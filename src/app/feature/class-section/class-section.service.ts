@@ -59,4 +59,27 @@ export class ClassSectionService {
       catchError(() => of(null))
     );
   }
+
+  resolveDefaultClassSection(
+    options: ClassSectionOption[],
+    defaultSelection: { classId: string; sectionName: string } | null
+  ): { classId: string; sectionName: string } {
+    const fallbackClass = options[0]?.classId ?? '';
+    const fallbackSection = options[0]?.sections[0]?.sectionName ?? '';
+
+    if (!defaultSelection) {
+      return { classId: fallbackClass, sectionName: fallbackSection };
+    }
+
+    const matchedClass = options.find(option => option.classId === defaultSelection.classId);
+    if (!matchedClass) {
+      return { classId: fallbackClass, sectionName: fallbackSection };
+    }
+
+    const matchedSection = matchedClass.sections.find(section => section.sectionName === defaultSelection.sectionName);
+    return {
+      classId: matchedClass.classId,
+      sectionName: matchedSection?.sectionName ?? matchedClass.sections[0]?.sectionName ?? fallbackSection
+    };
+  }
 }

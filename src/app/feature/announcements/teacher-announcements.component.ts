@@ -35,15 +35,9 @@ export class TeacherAnnouncementsComponent {
       next: classOptions => {
         this.classOptions.set(classOptions);
         this.classSectionService.getTeacherDefaultClassSection().subscribe(defaultSelection => {
-          if (defaultSelection) {
-            const selectedClass = classOptions.find(option => option.classId === defaultSelection.classId);
-            this.className.set(defaultSelection.classId);
-            this.section.set(defaultSelection.sectionName);
-            this.loadAnnouncements();
-            return;
-          }
-          this.className.set(classOptions[0]?.classId ?? '');
-          this.section.set('All');
+          const resolved = this.classSectionService.resolveDefaultClassSection(classOptions, defaultSelection);
+          this.className.set(resolved.classId);
+          this.section.set(defaultSelection ? resolved.sectionName : 'All');
           this.loadAnnouncements();
         });
       },

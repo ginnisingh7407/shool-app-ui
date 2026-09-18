@@ -42,13 +42,9 @@ export class TeacherExamResultsComponent {
     this.classSectionService.getAll().subscribe(options => {
       this.classOptions.set(options);
       this.classSectionService.getTeacherDefaultClassSection().subscribe(defaultSelection => {
-        if (defaultSelection) {
-          this.className.set(defaultSelection.classId);
-          this.section.set(defaultSelection.sectionName);
-        } else {
-          this.className.set(options[0]?.classId ?? '');
-          this.section.set(options[0]?.sections[0]?.sectionName ?? '');
-        }
+        const resolved = this.classSectionService.resolveDefaultClassSection(options, defaultSelection);
+        this.className.set(resolved.classId);
+        this.section.set(resolved.sectionName);
         this.loadResults();
       });
     });
