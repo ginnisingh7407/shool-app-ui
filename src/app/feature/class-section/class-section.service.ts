@@ -1,13 +1,15 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { map, Observable } from 'rxjs';
+import { catchError, map, Observable, of, switchMap } from 'rxjs';
 
-import { classSectionApiUrl } from '../../core/config/api.config';
-import { ClassSectionApiResponse, ClassSectionOption } from '../../common/model/models';
+import { classSectionApiUrl, classTeacherApiUrl } from '../../core/config/api.config';
+import { ClassSectionApiResponse, ClassSectionOption, ClassTeacherApiResponse, ClassTeacherAssignment } from '../../common/model/models';
+import { ProfileService } from '../profile/profile.service';
 
 @Injectable({ providedIn: 'root' })
 export class ClassSectionService {
   private readonly http = inject(HttpClient);
+  private readonly profileService = inject(ProfileService);
 
   getAll(): Observable<ClassSectionOption[]> {
     return this.http.get<ClassSectionApiResponse>(classSectionApiUrl('')).pipe(
@@ -35,6 +37,26 @@ export class ClassSectionService {
         const sorted = [...classSections.values()].sort((a,b) => Number(a.classId) - Number(b.classId));
         return sorted;
       })
+    );
+  }
+
+  getClassTeacherAssignments(): Observable<ClassTeacherAssignment[]> {
+    return this.http.get<ClassTeacherApiResponse>(classTeacherApiUrl('')).pipe(
+      map(response => response.data ?? []),
+      catchError(() => of([]))
+    );
+  }
+
+  getTeacherDefaultClassSection(): Observable<{ classId: string; sectionName: string } | null> {
+    return this.profileService.getProfile().pipe(
+      switchMap(profile => this.getClassTeacherAssignments().pipe(
+        map(assignments => {
+          const assignment = assignments.find(item => item.teacherId === profile.id);
+          if (!assignment) return null;
+          return { classId: String(assignment.classId), sectionName: assignment.sectionName };
+        })
+      )),
+      catchError(() => of(null))
     );
   }
 }

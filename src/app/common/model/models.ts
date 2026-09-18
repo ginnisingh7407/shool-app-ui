@@ -38,6 +38,21 @@ export interface ClassSectionOption {
   sections: Section[];
 }
 
+export interface ClassTeacherAssignment {
+  id: number | null;
+  classId: number;
+  sectionName: string;
+  teacherId: number;
+}
+
+export interface ClassTeacherApiResponse {
+  status: string;
+  code: number;
+  message: string;
+  data: ClassTeacherAssignment[];
+  timestamp: string;
+}
+
 export interface AttendanceSummary { present: number; absent: number; late: number; }
 
 export interface AttendanceStudent {

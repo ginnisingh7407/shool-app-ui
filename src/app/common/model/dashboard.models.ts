@@ -26,6 +26,7 @@ export const FALLBACK_DASHBOARD_DATA: DashboardData = {
     ],
     Admin: [
       { id: 'teachers', label: 'Manage teachers', detail: 'View and manage faculty', icon: 'teacher', tone: 'teal', roles: ['Admin'] },
+      { id: 'class-teachers', label: 'Class teacher mapping', detail: 'Assign a teacher to a class and section', icon: 'teacher', tone: 'blue', roles: ['Admin'] },
       { id: 'students', label: 'Manage students', detail: 'Keep student records current', icon: 'users', tone: 'coral', roles: ['Admin'] },
       { id: 'fees', label: 'Fee management', detail: 'Track fees and payments', icon: 'fee', tone: 'gold', roles: ['Admin'] },
       { id: 'import-data', label: 'Import/Export Data', detail: 'Teachers, students, classes & sections', icon: 'import', tone: 'orange', roles: ['Admin'] },

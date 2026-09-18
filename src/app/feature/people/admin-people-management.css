@@ -21,5 +21,6 @@
 .admin-data-message, .admin-data-error { margin: 15px 0 0; font: 12px 'Trebuchet MS', sans-serif; }
 .admin-data-message { color: #2e8581; }
 .admin-data-error { color: #c96450; }
-@media (max-width: 520px) { .admin-people-form { grid-template-columns: 1fr; } }
-@media (max-width: 520px) { .admin-manage-controls { grid-template-columns: 1fr; } .admin-student-card { flex-direction: column; } }
+.edit-link { border: 0; background: transparent; color: #2e8581; font: 700 11px 'Trebuchet MS', sans-serif; cursor: pointer; text-align: left; }
+.save-attendance { min-height: 38px; padding: 0 16px; border: 0; border-radius: 4px; background: #2e8581; color: #fff; font: 600 12px 'Trebuchet MS', sans-serif; cursor: pointer; }
+@media (max-width: 520px) { .admin-people-form { grid-template-columns: 1fr; } .admin-manage-controls { grid-template-columns: 1fr; } .admin-student-card { flex-direction: column; } }

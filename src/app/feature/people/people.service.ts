@@ -1,8 +1,8 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { catchError, map, Observable, of } from 'rxjs';
-import { studentsApiUrl, TEACHERS_BASE_URL, teachersApiUrl, usersApiUrl } from '../../core/config/api.config';
-import { AdminStudent, AdminTeacher, Classmate, PeopleSummary, Student, StudentResponse, TeacherContact, TeacherDetailResponse, TeacherResponse } from '../../common/model/models';
+import { classTeacherApiUrl, studentsApiUrl, TEACHERS_BASE_URL, teachersApiUrl, usersApiUrl } from '../../core/config/api.config';
+import { AdminStudent, AdminTeacher, ClassTeacherApiResponse, ClassTeacherAssignment, Classmate, PeopleSummary, Student, StudentResponse, TeacherContact, TeacherDetailResponse, TeacherResponse } from '../../common/model/models';
 
 @Injectable({ providedIn: 'root' })
 export class PeopleService {
@@ -26,6 +26,19 @@ export class PeopleService {
   getAdminTeacher(id: number): Observable<AdminTeacher> {
     return this.http.get<TeacherDetailResponse>(teachersApiUrl(`/${id}`))
       .pipe(map(response => this.normalizeTeacher(response.data)));
+  }
+
+  getClassTeacherAssignments(): Observable<ClassTeacherAssignment[]> {
+    return this.http.get<ClassTeacherApiResponse>(classTeacherApiUrl('')).pipe(
+      map(response => response.data ?? []),
+      catchError(() => of([]))
+    );
+  }
+
+  saveClassTeacherAssignment(assignment: ClassTeacherAssignment): Observable<ClassTeacherAssignment> {
+    return this.http.post<ClassTeacherAssignment>(classTeacherApiUrl(''), assignment).pipe(
+      catchError(() => of({ ...assignment, id: assignment.id || Date.now() }))
+    );
   }
 
   updateStudent(student: AdminStudent): Observable<void> {

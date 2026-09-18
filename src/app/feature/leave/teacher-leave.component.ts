@@ -44,9 +44,16 @@ export class TeacherLeaveComponent {
     this.classSectionService.getAll().subscribe({
       next: options => {
         this.classOptions.set(options);
-        this.selectedClass.set(options[0]?.classId ?? '');
-        this.selectedSection.set(options[0]?.sections[0]?.sectionName ?? '');
-        this.loadStudents();
+        this.classSectionService.getTeacherDefaultClassSection().subscribe(defaultSelection => {
+          if (defaultSelection) {
+            this.selectedClass.set(defaultSelection.classId);
+            this.selectedSection.set(defaultSelection.sectionName);
+          } else {
+            this.selectedClass.set(options[0]?.classId ?? '');
+            this.selectedSection.set(options[0]?.sections[0]?.sectionName ?? '');
+          }
+          this.loadStudents();
+        });
       },
       error: () => {
         this.students.set([]);

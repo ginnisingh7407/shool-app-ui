@@ -1,0 +1,77 @@
+<main class="dashboard feature-page admin-people-page">
+  <a class="back-link" routerLink="/" [queryParams]="{ role: 'Admin' }">&#8592; Back to workspace</a>
+  <section class="feature-panel admin-people-panel">
+    <p class="eyebrow">Oakridge workspace</p>
+    <h1>Class teacher assignment</h1>
+    <p>Assign or update which teacher is responsible for a class and section.</p>
+
+    <section class="admin-people-tools" aria-labelledby="class-teacher-title">
+      <h2 id="class-teacher-title">Teacher assignment records</h2>
+      <div class="admin-data-tabs" role="tablist" aria-label="Class teacher assignment actions">
+        <button type="button" role="tab" [attr.aria-selected]="activeTab() === 'assign'" [class.active]="activeTab() === 'assign'" (click)="switchTab('assign')">Assign teacher</button>
+        <button type="button" role="tab" [attr.aria-selected]="activeTab() === 'manage'" [class.active]="activeTab() === 'manage'" (click)="switchTab('manage')">Manage</button>
+      </div>
+
+      @if (activeTab() === 'assign') {
+        <form class="admin-people-form" (submit)="$event.preventDefault(); saveAssignment()">
+          <label>Class
+            <select [value]="selectedClass()" (change)="onClassChange($event)" required>
+              <option value="" disabled>Select a class</option>
+              @for (option of classOptions(); track option.classId) {
+                <option [value]="option.classId">Class {{ option.classId }}</option>
+              }
+            </select>
+          </label>
+
+          <label>Section
+            <select [value]="selectedSection()" (change)="onSectionChange($event)" required>
+              <option value="" disabled>Select a section</option>
+              @for (section of sectionOptions(); track section.sectionName) {
+                <option [value]="section.sectionName">Section {{ section.sectionName }}</option>
+              }
+            </select>
+          </label>
+
+          <label>Teacher
+            <select [value]="selectedTeacherId() ?? ''" (change)="onTeacherChange($event)" required>
+              <option value="" disabled>Select a teacher</option>
+              @for (teacher of teachers(); track teacher.id) {
+                <option [value]="teacher.id">{{ teacher.name }} ({{ teacher.employeeId }})</option>
+              }
+            </select>
+          </label>
+
+          <button class="save-attendance" type="submit">
+            {{ saving() ? 'Saving...' : (editingAssignmentId() !== null ? 'Update assignment' : 'Assign teacher') }}
+          </button>
+        </form>
+      } @else {
+        @if (assignments().length) {
+          <div class="admin-student-list" aria-label="Class teacher assignments">
+            @for (assignment of assignments(); track assignment.id) {
+              <article class="admin-student-card">
+                <div>
+                  <strong>Class {{ assignment.classId }} · Section {{ assignment.sectionName }}</strong>
+                  <span>Teacher: {{ teachers().find(teacher => teacher.id === assignment.teacherId)?.name ?? 'Unknown teacher' }}</span>
+                </div>
+                <div>
+                  <span>{{ teachers().find(teacher => teacher.id === assignment.teacherId)?.employeeId ?? '' }}</span>
+                  <button type="button" class="edit-link" (click)="editAssignment(assignment)">Edit</button>
+                </div>
+              </article>
+            }
+          </div>
+        } @else {
+          <div class="admin-manage-placeholder" role="status">
+            <strong>No assignments found</strong>
+            <span>No class teacher assignments are available yet.</span>
+          </div>
+        }
+      }
+
+      @if (message()) { <p class="admin-data-message">{{ message() }}</p> }
+      @if (error()) { <p class="admin-data-error" role="alert">{{ error() }}</p> }
+    </section>
+  </section>
+</main>
+<footer><span>Oakridge School</span><span>Learning together since 1987</span></footer>

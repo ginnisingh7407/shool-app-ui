@@ -41,9 +41,16 @@ export class TeacherExamResultsComponent {
   constructor() {
     this.classSectionService.getAll().subscribe(options => {
       this.classOptions.set(options);
-      this.className.set(options[0]?.classId ?? '');
-      this.section.set(options[0]?.sections[0]?.sectionName ?? '');
-      this.loadResults();
+      this.classSectionService.getTeacherDefaultClassSection().subscribe(defaultSelection => {
+        if (defaultSelection) {
+          this.className.set(defaultSelection.classId);
+          this.section.set(defaultSelection.sectionName);
+        } else {
+          this.className.set(options[0]?.classId ?? '');
+          this.section.set(options[0]?.sections[0]?.sectionName ?? '');
+        }
+        this.loadResults();
+      });
     });
   }
 

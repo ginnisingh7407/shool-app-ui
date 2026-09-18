@@ -26,23 +26,32 @@ export class TeacherAnnouncementsComponent {
   protected readonly statusMessage = signal('');
   protected readonly sectionOptions = computed(() => this.classOptions().find(x => x.classId === this.className())?.sections ?? []);
 
-  constructor() { 
+  constructor() {
     this.loadClasses();
-    }
+  }
 
-   protected loadClasses(): void {
-     this.classSectionService.getAll().subscribe({
-       next: classOptions => {
-         this.classOptions.set(classOptions);
-         this.className.set(classOptions[0]?.classId ?? '');
-         this.section.set('All');
-         this.loadAnnouncements();
-       },
-       error: () => {
-         this.statusMessage.set('Unable to load classes and sections.');
-       }
-     });
-   }
+  protected loadClasses(): void {
+    this.classSectionService.getAll().subscribe({
+      next: classOptions => {
+        this.classOptions.set(classOptions);
+        this.classSectionService.getTeacherDefaultClassSection().subscribe(defaultSelection => {
+          if (defaultSelection) {
+            const selectedClass = classOptions.find(option => option.classId === defaultSelection.classId);
+            this.className.set(defaultSelection.classId);
+            this.section.set(defaultSelection.sectionName);
+            this.loadAnnouncements();
+            return;
+          }
+          this.className.set(classOptions[0]?.classId ?? '');
+          this.section.set('All');
+          this.loadAnnouncements();
+        });
+      },
+      error: () => {
+        this.statusMessage.set('Unable to load classes and sections.');
+      }
+    });
+  }
   protected loadAnnouncements(): void {
     this.announcementsService.getAll(this.className(), this.section()).subscribe(data => this.announcements.set(data));
   }
