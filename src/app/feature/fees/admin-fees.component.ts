@@ -1,5 +1,7 @@
-import { Component, computed, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { ClassSectionService } from '../class-section/class-section.service';
+import { ClassSectionOption } from '../../common/model/models';
 
 interface PendingFee {
   studentName: string;
@@ -16,9 +18,10 @@ interface PendingFee {
   styleUrl: './admin-fees.component.css'
 })
 export class AdminFeesComponent {
+  private readonly classSectionService = inject(ClassSectionService);
   protected activeTab: 'structure' | 'pending' = 'structure';
-  protected readonly classOptions = ['Class 6', 'Class 7', 'Class 8', 'Class 9', 'Class 10'];
-  protected readonly selectedClass = signal('Class 8');
+  protected readonly classOptions = signal<ClassSectionOption[]>([]);
+  protected readonly selectedClass = signal('');
   protected readonly feeTypes = [
     { key: 'tuition', label: 'Tuition fee' },
     { key: 'transport', label: 'Transport fee' },
@@ -42,6 +45,13 @@ export class AdminFeesComponent {
     { studentName: 'Kabir Singh', className: 'Class 9', section: 'A', amount: 6500, parentMobile: '+91 98765 43212' }
   ]);
   protected statusMessage = '';
+
+  constructor() {
+    this.classSectionService.getAll().subscribe(options => {
+      this.classOptions.set(options);
+      this.selectedClass.set(options[0]?.classId ?? '');
+    });
+  }
 
   protected selectClass(event: Event): void {
     this.selectedClass.set((event.target as HTMLSelectElement).value);

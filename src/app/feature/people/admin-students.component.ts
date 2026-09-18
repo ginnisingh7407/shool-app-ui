@@ -1,8 +1,9 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 import { PeopleService } from './people.service';
-import { AdminStudent } from '../../common/model/models';
+import { AdminStudent, ClassSectionOption } from '../../common/model/models';
+import { ClassSectionService } from '../class-section/class-section.service';
 
 @Component({
   selector: 'app-admin-students',
@@ -12,10 +13,10 @@ import { AdminStudent } from '../../common/model/models';
 })
 export class AdminStudentsComponent {
   private readonly peopleService = inject(PeopleService);
+  private readonly classSectionService = inject(ClassSectionService);
   protected readonly fields = ['name', 'gender', 'rollNumber', 'admissionNumber', 'dob', 'address', 'fatherName', 'motherName', 'parentMobile', 'className', 'section', 'email'];
-  protected readonly classOptions = ['Class 6', 'Class 7', 'Class 8', 'Class 9', 'Class 10'];
-  protected readonly manageClassOptions = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-  protected readonly sectionOptions = ['A', 'B', 'C'];
+  protected readonly classOptions = signal<ClassSectionOption[]>([]);
+  protected readonly sectionOptions = computed(() => this.classOptions().find(option => Number(option.classId) === this.selectedClassId())?.sections ?? []);
   protected readonly form: Record<string, string> = {};
   protected activeTab: 'add' | 'manage' = 'add';
   protected readonly selectedClassId = signal(2);
@@ -25,6 +26,15 @@ export class AdminStudentsComponent {
   protected editingStudentId: number | null = null;
   protected message = '';
   protected error = '';
+
+  constructor() {
+    this.classSectionService.getAll().subscribe(options => {
+      this.classOptions.set(options);
+      const firstClass = options[0];
+      this.selectedClassId.set(Number(firstClass?.classId ?? 0));
+      this.selectedSection.set(firstClass?.sections[0]?.sectionName ?? '');
+    });
+  }
 
   protected labelFor(field: string): string {
     return { rollNumber: 'Roll no', admissionNumber: 'Admission no', dob: 'Date of birth', className: 'Class', parentMobile: 'Parent mobile' }[field] ?? field;
@@ -47,7 +57,7 @@ export class AdminStudentsComponent {
       email: this.form['email'],
       admissionNumber: Number(this.form['admissionNumber']),
       rollNumber: Number(this.form['rollNumber']),
-      classId: Number(this.form['className'].replace('Class ', '')),
+      classId: Number(this.form['className']),
       sectionName: this.form['section'],
       fatherName: this.form['fatherName'],
       motherName: this.form['motherName'],
@@ -80,7 +90,9 @@ export class AdminStudentsComponent {
   }
 
   protected onManageClassChange(event: Event): void {
-    this.selectedClassId.set(Number((event.target as HTMLSelectElement).value));
+    const classId = Number((event.target as HTMLSelectElement).value);
+    this.selectedClassId.set(classId);
+    this.selectedSection.set(this.classOptions().find(option => Number(option.classId) === classId)?.sections[0]?.sectionName ?? '');
     this.loadStudents();
   }
 
@@ -101,7 +113,7 @@ export class AdminStudentsComponent {
       fatherName: student.fatherName,
       motherName: student.motherName,
       parentMobile: student.parentPhone,
-      className: `Class ${student.classId}`,
+      className: String(student.classId),
       section: student.sectionName,
       email: student.email
     });
