@@ -369,7 +369,7 @@ export interface HomeworkAttachment {
   fileData: string[];
 }
 export interface HomeworkUploadPayload {
-  id: number;
+  id?: number;
   teacherId: number;
   classId: number;
   sectionName: string;

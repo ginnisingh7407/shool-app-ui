@@ -21,26 +21,8 @@ export class HomeworkService {
   }
 
   uploadWork(homework: Homework): Observable<HomeworkUploadResponse> {
-    return from(this.buildUploadPayload(homework)).pipe(
-      switchMap(payload => this.http.post<HomeworkUploadResponse>(homeworkApiUrl(''), payload).pipe(
-        catchError(() => of({ success: true, message: 'Work uploaded using the local preview.' }))
-      ))
-    );
-  }
-
-  private async buildUploadPayload(homework: Homework): Promise<HomeworkUploadPayload> {
-    const files = homework.files && homework.files.length > 0
-      ? await Promise.all(homework.files.map(async (file, index) => ({
-          id: index,
-          fileName: file.name,
-          contentType: file.type || 'application/octet-stream',
-          fileSize: file.size,
-          fileData: [await this.readFileAsBase64(file)]
-        })))
-      : [];
-
-    return {
-      id: 0,
+    const formData = new FormData();
+    const homeworkPayload: HomeworkUploadPayload = {
       teacherId: homework.teacherId,
       classId: homework.classId,
       sectionName: homework.sectionName || '',
@@ -50,20 +32,20 @@ export class HomeworkService {
       fileUrl: homework.fileUrl || '',
       dueDate: homework.dueDate || new Date().toISOString().slice(0, 10),
       workType: homework.workType,
-      files
+      files: []
     };
-  }
 
-  private readFileAsBase64(file: File): Promise<string> {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => {
-        const result = typeof reader.result === 'string' ? reader.result : '';
-        resolve(result.includes(',') ? result.split(',')[1] : result);
-      };
-      reader.onerror = () => reject(new Error(`Failed to read file: ${file.name}`));
-      reader.readAsDataURL(file);
-    });
+    formData.append('homework', new Blob([JSON.stringify(homeworkPayload)], { type: 'application/json' }));
+
+    if (homework.files && homework.files.length > 0) {
+      homework.files.forEach(file => {
+        formData.append('files', file, file.name);
+      });
+    }
+
+    return this.http.post<HomeworkUploadResponse>(homeworkApiUrl(''), formData).pipe(
+      catchError(() => of({ success: true, message: 'Work uploaded using the local preview.' }))
+    );
   }
 
   getStudentWork(studentId: number): Observable<StudentWorkItem[]> {
