@@ -4,9 +4,11 @@ import { RouterLink } from '@angular/router';
 import { HomeworkService } from './homework.service';
 import { ClassSectionService } from '../class-section/class-section.service';
 import { PeopleService } from '../people/people.service';
-import { ClassSectionOption, Student } from '../../common/model/models';
+import { ClassSectionOption, HomeworkRecord, Student } from '../../common/model/models';
 import { ProfileService } from '../profile/profile.service';
 import { toSignal } from '@angular/core/rxjs-interop';
+
+type HomeworkTab = 'new' | 'list';
 
 @Component({
   selector: 'app-teacher-homework',
@@ -19,6 +21,7 @@ export class TeacherHomeworkComponent {
   private readonly peopleService = inject(PeopleService);
   protected readonly profileService = inject(ProfileService);
 
+  protected readonly activeTab = signal<HomeworkTab>('new');
   protected readonly title = signal('');
   protected readonly description = signal('');
   protected readonly workType = signal<'CLASSWORK' | 'HOMEWORK'>('HOMEWORK');
@@ -30,10 +33,11 @@ export class TeacherHomeworkComponent {
   protected readonly selectedSection = signal('');
   protected readonly sectionOptions = computed(() => this.classOptions().find(option => option.classId === this.selectedClass())?.sections ?? []);
   protected readonly students = signal<Student[]>([]);
+  protected readonly assignments = signal<HomeworkRecord[]>([]);
   protected readonly isLoadingStudents = signal(false);
+  protected readonly isLoadingAssignments = signal(false);
   protected readonly profile = toSignal(this.profileService.getProfile());
   protected readonly teacherId = computed(() => this.profile()?.role === 'TEACHER' ? this.profile()?.id ?? null : null);
-
 
   constructor() {
     this.loadClasses();
@@ -53,6 +57,7 @@ export class TeacherHomeworkComponent {
             this.selectedSection.set(firstClass?.sections[0]?.sectionName ?? '');
           }
           this.loadStudents();
+          this.loadAssignments();
         });
       },
       error: () => {
@@ -67,11 +72,21 @@ export class TeacherHomeworkComponent {
     const firstSection = this.classOptions().find(option => option.classId === className)?.sections[0]?.sectionName ?? '';
     this.selectedSection.set(firstSection);
     this.loadStudents();
+    this.loadAssignments();
   }
 
   protected onSectionChange(event: Event): void {
     this.selectedSection.set((event.target as HTMLSelectElement).value);
     this.loadStudents();
+    this.loadAssignments();
+  }
+
+  protected switchTab(tab: HomeworkTab): void {
+    this.activeTab.set(tab);
+    this.uploadMessage.set('');
+    if (tab === 'list') {
+      this.loadAssignments();
+    }
   }
 
   protected onTitleChange(event: Event): void {
@@ -120,6 +135,7 @@ export class TeacherHomeworkComponent {
     }).subscribe(response => {
       this.isUploading.set(false);
       this.uploadMessage.set(response.message);
+      this.loadAssignments();
     });
   }
 
@@ -136,6 +152,22 @@ export class TeacherHomeworkComponent {
     this.peopleService.getStudents(className, section).subscribe(res => {
       this.students.set(res.data ?? []);
       this.isLoadingStudents.set(false);
+    });
+  }
+
+  private loadAssignments(): void {
+    const className = this.selectedClass();
+    const section = this.selectedSection();
+
+    if (!className || !section) {
+      this.assignments.set([]);
+      return;
+    }
+
+    this.isLoadingAssignments.set(true);
+    this.homeworkService.getByClassAndSection(className, section).subscribe(assignments => {
+      this.assignments.set(assignments);
+      this.isLoadingAssignments.set(false);
     });
   }
 }

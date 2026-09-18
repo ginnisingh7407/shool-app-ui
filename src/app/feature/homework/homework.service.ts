@@ -1,8 +1,8 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { catchError, from, map, Observable, of, switchMap } from 'rxjs';
+import { catchError, map, Observable, of } from 'rxjs';
 import { homeworkApiUrl } from '../../core/config/api.config';
-import { StudentWorkItem, HomeworkSummary, HomeworkUploadResponse, Homework, HomeworkUploadPayload } from '../../common/model/models';
+import { StudentWorkItem, HomeworkSummary, HomeworkUploadResponse, Homework, HomeworkUploadPayload, HomeworkApiResponse, HomeworkRecord } from '../../common/model/models';
 
 const FALLBACK_STUDENT_WORK: StudentWorkItem[] = [
   { id: 1, type: 'CLASSWORK', date: '2026-09-15', title: 'Fractions practice', description: 'Complete the examples discussed in today\'s mathematics lesson.', fileName: 'fractions-practice.pdf', fileUrl: '/files/fractions-practice.pdf' },
@@ -45,6 +45,13 @@ export class HomeworkService {
 
     return this.http.post<HomeworkUploadResponse>(homeworkApiUrl(''), formData).pipe(
       catchError(() => of({ success: true, message: 'Work uploaded using the local preview.' }))
+    );
+  }
+
+  getByClassAndSection(classId: string, sectionName: string): Observable<HomeworkRecord[]> {
+    return this.http.get<HomeworkApiResponse>(homeworkApiUrl(`/class/${classId}/section/${encodeURIComponent(sectionName)}`)).pipe(
+      map(response => [...(response.data ?? [])].sort((a, b) => new Date(b.dueDate).getTime() - new Date(a.dueDate).getTime())),
+      catchError(() => of([]))
     );
   }
 

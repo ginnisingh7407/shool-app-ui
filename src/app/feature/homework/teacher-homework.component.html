@@ -10,64 +10,132 @@
   </section>
 
   <section class="homework-form-panel">
-    <div class="homework-form-heading"><div><p class="eyebrow">New assignment</p><h2>Work details</h2></div><span>Required fields are marked by the form</span></div>
-    <div class="homework-form">
-      <label>Class
-        <select [value]="selectedClass()" (change)="onClassChange($event)">
-          <option value="" disabled>Select a class</option>
-          @for (option of classOptions(); track option.classId) {
-            <option [value]="option.classId">Class {{ option.classId }}</option>
-          }
-        </select>
-      </label>
-      <label>Section
-        <select [value]="selectedSection()" (change)="onSectionChange($event)" [disabled]="!selectedClass()">
-          <option value="" disabled>Select a section</option>
-          @for (section of sectionOptions(); track section.sectionName) {
-            <option [value]="section.sectionName">Section {{ section.sectionName }}</option>
-          }
-        </select>
-      </label>
-      <label class="full-width">Students in selected class/section
-        @if (isLoadingStudents()) {
-          <small>Loading students...</small>
-        } @else if (students().length) {
-          <div class="student-chip-list">
-            @for (student of students(); track student.id) {
-              <span>{{ student.name }}</span>
-            }
-          </div>
-        } @else {
-          <small>No students found for this class and section.</small>
-        }
-      </label>
-      <label>Title
-        <input type="text" placeholder="e.g. Fractions practice" [value]="title()" (input)="onTitleChange($event)" />
-      </label>
-      <label>Type
-        <select [value]="workType()" (change)="onWorkTypeChange($event)">
-          <option value="CLASSWORK">CLASSWORK</option>
-          <option value="HOMEWORK">HOMEWORK</option>
-        </select>
-      </label>
-      <label class="full-width">Description
-        <textarea rows="6" placeholder="Add instructions or context for your students" [value]="description()" (input)="onDescriptionChange($event)"></textarea>
-      </label>
-      <label class="file-field full-width">Attachment <span class="optional-label">Optional</span>
-        <input type="file" multiple (change)="onFileChange($event)" />
-        @if (selectedFiles().length) {
-          <div class="selected-file-list">
-            @for (file of selectedFiles(); track file.name + file.size + $index) {
-              <small class="selected-file">{{ file.name }} ({{ file.size }} bytes)</small>
-            }
-          </div>
-        }
-      </label>
+    <div class="homework-form-heading">
+      <div>
+        <p class="eyebrow">Assignments</p>
+        <h2>Classroom work</h2>
+      </div>
+      <span>Required fields are marked by the form</span>
     </div>
-    <div class="homework-form-footer">
-      <span>Accepted file types depend on the connected API.</span>
-      <button class="upload-work-button" type="button" [disabled]="isUploading()" (click)="uploadWork()">{{ isUploading() ? 'Uploading...' : 'Upload work' }}</button>
+
+    <div class="admin-data-tabs" role="tablist" aria-label="Homework actions">
+      <button type="button" role="tab" [class.active]="activeTab() === 'new'" [attr.aria-selected]="activeTab() === 'new'" (click)="switchTab('new')">New assignment</button>
+      <button type="button" role="tab" [class.active]="activeTab() === 'list'" [attr.aria-selected]="activeTab() === 'list'" (click)="switchTab('list')">Existing work</button>
     </div>
+
+    @if (activeTab() === 'new') {
+      <div class="homework-form">
+        <label>Class
+          <select [value]="selectedClass()" (change)="onClassChange($event)">
+            <option value="" disabled>Select a class</option>
+            @for (option of classOptions(); track option.classId) {
+              <option [value]="option.classId">Class {{ option.classId }}</option>
+            }
+          </select>
+        </label>
+        <label>Section
+          <select [value]="selectedSection()" (change)="onSectionChange($event)" [disabled]="!selectedClass()">
+            <option value="" disabled>Select a section</option>
+            @for (section of sectionOptions(); track section.sectionName) {
+              <option [value]="section.sectionName">Section {{ section.sectionName }}</option>
+            }
+          </select>
+        </label>
+        <label class="full-width">Students in selected class/section
+          @if (isLoadingStudents()) {
+            <small>Loading students...</small>
+          } @else if (students().length) {
+            <div class="student-chip-list">
+              @for (student of students(); track student.id) {
+                <span>{{ student.name }}</span>
+              }
+            </div>
+          } @else {
+            <small>No students found for this class and section.</small>
+          }
+        </label>
+        <label>Title
+          <input type="text" placeholder="e.g. Fractions practice" [value]="title()" (input)="onTitleChange($event)" />
+        </label>
+        <label>Type
+          <select [value]="workType()" (change)="onWorkTypeChange($event)">
+            <option value="CLASSWORK">CLASSWORK</option>
+            <option value="HOMEWORK">HOMEWORK</option>
+          </select>
+        </label>
+        <label class="full-width">Description
+          <textarea rows="6" placeholder="Add instructions or context for your students" [value]="description()" (input)="onDescriptionChange($event)"></textarea>
+        </label>
+        <label class="file-field full-width">Attachment <span class="optional-label">Optional</span>
+          <input type="file" multiple (change)="onFileChange($event)" />
+          @if (selectedFiles().length) {
+            <div class="selected-file-list">
+              @for (file of selectedFiles(); track file.name + file.size + $index) {
+                <small class="selected-file">{{ file.name }} ({{ file.size }} bytes)</small>
+              }
+            </div>
+          }
+        </label>
+      </div>
+      <div class="homework-form-footer">
+        <span>Accepted file types depend on the connected API.</span>
+        <button class="upload-work-button" type="button" [disabled]="isUploading()" (click)="uploadWork()">{{ isUploading() ? 'Uploading...' : 'Upload work' }}</button>
+      </div>
+    } @else {
+      <div class="homework-form">
+        <label>Class
+          <select [value]="selectedClass()" (change)="onClassChange($event)">
+            <option value="" disabled>Select a class</option>
+            @for (option of classOptions(); track option.classId) {
+              <option [value]="option.classId">Class {{ option.classId }}</option>
+            }
+          </select>
+        </label>
+        <label>Section
+          <select [value]="selectedSection()" (change)="onSectionChange($event)" [disabled]="!selectedClass()">
+            <option value="" disabled>Select a section</option>
+            @for (section of sectionOptions(); track section.sectionName) {
+              <option [value]="section.sectionName">Section {{ section.sectionName }}</option>
+            }
+          </select>
+        </label>
+      </div>
+      @if (isLoadingAssignments()) {
+        <div class="admin-manage-placeholder" role="status">Loading assignments...</div>
+      } @else if (assignments().length) {
+        <div class="admin-student-list" aria-label="Homework assignments">
+          @for (assignment of assignments(); track assignment.id) {
+            <article class="admin-student-card">
+              <div>
+                <strong>{{ assignment.title }}</strong>
+                <span>{{ assignment.workType }} · Due {{ assignment.dueDate }}</span>
+                <span>{{ assignment.description }}</span>
+              </div>
+              <div>
+                @if (assignment.files?.length) {
+                  <span>Files: {{ assignment.files.length }}</span>
+                  @for (file of assignment.files; track file.id) {
+                    @if (file.downloadUrl) {
+                      <a [href]="file.downloadUrl" target="_blank" rel="noopener noreferrer">{{ file.fileName }}</a>
+                    } @else {
+                      <span>{{ file.fileName }}</span>
+                    }
+                  }
+                } @else {
+                  <span>No files attached</span>
+                }
+              </div>
+            </article>
+          }
+        </div>
+      } @else {
+        <div class="admin-manage-placeholder" role="status">
+          <strong>No assignments found</strong>
+          <span>No HOMEWORK or CLASSWORK is available for Class {{ selectedClass() }}, Section {{ selectedSection() }}.</span>
+        </div>
+      }
+    }
+
     @if (uploadMessage()) { <p class="upload-message">{{ uploadMessage() }}</p> }
   </section>
 </main>

@@ -381,6 +381,34 @@ export interface HomeworkUploadPayload {
   workType: 'CLASSWORK' | 'HOMEWORK';
   files: HomeworkAttachment[];
 }
+export interface HomeworkFileItem {
+  id: number;
+  fileName: string;
+  contentType: string;
+  fileSize: number;
+  filePath?: string;
+  downloadUrl?: string;
+}
+export interface HomeworkRecord {
+  id: number;
+  teacherId: number;
+  classId: number;
+  sectionName: string;
+  subjectId: number;
+  title: string;
+  description: string;
+  fileUrl: string;
+  dueDate: string;
+  workType: 'CLASSWORK' | 'HOMEWORK';
+  files: HomeworkFileItem[];
+}
+export interface HomeworkApiResponse {
+  status: string;
+  code: number;
+  message: string;
+  data: HomeworkRecord[];
+  timestamp: string;
+}
 export interface Homework {
   id?: number | null;
   teacherId: number;
