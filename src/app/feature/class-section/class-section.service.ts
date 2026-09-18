@@ -60,6 +60,14 @@ export class ClassSectionService {
     );
   }
 
+  getAllWithTeacherDefaultSelection(): Observable<{ classOptions: ClassSectionOption[]; defaultSelection: { classId: string; sectionName: string } | null }> {
+    return this.getAll().pipe(
+      switchMap(classOptions => this.getTeacherDefaultClassSection().pipe(
+        map(defaultSelection => ({ classOptions, defaultSelection }))
+      ))
+    );
+  }
+
   resolveDefaultClassSection(
     options: ClassSectionOption[],
     defaultSelection: { classId: string; sectionName: string } | null

@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { catchError, map, Observable, of } from 'rxjs';
 import { classTeacherApiUrl, studentsApiUrl, TEACHERS_BASE_URL, teachersApiUrl, usersApiUrl } from '../../core/config/api.config';
-import { AdminStudent, AdminTeacher, ClassTeacherApiResponse, ClassTeacherAssignment, Classmate, PeopleSummary, Student, StudentResponse, TeacherContact, TeacherDetailResponse, TeacherResponse } from '../../common/model/models';
+import { Student, AdminTeacher, ClassTeacherApiResponse, ClassTeacherAssignment, Classmate, PeopleSummary, StudentResponse, TeacherContact, TeacherDetailResponse, TeacherResponse } from '../../common/model/models';
 
 @Injectable({ providedIn: 'root' })
 export class PeopleService {
@@ -13,7 +13,7 @@ export class PeopleService {
     );
   }
 
-  getStudentsByClassAndSection(classId: number, section: string): Observable<AdminStudent[]> {
+  getStudentsByClassAndSection(classId: number, section: string): Observable<Student[]> {
     return this.http.get<StudentResponse>(studentsApiUrl(`/class/${classId}/section/${encodeURIComponent(section)}`))
       .pipe(map(response => response.data));
   }
@@ -41,11 +41,11 @@ export class PeopleService {
     );
   }
 
-  updateStudent(student: AdminStudent): Observable<void> {
+  updateStudent(student: Student): Observable<void> {
     return this.http.put<void>(studentsApiUrl(`/${student.id}`), student);
   }
 
-  createStudent(student: AdminStudent): Observable<void> {
+  createStudent(student: Student): Observable<void> {
     return this.http.post<void>(studentsApiUrl(''), student);
   }
 
@@ -77,9 +77,9 @@ export class PeopleService {
     );
   }
 
-  getStudents(classId: string, sectionName: string): Observable<{data: Student[]}> {
-      return this.http.get<{data: Student[]}>(studentsApiUrl(`/class/${classId}/section/${sectionName}`)).pipe(
-        catchError(() => of({ data: [] }))
-      );
-    }
+  getStudents(classId: string, sectionName: string): Observable<{ data: Student[] }> {
+    return this.http.get<{ data: Student[] }>(studentsApiUrl(`/class/${classId}/section/${encodeURIComponent(sectionName)}`)).pipe(
+      catchError(() => of({ data: [] }))
+    );
+  }
 }

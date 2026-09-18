@@ -41,15 +41,13 @@ export class TeacherLeaveComponent {
   }
 
   protected loadClasses(): void {
-    this.classSectionService.getAll().subscribe({
-      next: options => {
-        this.classOptions.set(options);
-        this.classSectionService.getTeacherDefaultClassSection().subscribe(defaultSelection => {
-          const resolved = this.classSectionService.resolveDefaultClassSection(options, defaultSelection);
-          this.selectedClass.set(resolved.classId);
-          this.selectedSection.set(resolved.sectionName);
-          this.loadStudents();
-        });
+    this.classSectionService.getAllWithTeacherDefaultSelection().subscribe({
+      next: ({ classOptions, defaultSelection }) => {
+        this.classOptions.set(classOptions);
+        const resolved = this.classSectionService.resolveDefaultClassSection(classOptions, defaultSelection);
+        this.selectedClass.set(resolved.classId);
+        this.selectedSection.set(resolved.sectionName);
+        this.loadStudents();
       },
       error: () => {
         this.students.set([]);
@@ -150,7 +148,10 @@ export class TeacherLeaveComponent {
       return;
     }
 
-    this.peopleService.getStudents(this.selectedClass(), this.selectedSection()).subscribe(res => {
+    this.peopleService.getStudents(className, section).subscribe(res => {
+      if (this.selectedClass() !== className || this.selectedSection() !== section) {
+        return;
+      }
       this.students.set(res.data);
       this.selectedStudentId.set(null);
     });

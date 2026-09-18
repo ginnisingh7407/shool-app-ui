@@ -56,10 +56,10 @@ export interface ClassTeacherApiResponse {
 export interface AttendanceSummary { present: number; absent: number; late: number; }
 
 export interface AttendanceStudent {
-  id: number;
+  id: number | null;
   name: string;
   rollNumber: string;
-  present: boolean;
+  present?: boolean;
   onLeave?: boolean;
   admissionNumber: number;
   classId?: number;
@@ -80,7 +80,7 @@ export interface StudentRosterEntry {
 }
 
 export interface AttendanceApiRecord {
-  id: number;
+  id: number | null;
   admissionNumber: number;
   teacherId: number;
   classId: number;
@@ -93,7 +93,7 @@ export interface AttendanceApiRecord {
 export interface AttendanceApiResponse { data: AttendanceApiRecord[]; }
 
 export interface AttendanceSubmission {
-  id: number;
+  id: number | null;
   admissionNumber: number;
   teacherId: number;
   classId: number;
@@ -161,22 +161,6 @@ export interface School {
 
 export interface PeopleSummary { students: number; teachers: number; classmates: number; }
 
-export interface AdminStudent {
-  id: number | null;
-  name: string;
-  gender: string;
-  email: string;
-  admissionNumber: number;
-  rollNumber: number;
-  classId: number;
-  sectionName: string;
-  fatherName: string;
-  motherName: string;
-  dateOfBirth: string;
-  address: string;
-  parentPhone: string;
-}
-
 export interface CalendarDay {
   date: string;
   day: number;
@@ -210,7 +194,7 @@ export interface StudentResponse {
   status: string;
   code: number;
   message: string;
-  data: AdminStudent[];
+  data: Student[];
 }
 export interface TeacherResponse {
   status: string;
@@ -242,7 +226,7 @@ export interface ProfileSummary {
 }
 
 export interface ProfilePayload {
-  id?: number;
+  id: number | null;
   name?: string;
   username?: string;
   className?: string;
@@ -271,7 +255,7 @@ export interface ResponseData {
 }
 
 export interface Student {
-  id: number;
+  id: number | null;
   name: string;
   gender: string;
   email: string;
@@ -281,10 +265,11 @@ export interface Student {
   sectionName: string;
   fatherName: string;
   motherName: string;
-  dateOfBirth: string; // Format: "YYYY-MM-DD"
+  dateOfBirth: string;
   address: string;
   parentPhone: string;
 }
+
 
 export interface Teacher {
   id: number;

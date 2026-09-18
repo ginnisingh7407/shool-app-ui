@@ -5,6 +5,7 @@ import { AttendanceService } from './attendance.service';
 import { AttendanceRecord, AttendanceStudent, CalendarDay, CalendarMonth, ClassSectionOption, LeaveApplication } from '../../common/model/models';
 import { LeaveService } from '../leave/leave.service';
 import { ClassSectionService } from '../class-section/class-section.service';
+import { PeopleService } from '../people/people.service';
 
 
 type AttendanceMode = 'mark' | 'history';
@@ -18,6 +19,7 @@ type AttendanceMode = 'mark' | 'history';
 export class TeacherAttendanceComponent {
   private readonly attendanceService = inject(AttendanceService);
   private readonly leaveService = inject(LeaveService);
+  private readonly peopleService = inject(PeopleService);
   private readonly classSectionService = inject(ClassSectionService);
   protected readonly mode = signal<AttendanceMode>('mark');
   protected readonly classOptions = signal<ClassSectionOption[]>([]);
@@ -40,14 +42,12 @@ export class TeacherAttendanceComponent {
       this.applyLeaveToStudents();
       if (this.selectedStudentId() !== null) this.loadHistory();
     });
-    this.classSectionService.getAll().subscribe(options => {
-      this.classOptions.set(options);
-      this.classSectionService.getTeacherDefaultClassSection().subscribe(defaultSelection => {
-        const resolved = this.classSectionService.resolveDefaultClassSection(options, defaultSelection);
-        this.selectedClass.set(resolved.classId);
-        this.selectedSection.set(resolved.sectionName);
-        this.loadStudents();
-      });
+    this.classSectionService.getAllWithTeacherDefaultSelection().subscribe(({ classOptions, defaultSelection }) => {
+      this.classOptions.set(classOptions);
+      const resolved = this.classSectionService.resolveDefaultClassSection(classOptions, defaultSelection);
+      this.selectedClass.set(resolved.classId);
+      this.selectedSection.set(resolved.sectionName);
+      this.loadStudents();
     });
   }
 
@@ -115,7 +115,11 @@ export class TeacherAttendanceComponent {
     return this.students().find(student => student.id === this.selectedStudentId());
   }
 
-  protected markStudent(studentId: number, present: boolean, onLeave = false): void {
+  protected markStudent(studentId: number | null, present: boolean, onLeave = false): void {
+    if (studentId === null) {
+      return;
+    }
+
     this.students.update(students => students.map(student =>
       student.id === studentId ? { ...student, present, onLeave } : student
     ));
@@ -145,25 +149,44 @@ export class TeacherAttendanceComponent {
   }
 
   private loadStudents(): void {
+    const className = this.selectedClass();
+    const section = this.selectedSection();
+    const date = this.selectedStartDate();
+
+    if (!className || !section) {
+      this.students.set([]);
+      return;
+    }
+
     this.saveMessage.set('');
-    this.attendanceService.getStudents(
-      this.selectedClass(), this.selectedSection(), this.selectedStartDate()
-    ).subscribe(students => {
-      this.students.set(students.map(student => ({ ...student, onLeave: false })));
+    this.peopleService.getStudentsByClassAndSection(Number(className), section).subscribe(students => {
+      if (this.selectedClass() !== className || this.selectedSection() !== section || this.selectedStartDate() !== date) {
+        return;
+      }
+      this.students.set(students.map(student => ({
+        ...student,
+        rollNumber: String(student.rollNumber),
+        onLeave: false,
+        present: false
+      })));
       this.applyLeaveToStudents();
       if (this.mode() === 'history') this.loadHistory();
     });
   }
 
   private loadHistory(): void {
+
+
     const studentId = this.selectedStudentId();
     if (studentId === null) {
       this.history.set([]);
       return;
     }
+    
+    const admissionNumber = this.students().find(student => student.id === this.selectedStudentId())?.admissionNumber;
     this.attendanceService.getStudentHistory(
-      this.selectedClass(), this.selectedSection(), studentId, this.selectedStartDate(), this.selectedEndDate()
-    ).subscribe(history => this.history.set(this.applyLeaveToHistory(history, studentId)));
+      this.selectedClass(), this.selectedSection(), admissionNumber!, this.selectedStartDate(), this.selectedEndDate()
+    ).subscribe(history => this.history.set(this.applyLeaveToHistory(history, admissionNumber!)));
   }
 
   private applyLeaveToStudents(): void {
@@ -175,17 +198,17 @@ export class TeacherAttendanceComponent {
     })));
   }
 
-  private applyLeaveToHistory(history: AttendanceRecord[], studentId: number): AttendanceRecord[] {
+  private applyLeaveToHistory(history: AttendanceRecord[], admissionNumber: number): AttendanceRecord[] {
     return history.map(record => ({
       ...record,
-      onLeave: this.isLeaveDate(studentId, record.date),
-      present: this.isLeaveDate(studentId, record.date) ? false : record.present
+      onLeave: this.isLeaveDate(admissionNumber, record.date),
+      present: this.isLeaveDate(admissionNumber, record.date) ? false : record.present
     }));
   }
 
-  private isLeaveDate(studentNumber: number, date: string): boolean {
+  private isLeaveDate(admissionNumber: number, date: string): boolean {
     return this.leaveApplications().some(application =>
-      application.admissionNumber === studentNumber && application.status !== 'REJECTED' &&
+      application.admissionNumber === admissionNumber && application.status !== 'REJECTED' &&
       application.fromDate <= date && application.toDate >= date
     );
   }

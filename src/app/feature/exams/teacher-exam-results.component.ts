@@ -39,14 +39,12 @@ export class TeacherExamResultsComponent {
   });
 
   constructor() {
-    this.classSectionService.getAll().subscribe(options => {
-      this.classOptions.set(options);
-      this.classSectionService.getTeacherDefaultClassSection().subscribe(defaultSelection => {
-        const resolved = this.classSectionService.resolveDefaultClassSection(options, defaultSelection);
-        this.className.set(resolved.classId);
-        this.section.set(resolved.sectionName);
-        this.loadResults();
-      });
+    this.classSectionService.getAllWithTeacherDefaultSelection().subscribe(({ classOptions, defaultSelection }) => {
+      this.classOptions.set(classOptions);
+      const resolved = this.classSectionService.resolveDefaultClassSection(classOptions, defaultSelection);
+      this.className.set(resolved.classId);
+      this.section.set(resolved.sectionName);
+      this.loadResults();
     });
   }
 

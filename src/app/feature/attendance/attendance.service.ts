@@ -44,18 +44,23 @@ export class AttendanceService {
             admissionNumber: student.admissionNumber,
             classId: student.classId,
             sectionName: student.sectionName,
-            attendanceId: record?.id
-          };
+            attendanceId: record?.id ?? undefined
+          } satisfies AttendanceStudent;
         });
       }),
-      catchError(() => of([]))
+      catchError(() => of([] as AttendanceStudent[]))
     );
   }
 
-  getStudentHistory(className: string, section: string, studentId: number, startDate: string, endDate: string): Observable<AttendanceRecord[]> {
-    const params = `class=${encodeURIComponent(className)}&section=${encodeURIComponent(section)}&studentId=${studentId}&startDate=${startDate}&endDate=${endDate}`;
-    return this.http.get<AttendanceRecord[]>(attendanceApiUrl(`/history?${params}`)).pipe(
-      catchError(() => of())
+  getStudentHistory(className: string, section: string, admissionNumber: number, startDate: string, endDate: string): Observable<AttendanceRecord[]> {
+    const params = `classId=${Number(className)}&sectionName=${encodeURIComponent(section)}&admissionNumber=${admissionNumber}&fromDate=${startDate}&toDate=${endDate}`;
+    return this.http.get<{ status: string; code: number; message: string; data: AttendanceApiRecord[] }>(attendanceApiUrl(`/history/params?${params}`)).pipe(
+      map(response => (response.data ?? []).map(record => ({
+        date: record.attendanceDate,
+        present: record.status === 'PRESENT',
+        onLeave: record.status === 'LEAVE'
+      }))),
+      catchError(() => of([] as AttendanceRecord[]))
     );
   }
 
@@ -65,7 +70,7 @@ export class AttendanceService {
       map(profile => students
         .filter(student => !student.onLeave && student.admissionNumber !== undefined)
         .map(student => ({
-          id: student.attendanceId ?? 0,
+          id: student.attendanceId ?? null,
           admissionNumber: student.admissionNumber as number,
           teacherId: profile.id,
           classId: student.classId ?? classId,
@@ -74,7 +79,7 @@ export class AttendanceService {
           status: student.present ? 'PRESENT' : 'ABSENT',
           remarks: ''
         } satisfies AttendanceSubmission))),
-      switchMap(payload => this.http.post<unknown>(attendanceApiUrl('/api/v1/attendance/mark/all'), payload)),
+      switchMap(payload => this.http.post<unknown>(attendanceApiUrl('/mark/all'), payload)),
       map(() => ({ success: true })),
       catchError(error => throwError(() => error))
     );

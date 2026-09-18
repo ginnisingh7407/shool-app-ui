@@ -2,7 +2,7 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 import { PeopleService } from './people.service';
-import { AdminStudent, ClassSectionOption } from '../../common/model/models';
+import { ClassSectionOption, Student } from '../../common/model/models';
 import { ClassSectionService } from '../class-section/class-section.service';
 
 @Component({
@@ -17,22 +17,20 @@ export class TeacherStudentsComponent {
   protected readonly sectionOptions = computed(() => this.classOptions().find(option => option.classId === this.selectedClass())?.sections ?? []);
   protected readonly selectedClass = signal('');
   protected readonly selectedSection = signal('');
-  protected readonly students = signal<AdminStudent[]>([]);
+  protected readonly students = signal<Student[]>([]);
 
   constructor() {
     this.loadClasses();
   }
 
   protected loadClasses(): void {
-    this.classSectionService.getAll().subscribe({
-      next: options => {
-        this.classOptions.set(options);
-        this.classSectionService.getTeacherDefaultClassSection().subscribe(defaultSelection => {
-          const resolved = this.classSectionService.resolveDefaultClassSection(options, defaultSelection);
-          this.selectedClass.set(resolved.classId);
-          this.selectedSection.set(resolved.sectionName);
-          this.loadStudents();
-        });
+    this.classSectionService.getAllWithTeacherDefaultSelection().subscribe({
+      next: ({ classOptions, defaultSelection }) => {
+        this.classOptions.set(classOptions);
+        const resolved = this.classSectionService.resolveDefaultClassSection(classOptions, defaultSelection);
+        this.selectedClass.set(resolved.classId);
+        this.selectedSection.set(resolved.sectionName);
+        this.loadStudents();
       },
       error: () => {
         this.students.set([]);
@@ -53,15 +51,21 @@ export class TeacherStudentsComponent {
   }
 
   private loadStudents(): void {
-    const classId = Number(this.selectedClass());
+    const className = this.selectedClass();
+    const classId = Number(className);
     const section = this.selectedSection();
 
-    if (!this.selectedClass() || !section || Number.isNaN(classId)) {
+    if (!className || !section || Number.isNaN(classId)) {
       this.students.set([]);
       return;
     }
 
     this.peopleService.getStudentsByClassAndSection(classId, section)
-      .subscribe(students => this.students.set(students));
+      .subscribe(students => {
+        if (this.selectedClass() !== className || this.selectedSection() !== section) {
+          return;
+        }
+        this.students.set(students);
+      });
   }
 }

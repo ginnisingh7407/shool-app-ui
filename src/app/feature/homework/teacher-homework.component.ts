@@ -67,16 +67,14 @@ export class TeacherHomeworkComponent {
   }
 
   protected loadClasses(): void {
-    this.classSectionService.getAll().subscribe({
-      next: options => {
-        this.classOptions.set(options);
-        this.classSectionService.getTeacherDefaultClassSection().subscribe(defaultSelection => {
-          const resolved = this.classSectionService.resolveDefaultClassSection(options, defaultSelection);
-          this.selectedClass.set(resolved.classId);
-          this.selectedSection.set(resolved.sectionName);
-          this.loadStudents();
-          this.loadAssignments();
-        });
+    this.classSectionService.getAllWithTeacherDefaultSelection().subscribe({
+      next: ({ classOptions, defaultSelection }) => {
+        this.classOptions.set(classOptions);
+        const resolved = this.classSectionService.resolveDefaultClassSection(classOptions, defaultSelection);
+        this.selectedClass.set(resolved.classId);
+        this.selectedSection.set(resolved.sectionName);
+        this.loadStudents();
+        this.loadAssignments();
       },
       error: () => {
         this.uploadMessage.set('Unable to load classes and sections.');
@@ -175,8 +173,11 @@ export class TeacherHomeworkComponent {
     }
 
     this.isLoadingStudents.set(true);
-    this.peopleService.getStudents(className, section).subscribe(res => {
-      this.students.set(res.data ?? []);
+    this.peopleService.getStudentsByClassAndSection(Number(className), section).subscribe(res => {
+      if (this.selectedClass() !== className || this.selectedSection() !== section) {
+        return;
+      }
+      this.students.set(res ?? []);
       this.isLoadingStudents.set(false);
     });
   }
@@ -192,6 +193,9 @@ export class TeacherHomeworkComponent {
 
     this.isLoadingAssignments.set(true);
     this.homeworkService.getByClassAndSection(className, section).subscribe(assignments => {
+      if (this.selectedClass() !== className || this.selectedSection() !== section) {
+        return;
+      }
       this.assignments.set(assignments);
       this.isLoadingAssignments.set(false);
     });

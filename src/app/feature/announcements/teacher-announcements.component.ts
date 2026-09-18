@@ -31,15 +31,13 @@ export class TeacherAnnouncementsComponent {
   }
 
   protected loadClasses(): void {
-    this.classSectionService.getAll().subscribe({
-      next: classOptions => {
+    this.classSectionService.getAllWithTeacherDefaultSelection().subscribe({
+      next: ({ classOptions, defaultSelection }) => {
         this.classOptions.set(classOptions);
-        this.classSectionService.getTeacherDefaultClassSection().subscribe(defaultSelection => {
-          const resolved = this.classSectionService.resolveDefaultClassSection(classOptions, defaultSelection);
-          this.className.set(resolved.classId);
-          this.section.set(defaultSelection ? resolved.sectionName : 'All');
-          this.loadAnnouncements();
-        });
+        const resolved = this.classSectionService.resolveDefaultClassSection(classOptions, defaultSelection);
+        this.className.set(resolved.classId);
+        this.section.set(defaultSelection ? resolved.sectionName : 'All');
+        this.loadAnnouncements();
       },
       error: () => {
         this.statusMessage.set('Unable to load classes and sections.');

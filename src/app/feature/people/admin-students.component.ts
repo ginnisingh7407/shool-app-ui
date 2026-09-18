@@ -2,7 +2,7 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 import { PeopleService } from './people.service';
-import { AdminStudent, ClassSectionOption } from '../../common/model/models';
+import { Student, ClassSectionOption } from '../../common/model/models';
 import { ClassSectionService } from '../class-section/class-section.service';
 
 @Component({
@@ -21,7 +21,7 @@ export class AdminStudentsComponent {
   protected activeTab: 'add' | 'manage' = 'add';
   protected readonly selectedClassId = signal(2);
   protected readonly selectedSection = signal('B');
-  protected readonly students = signal<AdminStudent[]>([]);
+  protected readonly students = signal<Student[]>([]);
   protected readonly loadingStudents = signal(false);
   protected editingStudentId: number | null = null;
   protected message = '';
@@ -50,8 +50,8 @@ export class AdminStudentsComponent {
       this.message = '';
       return;
     }
-    const student: AdminStudent = {
-      id: this.editingStudentId,
+    const student: Student = {
+      id: this.editingStudentId ?? null,
       name: this.form['name'],
       gender: this.form['gender'],
       email: this.form['email'],
@@ -101,7 +101,7 @@ export class AdminStudentsComponent {
     this.loadStudents();
   }
 
-  protected editStudent(student: AdminStudent): void {
+  protected editStudent(student: Student): void {
     this.editingStudentId = student.id;
     Object.assign(this.form, {
       name: student.name,
