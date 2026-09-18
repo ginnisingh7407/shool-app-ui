@@ -1,0 +1,12 @@
+.admin-data-tools { margin-top: 27px; padding-top: 22px; border-top: 1px solid #edf0e9; }
+.admin-data-tools h2 { margin: 0 0 17px; font: 400 24px Georgia, serif; }
+.admin-data-tabs { display: flex; gap: 4px; margin-bottom: 17px; padding: 4px; border-radius: 4px; background: #e8e9df; }
+.admin-data-tabs button { flex: 1; padding: 10px 12px; border: 0; border-radius: 3px; color: #718081; background: transparent; font: 600 11px 'Trebuchet MS', sans-serif; cursor: pointer; }
+.admin-data-tabs button.active { color: #fff; background: #2e8581; }
+.admin-data-tool { margin-top: 14px; }
+.admin-data-tool label { display: block; margin-bottom: 7px; }
+.admin-data-controls { padding: 12px; }
+.admin-data-controls input { flex: 1; min-width: 0; padding: 7px 9px; }
+.admin-data-message, .admin-data-error { margin: 15px 0 0; font: 12px 'Trebuchet MS', sans-serif; }
+.admin-data-message { color: #2e8581; }
+.admin-data-error { color: #c96450; }

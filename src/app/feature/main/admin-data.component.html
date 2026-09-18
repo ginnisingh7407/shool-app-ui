@@ -1,0 +1,53 @@
+<main class="dashboard feature-page">
+  <a class="back-link" routerLink="/">&#8592; Back to workspace</a>
+  <section class="feature-panel">
+    <p class="eyebrow">Oakridge workspace</p>
+    <h1>Import/Export Data</h1>
+    <p>Manage teachers, students, classes and sections.</p>
+    <section class="admin-data-tools" aria-labelledby="admin-data-tools-title">
+      <h2 id="admin-data-tools-title">Data management</h2>
+      <div class="admin-data-tabs" role="tablist" aria-label="Data actions">
+        <button type="button" role="tab" [attr.aria-selected]="activeDataTab === 'import'" [class.active]="activeDataTab === 'import'" (click)="selectDataTab('import')">Import CSV</button>
+        <button type="button" role="tab" [attr.aria-selected]="activeDataTab === 'sample'" [class.active]="activeDataTab === 'sample'" (click)="selectDataTab('sample')">Export sample</button>
+        <button type="button" role="tab" [attr.aria-selected]="activeDataTab === 'records'" [class.active]="activeDataTab === 'records'" (click)="selectDataTab('records')">Export records</button>
+      </div>
+      @if (activeDataTab === 'import') {
+        <div class="admin-data-tool" role="tabpanel">
+          <label for="import-type">Import CSV file</label>
+          <div class="admin-data-controls attendance-controls">
+            <select id="import-type" [value]="selectedImportType" (change)="selectedImportType = $any($event.target).value">
+              @for (dataType of adminDataTypes; track dataType) { <option [value]="dataType">{{ dataType }}</option> }
+            </select>
+            <input type="file" accept=".csv,text/csv" (change)="onFileSelected($event)">
+            <button class="save-attendance" type="button" (click)="importSelectedFile()">Import</button>
+          </div>
+        </div>
+      }
+      @if (activeDataTab === 'sample') {
+        <div class="admin-data-tool" role="tabpanel">
+          <label for="sample-type">Export Sample CSV template</label>
+          <div class="admin-data-controls attendance-controls">
+            <select id="sample-type" [value]="selectedSampleType" (change)="selectedSampleType = $any($event.target).value">
+              @for (dataType of adminDataTypes; track dataType) { <option [value]="dataType">{{ dataType }}</option> }
+            </select>
+            <button class="save-attendance" type="button" (click)="downloadSample()">Export template</button>
+          </div>
+        </div>
+      }
+      @if (activeDataTab === 'records') {
+        <div class="admin-data-tool" role="tabpanel">
+          <label for="export-type">Export existing records</label>
+          <div class="admin-data-controls attendance-controls">
+            <select id="export-type" [value]="selectedExportType" (change)="selectedExportType = $any($event.target).value">
+              @for (dataType of adminDataTypes; track dataType) { <option [value]="dataType">{{ dataType }}</option> }
+            </select>
+            <button class="save-attendance" type="button" (click)="exportRecords()">Export records</button>
+          </div>
+        </div>
+      }
+      @if (dataMessage) { <p class="admin-data-message">{{ dataMessage }}</p> }
+      @if (dataError) { <p class="admin-data-error" role="alert">{{ dataError }}</p> }
+    </section>
+  </section>
+</main>
+<footer><span>Oakridge School</span><span>Learning together since 1987</span></footer>

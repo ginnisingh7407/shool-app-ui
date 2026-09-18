@@ -1,0 +1,25 @@
+.admin-people-page { max-width: 820px; }
+.admin-people-panel { padding-bottom: 30px; }
+.admin-people-tools { margin-top: 27px; padding-top: 22px; border-top: 1px solid #edf0e9; }
+.admin-people-tools h2 { margin: 0 0 17px; font: 400 24px Georgia, serif; }
+.admin-data-tabs { display: flex; gap: 4px; margin-bottom: 17px; padding: 4px; border-radius: 4px; background: #e8e9df; }
+.admin-data-tabs button { flex: 1; padding: 10px 12px; border: 0; border-radius: 3px; color: #718081; background: transparent; font: 600 11px 'Trebuchet MS', sans-serif; cursor: pointer; }
+.admin-data-tabs button.active { color: #fff; background: #2e8581; }
+.admin-people-form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 13px; }
+.admin-people-form label { display: flex; flex-direction: column; gap: 7px; color: #829191; font: 700 10px 'Trebuchet MS', sans-serif; text-transform: uppercase; }
+.admin-people-form input, .admin-people-form select { min-height: 36px; padding: 0 9px; border: 1px solid #d9e0d8; border-radius: 3px; color: #17383b; background: #fbfcf8; font: 12px 'Trebuchet MS', sans-serif; }
+.admin-people-form button { grid-column: 1 / -1; justify-self: start; }
+.admin-manage-placeholder { display: flex; gap: 7px; padding: 18px; flex-direction: column; border: 1px solid #e4e5d9; border-radius: 4px; background: #f3f5ed; color: #527174; font: 12px 'Trebuchet MS', sans-serif; }
+.admin-manage-placeholder strong { color: #17383b; font: 600 14px 'Trebuchet MS', sans-serif; }
+.admin-manage-controls { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 13px; margin-bottom: 17px; }
+.admin-manage-controls label { display: flex; flex-direction: column; gap: 7px; color: #829191; font: 700 10px 'Trebuchet MS', sans-serif; text-transform: uppercase; }
+.admin-manage-controls select { min-height: 36px; padding: 0 9px; border: 1px solid #d9e0d8; border-radius: 3px; color: #17383b; background: #fbfcf8; font: 12px 'Trebuchet MS', sans-serif; }
+.admin-student-list { display: grid; gap: 9px; }
+.admin-student-card { display: flex; justify-content: space-between; gap: 17px; padding: 14px; border: 1px solid #e4e5d9; border-radius: 4px; background: #f3f5ed; color: #527174; font: 12px 'Trebuchet MS', sans-serif; }
+.admin-student-card div { display: flex; flex-direction: column; gap: 5px; }
+.admin-student-card strong { color: #17383b; font: 600 14px 'Trebuchet MS', sans-serif; }
+.admin-data-message, .admin-data-error { margin: 15px 0 0; font: 12px 'Trebuchet MS', sans-serif; }
+.admin-data-message { color: #2e8581; }
+.admin-data-error { color: #c96450; }
+@media (max-width: 520px) { .admin-people-form { grid-template-columns: 1fr; } }
+@media (max-width: 520px) { .admin-manage-controls { grid-template-columns: 1fr; } .admin-student-card { flex-direction: column; } }

@@ -1,0 +1,18 @@
+<main class="dashboard feature-page">
+  <a class="back-link" routerLink="/">&#8592; Back to workspace</a>
+  <section class="feature-panel">
+    <p class="eyebrow">Oakridge workspace</p>
+    <h1>My profile</h1>
+    <p>Your school identity and account details.</p>
+    <div class="feature-metrics">
+      <div><strong>{{ profile().name }}</strong><small>Name</small></div>
+      <div><strong>{{ profile().username }}</strong><small>Username</small></div>
+      <div><strong>{{ profile().role }}</strong><small>Role</small></div>
+      <div><strong>{{ profile().mobile }}</strong><small>Mobile</small></div>
+      <div><strong>{{ profile().email }}</strong><small>Email</small></div>
+      <div><strong>{{ profile().active ? 'Active' : 'Inactive' }}</strong><small>Status</small></div>
+    </div>
+    <div class="feature-status"><span></span>Showing the local preview until the API is connected.</div>
+  </section>
+</main>
+<footer><span>Oakridge School</span><span>Learning together since 1987</span></footer>

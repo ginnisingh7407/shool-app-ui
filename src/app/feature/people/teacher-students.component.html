@@ -1,0 +1,49 @@
+<main class="dashboard students-page">
+  <a class="back-link" routerLink="/" queryParamsHandling="preserve">&#8592; Back to workspace</a>
+
+  <section class="students-heading">
+    <div>
+      <p class="eyebrow">Teacher workspace</p>
+      <h1>Student details</h1>
+      <p>View students and their parent contact details by class and section.</p>
+    </div>
+  </section>
+
+  <section class="student-directory-controls" aria-label="Student directory filters">
+    <label>Class
+      <select [value]="selectedClass()" (change)="onClassChange($event)">
+        @for (classId of classOptions; track classId) { <option [value]="classId">Class {{ classId }}</option> }
+      </select>
+    </label>
+    <label>Section
+      <select [value]="selectedSection()" (change)="onSectionChange($event)">
+        @for (section of sectionOptions; track section) { <option [value]="section">Section {{ section }}</option> }
+      </select>
+    </label>
+    <span class="directory-count">{{ students().length }} students</span>
+  </section>
+
+  @if (students().length) {
+  <section class="student-directory-grid" aria-label="Students in selected class and section">
+    @for (student of students(); track student.id) {
+    <article class="student-detail-card">
+      <div class="student-card-heading"><span class="directory-avatar">{{ student.name.charAt(0) }}</span>
+        <div>
+          <h2>{{ student.name }}</h2><small>{{ student.rollNumber }} · {{ student.gender }}</small>
+        </div>
+      </div>
+      <div class="student-card-details">
+        <div><span>Class</span><strong>Class {{ student.classId }} / Section {{ student.sectionName }}</strong></div>
+        <div><span>Parent / guardian</span><strong>{{ student.fatherName }}</strong><small>Father</small></div>
+        <div><span>Phone</span><a [href]="'tel:' + student.parentPhone">{{ student.parentPhone }}</a></div>
+      </div>
+    </article>
+    }
+  </section>
+  } @else {
+  <section class="student-directory-empty">
+    <p>No students found for Class {{ selectedClass() }} / Section {{ selectedSection() }}.</p>
+  </section>
+  }
+</main>
+<footer><span>Oakridge School</span><span>Learning together since 1987</span></footer>

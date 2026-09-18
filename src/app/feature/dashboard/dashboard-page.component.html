@@ -1,0 +1,5 @@
+<main class="dashboard">
+  <app-welcome />
+  <app-workspace [role]="role()" [menus]="dashboard().menus" (roleChange)="selectRole($event)" />
+</main>
+<footer><span>{{ school().schoolName }}</span><span>Learning together since 1987</span></footer>

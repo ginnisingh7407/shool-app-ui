@@ -1,0 +1,10 @@
+{
+  "/rest": {
+    "target": "http://192.168.1.10:8000",
+    "secure": false,
+    "changeOrigin": true,
+    "pathRewrite": {
+      "^/rest": ""
+    }
+  }
+}

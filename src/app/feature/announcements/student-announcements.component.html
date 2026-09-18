@@ -1,0 +1,57 @@
+<main class="dashboard student-page">
+  <a class="back-link" routerLink="/" queryParamsHandling="preserve">&#8592; Back to workspace</a>
+
+  <section class="student-page-heading">
+    <p class="eyebrow">Student workspace</p>
+    <h1>Announcements</h1>
+    <p>Review the latest school updates and open any announcement for full details.</p>
+  </section>
+
+  <section class="student-announcement-layout">
+    <aside class="announcement-list-panel student-announcement-list">
+      <div class="page-section-heading">
+        <div>
+          <p class="eyebrow">All updates</p>
+          <h2>Announcements</h2>
+        </div>
+        <span>{{ announcements().length }} posts</span>
+      </div>
+
+      <div class="announcement-list announcement-scroll">
+        @if (announcements().length) {
+          @for (announcement of announcements(); track announcement.id) {
+            <button type="button" class="announcement-row" [class.active]="selectedAnnouncement()?.id === announcement.id" (click)="selectAnnouncement(announcement)">
+              <strong>{{ announcement.title }}</strong>
+              <small>{{ announcement.date }}</small>
+            </button>
+          }
+        } @else {
+          <p class="empty-state">No announcements available.</p>
+        }
+      </div>
+    </aside>
+
+    <article class="announcement-detail-panel">
+      @if (selectedAnnouncement(); as item) {
+        <div class="page-section-heading">
+          <div>
+            <p class="eyebrow">Announcement</p>
+            <h2>{{ item.title }}</h2>
+          </div>
+          <span>{{ item.date }}</span>
+        </div>
+
+        <div class="announcement-detail-scroll">
+          <p class="announcement-detail-message">{{ item.message }}</p>
+          <div class="announcement-meta">
+            <span>{{ item.className }}</span>
+            <span>{{ item.section === 'All' ? 'All sections' : 'Section ' + item.section }}</span>
+          </div>
+        </div>
+      } @else {
+        <p class="empty-state">Select an announcement to view the full message.</p>
+      }
+    </article>
+  </section>
+</main>
+<footer><span>Oakridge School</span><span>Learning together since 1987</span></footer>

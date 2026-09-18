@@ -1,0 +1,16 @@
+<main class="dashboard student-page"><a class="back-link" routerLink="/" queryParamsHandling="preserve">&#8592; Back to workspace</a>
+    <section class="student-page-heading">
+        <p class="eyebrow">Student workspace</p>
+        <h1>My teachers</h1>
+        <p>Contact your class teacher and teaching team.</p>
+    </section>
+    <section class="teacher-grid">@for (teacher of teachers(); track teacher.id) { <article class="teacher-card"><img
+                [src]="teacher.photoUrl" [alt]="teacher.name" />
+            <div>
+                <h2>{{ teacher.name }}</h2><span class="teacher-subject">{{ teacher.subject }}</span>@if
+                (teacher.isClassTeacher) { <span class="class-teacher-badge">Class teacher</span> }
+            </div><a [href]="'tel:' + teacher.phone">{{ teacher.phone }}</a><a [href]="'mailto:' + teacher.email">{{
+                teacher.email }}</a>
+        </article> }</section>
+</main>
+<footer><span>Oakridge School</span><span>Learning together since 1987</span></footer>

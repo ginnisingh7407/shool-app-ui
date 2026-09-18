@@ -1,0 +1,15 @@
+<main class="dashboard feature-page">
+  <a class="back-link" routerLink="/" queryParamsHandling="preserve">&#8592; Back to workspace</a>
+  <section class="feature-panel">
+    <p class="eyebrow">Student workspace</p>
+    <h1>Fee</h1>
+    <p>View your payment information and upcoming fee dates.</p>
+    <div class="feature-metrics">
+      <div><strong>{{ summary().outstanding }}</strong><small>Outstanding</small></div>
+      <div><strong>{{ summary().paid }}</strong><small>Paid</small></div>
+      <div><strong>{{ summary().dueDate }}</strong><small>Due date</small></div>
+    </div>
+    <div class="feature-status"><span></span>Showing the local preview until the API is connected.</div>
+  </section>
+</main>
+<footer><span>Oakridge School</span><span>Learning together since 1987</span></footer>

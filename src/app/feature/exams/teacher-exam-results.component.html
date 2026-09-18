@@ -1,0 +1,23 @@
+<main class="dashboard results-page">
+  <a class="back-link" routerLink="/" queryParamsHandling="preserve">&#8592; Back to workspace</a>
+  <section class="results-heading"><p class="eyebrow">Teacher workspace</p><h1>Exam results</h1><p>Record marks, attach subject papers, and review a student's final result.</p></section>
+
+  <div class="results-mode-switcher" role="tablist" aria-label="Exam result mode"><button type="button" role="tab" [class.active]="mode() === 'save'" (click)="switchMode('save')">Save / update result</button><button type="button" role="tab" [class.active]="mode() === 'view'" (click)="switchMode('view')">View result</button></div>
+  <section class="results-filters" aria-label="Exam result filters">
+    <label>Class<select [value]="className()" (change)="changeFilter($event, 'className')">@for (option of classOptions; track option) { <option [value]="option">{{ option }}</option> }</select></label>
+    <label>Section<select [value]="section()" (change)="changeFilter($event, 'section')">@for (option of sectionOptions; track option) { <option [value]="option">Section {{ option }}</option> }</select></label>
+    <label>Academic year<select [value]="academicYear()" (change)="changeFilter($event, 'academicYear')">@for (option of academicYearOptions; track option) { <option [value]="option">{{ option }}</option> }</select></label>
+    @if (mode() === 'view') { <label>Student<select [value]="studentName()" (change)="changeFilter($event, 'studentName')"><option value="">All students</option>@for (option of studentOptions(); track option) { <option [value]="option">{{ option }}</option> }</select></label> }
+  </section>
+
+  @if (mode() === 'save') {
+    <section class="result-panel"><div class="page-section-heading"><div><p class="eyebrow">Marks register</p><h2>Enter subject marks</h2></div><span>{{ rows().length }} rows</span></div>
+      <div class="result-table-wrap"><table class="result-table"><thead><tr><th><button class="sortable-header" type="button" (click)="sortBy('studentName')">Student name <span aria-hidden="true">{{ sortIndicator('studentName') }}</span></button></th><th>Roll no.</th><th>Admission no.</th><th><button class="sortable-header" type="button" (click)="sortBy('subject')">Subject <span aria-hidden="true">{{ sortIndicator('subject') }}</span></button></th><th>Obtained mark</th><th>Total marks</th><th>Subject paper</th></tr></thead><tbody>@for (row of sortedRows(); track row.id) { <tr><td>{{ row.studentName }}</td><td>{{ row.rollNumber }}</td><td>{{ row.admissionNumber }}</td><td>{{ row.subject }}</td><td><input type="number" min="0" [max]="row.totalMarks" [value]="row.obtainedMark" (input)="updateMark($event, row.id)" /></td><td><input type="number" min="1" [value]="row.totalMarks" (input)="updateTotal($event, row.id)" /></td><td><label class="upload-control"><span>{{ row.paperFileName || 'Upload paper' }}</span><input type="file" accept=".pdf,image/*" (change)="onPaperChange($event, row.id)" /></label></td></tr> }</tbody></table></div>
+      <div class="result-footer"><label class="final-upload">Final result PDF / image<input type="file" accept=".pdf,image/*" (change)="onFinalResultChange($event)" />@if (finalResultFile(); as file) { <small>{{ file.name }}</small> }</label><button class="primary-action" type="button" [disabled]="isSaving() || !rows().length" (click)="saveResults()">{{ isSaving() ? 'Saving...' : 'Save result' }}</button></div>
+    </section>
+  } @else {
+    <section class="result-panel"><div class="page-section-heading"><div><p class="eyebrow">Result view</p><h2>{{ studentName() || 'All student results' }}</h2></div><span>{{ selectedStudentRows().length }} rows</span></div><div class="result-table-wrap"><table class="result-table"><thead><tr><th>Student name</th><th>Roll no.</th><th>Admission no.</th><th>Subject</th><th>Obtained mark</th><th>Total marks</th><th>Paper</th></tr></thead><tbody>@for (row of selectedStudentRows(); track row.id) { <tr><td>{{ row.studentName }}</td><td>{{ row.rollNumber }}</td><td>{{ row.admissionNumber }}</td><td>{{ row.subject }}</td><td><strong>{{ row.obtainedMark }}</strong></td><td>{{ row.totalMarks }}</td><td>{{ row.paperFileName || 'Not attached' }}</td></tr> }</tbody></table></div>@if (!selectedStudentRows().length) { <p class="empty-state">No results found for the selected filters.</p> }</section>
+  }
+  @if (statusMessage()) { <p class="form-message">{{ statusMessage() }}</p> }
+</main>
+<footer><span>Oakridge School</span><span>Learning together since 1987</span></footer>

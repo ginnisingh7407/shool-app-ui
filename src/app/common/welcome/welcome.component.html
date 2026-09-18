@@ -1,0 +1,12 @@
+<section class="welcome-panel">
+  <div class="welcome-copy">
+    <div class="welcome-school"><img [src]="school().logo || defaultLogo" [alt]="school().schoolName + ' logo'"
+        (error)="useDefaultLogo($event)">
+      <p class="eyebrow">{{ school().schoolName }}</p>
+    </div>
+    <h1>Make today <em>count.</em></h1>
+    <p class="welcome-text">{{ school().announcement }}</p>
+  </div>
+  <img class="school-welcom-background" [src]="school().banner || defaultWelcomeBackground" alt="" aria-hidden="true"
+    (error)="useDefaultWelcomeBackground($event)">
+</section>

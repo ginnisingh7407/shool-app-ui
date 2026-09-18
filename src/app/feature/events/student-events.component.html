@@ -1,0 +1,47 @@
+<main class="dashboard student-page">
+  <a class="back-link" routerLink="/" queryParamsHandling="preserve">&#8592; Back to workspace</a>
+
+  <section class="student-page-heading">
+    <p class="eyebrow">Student workspace</p>
+    <h1>Events</h1>
+    <p>Browse upcoming events and review images, videos, and related files shared by the school.</p>
+  </section>
+
+  <section class="student-event-list">
+    @if (events().length) {
+      @for (event of events(); track event.id ?? event.title) {
+        <article class="student-event-card">
+          <div class="student-event-header">
+            <div>
+              <p class="eyebrow">Event</p>
+              <h2>{{ event.title }}</h2>
+            </div>
+            <span>{{ event.date }}</span>
+          </div>
+
+          @if (event.attachments?.length) {
+            <div class="student-event-media-grid">
+              @for (attachment of event.attachments; track attachment) {
+                <div class="student-event-media-item">
+                  @if (mediaType(attachment) === 'image') {
+                    <img [src]="previewUrl(attachment)" [alt]="attachment" />
+                  } @else if (mediaType(attachment) === 'video') {
+                    <video [src]="previewUrl(attachment)" muted playsinline preload="metadata"></video>
+                  } @else {
+                    <div class="student-event-file-preview">
+                      <span>FILE</span>
+                    </div>
+                  }
+                  <small>{{ attachment }}</small>
+                </div>
+              }
+            </div>
+          }
+        </article>
+      }
+    } @else {
+      <p class="empty-state">No events are available right now.</p>
+    }
+  </section>
+</main>
+<footer><span>Oakridge School</span><span>Learning together since 1987</span></footer>

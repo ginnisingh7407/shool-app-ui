@@ -1,0 +1,67 @@
+<main class="dashboard feature-page admin-fees-page">
+  <a class="back-link" routerLink="/" [queryParams]="{ role: 'Admin' }">&#8592; Back to workspace</a>
+  <section class="feature-panel admin-fees-panel">
+    <p class="eyebrow">Admin workspace</p>
+    <h1>Fee management</h1>
+    <p>Configure monthly class fees and follow up on pending student payments.</p>
+
+    <div class="fee-tabs" role="tablist" aria-label="Fee management sections">
+      <button type="button" role="tab" [attr.aria-selected]="activeTab === 'structure'" [class.active]="activeTab === 'structure'" (click)="selectTab('structure')">Monthly fee structure</button>
+      <button type="button" role="tab" [attr.aria-selected]="activeTab === 'pending'" [class.active]="activeTab === 'pending'" (click)="selectTab('pending')">Pending student fees</button>
+    </div>
+
+    @if (activeTab === 'structure') {
+    <section class="fee-management-section" aria-labelledby="class-fees-title" role="tabpanel">
+      <div class="fee-section-heading">
+        <div><p class="eyebrow">Class-wise setup</p><h2 id="class-fees-title">Monthly fee structure</h2></div>
+        <label>Class
+          <select [value]="selectedClass()" (change)="selectClass($event)">
+            @for (className of classOptions; track className) { <option [value]="className">{{ className }}</option> }
+          </select>
+        </label>
+      </div>
+      <div class="fee-total-card">
+        <span>Total monthly fee</span>
+        <strong>{{ formatCurrency(monthlyTotal()) }}</strong>
+      </div>
+      <div class="fee-types-form">
+        @for (feeType of feeTypes; track feeType.key) {
+          <label>{{ feeType.label }}
+            <input type="number" min="0" step="1" [value]="feeAmounts()[feeType.key]" (input)="updateFee(feeType.key, $event)">
+          </label>
+        }
+      </div>
+      <button class="save-attendance" type="button" (click)="saveClassFees()">Save class fee</button>
+    </section>
+    }
+
+    @if (activeTab === 'pending') {
+    <section class="fee-management-section" aria-labelledby="pending-fees-title" role="tabpanel">
+      <div class="fee-section-heading">
+        <div><p class="eyebrow">Payment follow-up</p><h2 id="pending-fees-title">Pending student fees</h2></div>
+        <span class="pending-count">{{ pendingFees().length }} students</span>
+      </div>
+      @if (pendingFees().length) {
+        <div class="pending-fees-list">
+          @for (student of pendingFees(); track student.studentName) {
+            <article class="pending-fee-card">
+              <div>
+                <strong>{{ student.studentName }}</strong>
+                <small>{{ student.className }} · Section {{ student.section }} · {{ student.parentMobile }}</small>
+              </div>
+              <div class="pending-fee-action">
+                <strong>{{ formatCurrency(student.amount) }}</strong>
+                <button class="whatsapp-button" type="button" (click)="notifyParent(student)">Notify on WhatsApp</button>
+              </div>
+            </article>
+          }
+        </div>
+      } @else {
+        <p class="empty-fees">No pending student fees are available.</p>
+      }
+    </section>
+    }
+    @if (statusMessage) { <p class="fee-status" role="status">{{ statusMessage }}</p> }
+  </section>
+</main>
+<footer><span>Oakridge School</span><span>Learning together since 1987</span></footer>

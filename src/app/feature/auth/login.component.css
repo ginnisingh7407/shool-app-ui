@@ -1,0 +1,5 @@
+.login-card select { width: 100%; padding: 11px 12px; border: 1px solid #d9e5df; border-radius: 4px; color: #17383b; background: #fbfcf8; font: 14px 'Trebuchet MS', sans-serif; }
+.login-card select:focus { outline: 2px solid #acd4c8; border-color: #2e8581; }
+.login-card select:disabled { cursor: wait; opacity: .7; }
+.school-preview { display: flex; align-items: center; gap: 10px; margin: 8px 0 14px; color: #527174; font-size: 12px; }
+.school-preview img { width: 32px; height: 32px; object-fit: contain; }

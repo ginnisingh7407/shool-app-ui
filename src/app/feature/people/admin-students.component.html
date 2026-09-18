@@ -1,0 +1,77 @@
+<main class="dashboard feature-page admin-people-page">
+  <a class="back-link" routerLink="/" [queryParams]="{ role: 'Admin' }">&#8592; Back to workspace</a>
+  <section class="feature-panel admin-people-panel">
+    <p class="eyebrow">Oakridge workspace</p>
+    <h1>Manage Students</h1>
+    <p>Add student records or manage existing students in the school directory.</p>
+    <section class="admin-people-tools" aria-labelledby="admin-students-title">
+      <h2 id="admin-students-title">Student records</h2>
+      <div class="admin-data-tabs" role="tablist" aria-label="Student management actions">
+        <button type="button" role="tab" [attr.aria-selected]="activeTab === 'add'" [class.active]="activeTab === 'add'" (click)="activeTab = 'add'">{{ editingStudentId === null ? 'Add new' : 'Update' }}</button>
+        <button type="button" role="tab" [attr.aria-selected]="activeTab === 'manage'" [class.active]="activeTab === 'manage'" (click)="showManage()">Manage</button>
+      </div>
+      @if (activeTab === 'add') {
+        <form class="admin-people-form" (submit)="$event.preventDefault(); save()">
+          @for (field of fields; track field) {
+            <label>{{ labelFor(field) }}
+              @if (field === 'className') {
+                <select [value]="form[field] ?? ''" (change)="updateField(field, $event)" required>
+                  <option value="" disabled>Select a class</option>
+                  @for (className of classOptions; track className) { <option [value]="className">{{ className }}</option> }
+                </select>
+              } @else if (field === 'section') {
+                <select [value]="form[field] ?? ''" (change)="updateField(field, $event)" required>
+                  <option value="" disabled>Select a section</option>
+                  @for (section of sectionOptions; track section) { <option [value]="section">Section {{ section }}</option> }
+                </select>
+              } @else {
+                <input [type]="field === 'email' ? 'email' : field === 'dob' ? 'date' : 'text'" [value]="form[field] ?? ''" (input)="updateField(field, $event)" required>
+              }
+            </label>
+          }
+          <button class="save-attendance" type="submit">{{ editingStudentId === null ? 'Add student' : 'Update student' }}</button>
+        </form>
+      } @else {
+        <div class="admin-manage-controls" aria-label="Student filters">
+          <label>Class
+            <select [value]="selectedClassId()" (change)="onManageClassChange($event)">
+              @for (classId of manageClassOptions; track classId) { <option [value]="classId">Class {{ classId }}</option> }
+            </select>
+          </label>
+          <label>Section
+            <select [value]="selectedSection()" (change)="onManageSectionChange($event)">
+              @for (section of sectionOptions; track section) { <option [value]="section">Section {{ section }}</option> }
+            </select>
+          </label>
+        </div>
+        @if (loadingStudents()) {
+          <div class="admin-manage-placeholder" role="status">Loading students...</div>
+        } @else if (students().length) {
+          <div class="admin-student-list" aria-label="Students in selected class and section">
+            @for (student of students(); track student.id) {
+              <article class="admin-student-card">
+                <div>
+                  <strong>{{ student.name }}</strong>
+                  <span>{{ student.gender }} · Roll no {{ student.rollNumber }} · Admission no {{ student.admissionNumber }}</span>
+                </div>
+                <div>
+                  <span>{{ student.email }}</span>
+                  <span>{{ student.parentPhone }}</span>
+                  <button type="button" class="edit-link" (click)="editStudent(student)">Edit</button>
+                </div>
+              </article>
+            }
+          </div>
+        } @else {
+          <div class="admin-manage-placeholder" role="status">
+            <strong>No students found</strong>
+            <span>No students are available for Class {{ selectedClassId() }}, Section {{ selectedSection() }}.</span>
+          </div>
+        }
+      }
+      @if (message) { <p class="admin-data-message">{{ message }}</p> }
+      @if (error) { <p class="admin-data-error" role="alert">{{ error }}</p> }
+    </section>
+  </section>
+</main>
+<footer><span>Oakridge School</span><span>Learning together since 1987</span></footer>

@@ -1,0 +1,39 @@
+<main class="dashboard homework-page">
+  <a class="back-link" routerLink="/" queryParamsHandling="preserve">&#8592; Back to workspace</a>
+
+  <section class="homework-heading">
+    <div>
+      <p class="eyebrow">Teacher workspace</p>
+      <h1>Share work with your class</h1>
+      <p>Create a classwork or homework post and attach a file when your students need one.</p>
+    </div>
+  </section>
+
+  <section class="homework-form-panel">
+    <div class="homework-form-heading"><div><p class="eyebrow">New assignment</p><h2>Work details</h2></div><span>Required fields are marked by the form</span></div>
+    <div class="homework-form">
+      <label>Title
+        <input type="text" placeholder="e.g. Fractions practice" [value]="title()" (input)="onTitleChange($event)" />
+      </label>
+      <label>Type
+        <select [value]="workType()" (change)="onWorkTypeChange($event)">
+          <option value="CLASSWORK">CLASSWORK</option>
+          <option value="HOMEWORK">HOMEWORK</option>
+        </select>
+      </label>
+      <label class="full-width">Description
+        <textarea rows="6" placeholder="Add instructions or context for your students" [value]="description()" (input)="onDescriptionChange($event)"></textarea>
+      </label>
+      <label class="file-field full-width">Attachment <span class="optional-label">Optional</span>
+        <input type="file" (change)="onFileChange($event)" />
+        @if (selectedFile(); as file) { <small class="selected-file">{{ file.name }} ({{ file.size }} bytes)</small> }
+      </label>
+    </div>
+    <div class="homework-form-footer">
+      <span>Accepted file types depend on the connected API.</span>
+      <button class="upload-work-button" type="button" [disabled]="isUploading()" (click)="uploadWork()">{{ isUploading() ? 'Uploading...' : 'Upload work' }}</button>
+    </div>
+    @if (uploadMessage()) { <p class="upload-message">{{ uploadMessage() }}</p> }
+  </section>
+</main>
+<footer><span>Oakridge School</span><span>Learning together since 1987</span></footer>

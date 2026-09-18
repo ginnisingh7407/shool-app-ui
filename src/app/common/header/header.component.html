@@ -1,0 +1,32 @@
+<header class="topbar">
+  <a class="brand" routerLink="/" [attr.aria-label]="school().schoolName + ' home'">
+    <img class="school-logo" [src]="school().logo || defaultLogo" [alt]="school().schoolName + ' logo'" (error)="useDefaultLogo($event)">
+    <span class="brand-copy"><strong>{{ school().schoolName }}</strong><small>School portal</small></span>
+  </a>
+  <div class="topbar-actions">
+    <span class="date-label">{{ today }}</span>
+    <a class="icon-button" routerLink="/notifications" aria-label="Notifications">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg>
+      <span class="notification-dot"></span>
+    </a>
+    @if (isAuthenticated()) {
+      <div class="profile-menu">
+        <button class="avatar" type="button" aria-label="Open profile menu" [attr.aria-expanded]="isProfileMenuOpen()" (click)="toggleProfileMenu()">
+          @if (profile()?.photoUrl) {
+            <img width="35" height="35" [src]="profile()?.photoUrl" [alt]="profile()?.name ?? 'Profile photo'">
+          } @else {
+            {{ initials() }}
+          }
+        </button>
+        @if (isProfileMenuOpen()) {
+          <div class="profile-menu-panel">
+            <a routerLink="/profile" (click)="isProfileMenuOpen.set(false)">My profile</a>
+            <button type="button" (click)="logout()">Logout</button>
+          </div>
+        }
+      </div>
+    } @else {
+      <a class="avatar" routerLink="/login" aria-label="Sign in"></a>
+    }
+  </div>
+</header>

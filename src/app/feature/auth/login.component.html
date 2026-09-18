@@ -1,0 +1,54 @@
+<main class="login-page">
+  <section class="login-card" aria-labelledby="login-heading">
+    <p class="eyebrow">Oakridge School portal</p>
+    <h1 id="login-heading">Welcome back</h1>
+    <p class="login-intro">Sign in to access your school workspace.</p>
+
+    <label for="school">School</label>
+    <select id="school" name="school" [ngModel]="selectedSchoolId()" (ngModelChange)="setSelectedSchool($event)"
+      [disabled]="isLoadingSchools() || !!schoolError()" required>
+      <option value="" disabled>{{ isLoadingSchools() ? 'Loading schools...' : 'Select your school' }}</option>
+      @for (school of schools(); track school.schoolCode) {
+      <option [value]="school.id">{{ school.schoolName }}</option>
+      }
+    </select>
+    @if (selectedSchool()) {
+    <div class="school-preview">
+      <img [src]="selectedSchool()!.logo" [alt]="selectedSchool()!.schoolName + ' logo'">
+      <span>{{ selectedSchool()!.schoolName }}</span>
+    </div>
+    }
+    @if (schoolError()) {
+    <p class="login-error" role="alert">{{ schoolError() }}</p>
+    }
+    @if(isTokenAvailable()){
+    <h3>Create Admin User</h3>
+    <form (ngSubmit)="createAdminUser()">
+      <label for="username">Username</label>
+      <input id="username" name="username" type="text" autocomplete="username" [ngModel]="username()"
+        (ngModelChange)="username.set($event)" required>
+      <label for="password">Password</label>
+      <input id="password" name="password" type="password" autocomplete="current-password" [ngModel]="password()"
+        (ngModelChange)="password.set($event)" required>
+      @if (errorMessage()) {
+      <p class="login-error" role="alert">{{ errorMessage() }}</p>
+      }
+      <button type="submit" [disabled]="!schools().length">Create Admin User</button>
+    </form>
+    }@else {
+    <form (ngSubmit)="submit()">
+      <label for="username">Username</label>
+      <input id="username" name="username" type="text" autocomplete="username" [ngModel]="username()"
+        (ngModelChange)="username.set($event)" required>
+      <label for="password">Password</label>
+      <input id="password" name="password" type="password" autocomplete="current-password" [ngModel]="password()"
+        (ngModelChange)="password.set($event)" required>
+      @if (errorMessage()) {
+      <p class="login-error" role="alert">{{ errorMessage() }}</p>
+      }
+      <button type="submit" [disabled]="isSubmitting() || isLoadingSchools() || !!schoolError() || !schools().length">{{
+        isSubmitting() ? 'Signing in...' : 'Sign in' }}</button>
+    </form>
+    }
+  </section>
+</main>
