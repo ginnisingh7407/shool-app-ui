@@ -13,7 +13,8 @@ type HomeworkTab = 'new' | 'list';
 @Component({
   selector: 'app-teacher-homework',
   imports: [RouterLink],
-  templateUrl: './teacher-homework.component.html'
+  templateUrl: './teacher-homework.component.html',
+  styleUrl: './teacher-homework.component.css'
 })
 export class TeacherHomeworkComponent {
   private readonly homeworkService = inject(HomeworkService);
@@ -34,6 +35,28 @@ export class TeacherHomeworkComponent {
   protected readonly sectionOptions = computed(() => this.classOptions().find(option => option.classId === this.selectedClass())?.sections ?? []);
   protected readonly students = signal<Student[]>([]);
   protected readonly assignments = signal<HomeworkRecord[]>([]);
+  protected readonly groupedAssignments = computed(() => {
+    const groups = new Map<string, { homework: HomeworkRecord[]; classwork: HomeworkRecord[] }>();
+
+    this.assignments().forEach(assignment => {
+      const date = assignment.dueDate || 'Unknown date';
+      const bucket = groups.get(date) ?? { homework: [], classwork: [] };
+
+      if (assignment.workType === 'HOMEWORK') {
+        bucket.homework.push(assignment);
+      } else {
+        bucket.classwork.push(assignment);
+      }
+
+      groups.set(date, bucket);
+    });
+
+    return Array.from(groups.entries()).map(([date, value]) => ({
+      date,
+      homework: [...value.homework].sort((a, b) => a.title.localeCompare(b.title)),
+      classwork: [...value.classwork].sort((a, b) => a.title.localeCompare(b.title))
+    })).sort((a, b) => b.date.localeCompare(a.date));
+  });
   protected readonly isLoadingStudents = signal(false);
   protected readonly isLoadingAssignments = signal(false);
   protected readonly profile = toSignal(this.profileService.getProfile());

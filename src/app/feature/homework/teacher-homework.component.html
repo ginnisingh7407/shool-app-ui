@@ -102,30 +102,96 @@
       </div>
       @if (isLoadingAssignments()) {
         <div class="admin-manage-placeholder" role="status">Loading assignments...</div>
-      } @else if (assignments().length) {
-        <div class="admin-student-list" aria-label="Homework assignments">
-          @for (assignment of assignments(); track assignment.id) {
-            <article class="admin-student-card">
-              <div>
-                <strong>{{ assignment.title }}</strong>
-                <span>{{ assignment.workType }} · Due {{ assignment.dueDate }}</span>
-                <span>{{ assignment.description }}</span>
-              </div>
-              <div>
-                @if (assignment.files?.length) {
-                  <span>Files: {{ assignment.files.length }}</span>
-                  @for (file of assignment.files; track file.id) {
-                    @if (file.downloadUrl) {
-                      <a [href]="file.downloadUrl" target="_blank" rel="noopener noreferrer">{{ file.fileName }}</a>
-                    } @else {
-                      <span>{{ file.fileName }}</span>
+      } @else if (groupedAssignments().length) {
+        <div class="homework-assignment-groups" aria-label="Homework assignments grouped by due date">
+          @for (group of groupedAssignments(); track group.date) {
+            <section class="homework-date-group">
+              <div class="homework-date-header">Due {{ group.date }}</div>
+
+              <div class="homework-type-section">
+                <h3>Homework</h3>
+                @if (group.homework.length) {
+                  <div class="homework-assignment-list">
+                    @for (assignment of group.homework; track assignment.id) {
+                      <article class="homework-assignment-item">
+                        <div class="homework-assignment-header">
+                          <div class="homework-assignment-main">
+                            <strong>{{ assignment.title }}</strong>
+                            <span class="homework-assignment-meta">{{ assignment.workType }} · Due {{ assignment.dueDate }}</span>
+                          </div>
+                          <span class="homework-assignment-badge">{{ assignment.workType }}</span>
+                        </div>
+
+                        @if (assignment.description) {
+                          <p class="homework-assignment-description">{{ assignment.description }}</p>
+                        }
+
+                        <div class="homework-assignment-files">
+                          @if (assignment.files?.length) {
+                            <span class="homework-files-label">Files ({{ assignment.files.length }})</span>
+                            <div class="homework-file-links">
+                              @for (file of assignment.files; track file.id) {
+                                @if (file.downloadUrl) {
+                                  <a [href]="file.downloadUrl" target="_blank" rel="noopener noreferrer">{{ file.fileName }}</a>
+                                } @else {
+                                  <span>{{ file.fileName }}</span>
+                                }
+                              }
+                            </div>
+                          } @else {
+                            <span class="homework-files-label no-files">No files attached</span>
+                          }
+                        </div>
+                      </article>
                     }
-                  }
+                  </div>
                 } @else {
-                  <span>No files attached</span>
+                  <p class="homework-empty-state">No homework for this date.</p>
                 }
               </div>
-            </article>
+
+              <div class="homework-type-section">
+                <h3>Classwork</h3>
+                @if (group.classwork.length) {
+                  <div class="homework-assignment-list">
+                    @for (assignment of group.classwork; track assignment.id) {
+                      <article class="homework-assignment-item">
+                        <div class="homework-assignment-header">
+                          <div class="homework-assignment-main">
+                            <strong>{{ assignment.title }}</strong>
+                            <span class="homework-assignment-meta">{{ assignment.workType }} · Due {{ assignment.dueDate }}</span>
+                          </div>
+                          <span class="homework-assignment-badge">{{ assignment.workType }}</span>
+                        </div>
+
+                        @if (assignment.description) {
+                          <p class="homework-assignment-description">{{ assignment.description }}</p>
+                        }
+
+                        <div class="homework-assignment-files">
+                          @if (assignment.files?.length) {
+                            <span class="homework-files-label">Files ({{ assignment.files.length }})</span>
+                            <div class="homework-file-links">
+                              @for (file of assignment.files; track file.id) {
+                                @if (file.downloadUrl) {
+                                  <a [href]="file.downloadUrl" target="_blank" rel="noopener noreferrer">{{ file.fileName }}</a>
+                                } @else {
+                                  <span>{{ file.fileName }}</span>
+                                }
+                              }
+                            </div>
+                          } @else {
+                            <span class="homework-files-label no-files">No files attached</span>
+                          }
+                        </div>
+                      </article>
+                    }
+                  </div>
+                } @else {
+                  <p class="homework-empty-state">No classwork for this date.</p>
+                }
+              </div>
+            </section>
           }
         </div>
       } @else {
