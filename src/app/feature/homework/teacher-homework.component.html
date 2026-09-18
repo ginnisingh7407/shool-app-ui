@@ -132,7 +132,7 @@
                             <div class="homework-file-links">
                               @for (file of assignment.files; track file.id) {
                                 @if (file.downloadUrl) {
-                                  <a [href]="file.downloadUrl" target="_blank" rel="noopener noreferrer">{{ file.fileName }}</a>
+                                  <button type="button" class="homework-file-button" (click)="downloadAttachment(file)">{{ file.fileName }}</button>
                                 } @else {
                                   <span>{{ file.fileName }}</span>
                                 }
@@ -174,7 +174,7 @@
                             <div class="homework-file-links">
                               @for (file of assignment.files; track file.id) {
                                 @if (file.downloadUrl) {
-                                  <a [href]="file.downloadUrl" target="_blank" rel="noopener noreferrer">{{ file.fileName }}</a>
+                                  <button type="button" class="homework-file-button" (click)="downloadAttachment(file)">{{ file.fileName }}</button>
                                 } @else {
                                   <span>{{ file.fileName }}</span>
                                 }

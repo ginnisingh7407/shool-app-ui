@@ -133,6 +133,14 @@ export class TeacherHomeworkComponent {
     this.uploadMessage.set('');
   }
 
+  protected downloadAttachment(file: { fileName: string; downloadUrl?: string }): void {
+    if (!file.downloadUrl) {
+      return;
+    }
+
+    this.homeworkService.downloadFile(file.downloadUrl, file.fileName).subscribe();
+  }
+
   protected uploadWork(): void {
     if (!this.title().trim() || !this.description().trim()) {
       this.uploadMessage.set('Enter a title and description before uploading.');

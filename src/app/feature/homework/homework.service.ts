@@ -60,4 +60,22 @@ export class HomeworkService {
       catchError(() => of(FALLBACK_STUDENT_WORK.map(work => ({ ...work }))))
     );
   }
+
+  downloadFile(downloadUrl: string, fileName: string): Observable<boolean> {
+    return this.http.get(downloadUrl, { responseType: 'blob' }).pipe(
+      map((blob: Blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const anchor = document.createElement('a');
+        anchor.href = url;
+        anchor.download = fileName || 'download';
+        anchor.style.display = 'none';
+        document.body.appendChild(anchor);
+        anchor.click();
+        document.body.removeChild(anchor);
+        window.URL.revokeObjectURL(url);
+        return true;
+      }),
+      catchError(() => of(false))
+    );
+  }
 }
