@@ -13,14 +13,14 @@
     <label>Class
       <select [value]="selectedClass()" (change)="onClassChange($event)">
         @for (option of classOptions(); track option.classId) {
-          <option [value]="option.classId"> {{ option.classId }}</option>
+          <option [value]="option.classId"> Class {{ option.classId }}</option>
         }
       </select>
     </label>
     <label>Section
       <select [value]="selectedSection()" (change)="onSectionChange($event)">
         @for (section of sectionOptions(); track section.sectionName) {
-          <option [value]="section.sectionName"> {{ section.sectionName }}</option>
+          <option [value]="section.sectionName">Section {{ section.sectionName }}</option>
         }
       </select>
     </label>

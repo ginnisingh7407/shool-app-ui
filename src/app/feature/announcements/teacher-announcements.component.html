@@ -1,38 +1,76 @@
 <main class="dashboard announcements-page">
   <a class="back-link" routerLink="/" queryParamsHandling="preserve">&#8592; Back to workspace</a>
-  <section class="announcements-heading"><p class="eyebrow">Teacher workspace</p><h1>Announcements</h1><p>Add updates for a class and keep the whole school informed.</p></section>
+  <section class="announcements-heading">
+    <p class="eyebrow">Teacher workspace</p>
+    <h1>Announcements</h1>
+    <p>Add updates for a class and keep the whole school informed.</p>
+  </section>
 
   <div class="announcement-tabs" role="tablist" aria-label="Announcement views">
-    <button type="button" role="tab" [class.active]="activeTab() === 'new'" [attr.aria-selected]="activeTab() === 'new'" (click)="switchTab('new')">New announcement</button>
-    <button type="button" role="tab" [class.active]="activeTab() === 'published'" [attr.aria-selected]="activeTab() === 'published'" (click)="switchTab('published')">Published announcements</button>
+    <button type="button" role="tab" [class.active]="activeTab() === 'new'" [attr.aria-selected]="activeTab() === 'new'"
+      (click)="switchTab('new')">New announcement</button>
+    <button type="button" role="tab" [class.active]="activeTab() === 'published'"
+      [attr.aria-selected]="activeTab() === 'published'" (click)="switchTab('published')">Published
+      announcements</button>
   </div>
 
   @if (activeTab() === 'new') {
-    <section class="announcement-layout single-column">
-      <article class="announcement-form-panel">
-        <div class="page-section-heading"><div><p class="eyebrow">{{ editingId() ? 'Edit announcement' : 'New announcement' }}</p><h2>{{ editingId() ? 'Update details' : 'Share an update' }}</h2></div></div>
-        <div class="announcement-form">
-          <label>Title<input type="text" [value]="title()" (input)="onTextChange($event, 'title')" placeholder="e.g. Parent meeting this Friday" /></label>
-          <label>Class<select [value]="className()" (change)="onSelectChange($event, 'className')">@for (option of classOptions(); track option.classId) { <option [value]="option.classId">{{ option.classId }}</option> }</select></label>
-          <label>Section<select [value]="section()" (change)="onSelectChange($event, 'section')">@for (option of sectionOptions(); track option) { <option [value]="option.sectionName">{{ option.sectionName }}</option> }</select></label>
-          <label class="full-width">Message<textarea rows="6" [value]="message()" (input)="onTextChange($event, 'message')" placeholder="Write the announcement for students and families"></textarea></label>
-          <label class="published-toggle"><input type="checkbox" [checked]="published()" (change)="setPublished($event)" /> Publish immediately</label>
+  <section class="announcement-layout single-column">
+    <article class="announcement-form-panel">
+      <div class="page-section-heading">
+        <div>
+          <p class="eyebrow">{{ editingId() ? 'Edit announcement' : 'New announcement' }}</p>
+          <h2>{{ editingId() ? 'Update details' : 'Share an update' }}</h2>
         </div>
-        <div class="form-actions"><button class="secondary-action" type="button" (click)="cancelEdit()" [disabled]="!editingId()">Cancel</button><button class="primary-action" type="button" (click)="save()" [disabled]="isSaving()">{{ isSaving() ? 'Saving...' : editingId() ? 'Update announcement' : 'Add announcement' }}</button></div>
-        @if (statusMessage()) { <p class="form-message">{{ statusMessage() }}</p> }
-      </article>
-    </section>
+      </div>
+      <div class="announcement-form">
+        <label>Title<input type="text" [value]="title()" (input)="onTextChange($event, 'title')"
+            placeholder="e.g. Parent meeting this Friday" /></label>
+        <label>Class<select [value]="className()" (change)="onSelectChange($event, 'className')">@for (option of
+            classOptions(); track option.classId) { <option [value]="option.classId">Class {{ option.classId }}
+            </option> }</select></label>
+        <label>Section<select [value]="section()" (change)="onSelectChange($event, 'section')">@for (option of
+            sectionOptions(); track option) { <option [value]="option.sectionName">Section {{ option.sectionName
+              }}</option> }</select></label>
+        <label class="full-width">Message<textarea rows="6" [value]="message()"
+            (input)="onTextChange($event, 'message')"
+            placeholder="Write the announcement for students and families"></textarea></label>
+        <label class="published-toggle"><input type="checkbox" [checked]="published()"
+            (change)="setPublished($event)" /> Publish immediately</label>
+      </div>
+      <div class="form-actions"><button class="secondary-action" type="button" (click)="cancelEdit()"
+          [disabled]="!editingId()">Cancel</button><button class="primary-action" type="button" (click)="save()"
+          [disabled]="isSaving()">{{ isSaving() ? 'Saving...' : editingId() ? 'Update announcement' : 'Add announcement'
+          }}</button></div>
+      @if (statusMessage()) { <p class="form-message">{{ statusMessage() }}</p> }
+    </article>
+  </section>
   } @else {
-    <section class="announcement-layout single-column">
-      <article class="announcement-list-panel">
-        <div class="page-section-heading"><div><p class="eyebrow">Published updates</p><h2>All announcements</h2></div><span>{{ announcements().length }} shown</span></div>
-        @if (announcements().length) {
-          <div class="announcement-list">@for (announcement of announcements(); track announcement.id) {
-            <div class="announcement-item"><div class="announcement-item-heading"><div><h3>{{ announcement.title }}</h3><small>{{ announcement.date }} · {{ announcement.className }} · {{ announcement.section === 'All' ? 'All sections' : 'Section ' + announcement.section }}</small></div><button type="button" class="edit-link" (click)="edit(announcement)">Edit</button></div><p>{{ announcement.message }}</p><span class="announcement-status" [class.unpublished]="!announcement.published">{{ announcement.published ? 'Published' : 'Draft' }}</span></div>
-          }</div>
-        } @else { <p class="empty-state">No announcements match the selected class and section.</p> }
-      </article>
-    </section>
+  <section class="announcement-layout single-column">
+    <article class="announcement-list-panel">
+      <div class="page-section-heading">
+        <div>
+          <p class="eyebrow">Published updates</p>
+          <h2>All announcements</h2>
+        </div><span>{{ announcements().length }} shown</span>
+      </div>
+      @if (announcements().length) {
+      <div class="announcement-list">@for (announcement of announcements(); track announcement.id) {
+        <div class="announcement-item">
+          <div class="announcement-item-heading">
+            <div>
+              <h3>{{ announcement.title }}</h3><small>{{ announcement.date }} · {{ announcement.className }} · {{
+                announcement.section === 'All' ? 'All sections' : 'Section ' + announcement.section }}</small>
+            </div><button type="button" class="edit-link" (click)="edit(announcement)">Edit</button>
+          </div>
+          <p>{{ announcement.message }}</p><span class="announcement-status"
+            [class.unpublished]="!announcement.published">{{ announcement.published ? 'Published' : 'Draft' }}</span>
+        </div>
+        }
+      </div>
+      } @else { <p class="empty-state">No announcements match the selected class and section.</p> }
+    </article>
+  </section>
   }
 </main>
 <footer><span>Oakridge School</span><span>Learning together since 1987</span></footer>

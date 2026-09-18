@@ -4,10 +4,10 @@
 
   <div class="results-mode-switcher" role="tablist" aria-label="Exam result mode"><button type="button" role="tab" [class.active]="mode() === 'save'" (click)="switchMode('save')">Save / update result</button><button type="button" role="tab" [class.active]="mode() === 'view'" (click)="switchMode('view')">View result</button></div>
   <section class="results-filters" aria-label="Exam result filters">
-    <label>Class<select [value]="className()" (change)="changeFilter($event, 'className')">@for (option of classOptions(); track option.classId) { <option [value]="option.classId">{{ option.classId }}</option> }</select></label>
+    <label>Class<select [value]="className()" (change)="changeFilter($event, 'className')">@for (option of classOptions(); track option.classId) { <option [value]="option.classId">Class {{ option.classId }}</option> }</select></label>
     <label>Section<select [value]="section()" (change)="changeFilter($event, 'section')">@for (option of sectionOptions(); track option.sectionName) { <option [value]="option.sectionName">Section {{ option.sectionName }}</option> }</select></label>
     <label>Academic year<select [value]="academicYear()" (change)="changeFilter($event, 'academicYear')">@for (option of academicYearOptions; track option) { <option [value]="option">{{ option }}</option> }</select></label>
-    @if (mode() === 'view') { <label>Student<select [value]="studentName()" (change)="changeFilter($event, 'studentName')"><option value="">All students</option>@for (option of studentOptions(); track option) { <option [value]="option">{{ option }}</option> }</select></label> }
+    @if (mode() === 'view') { <label>Student<select [value]="studentName()" (change)="changeFilter($event, 'studentName')"><option value="">All students</option>@for (option of studentOptions(); track option) { <option [value]="option">Student &nbsp;{{ option }}</option> }</select></label> }
   </section>
 
   @if (mode() === 'save') {

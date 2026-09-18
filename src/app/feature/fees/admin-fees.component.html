@@ -16,7 +16,7 @@
         <div><p class="eyebrow">Class-wise setup</p><h2 id="class-fees-title">Monthly fee structure</h2></div>
         <label>Class
           <select [value]="selectedClass()" (change)="selectClass($event)">
-            @for (option of classOptions(); track option.classId) { <option [value]="option.classId">{{ option.classId }}</option> }
+            @for (option of classOptions(); track option.classId) { <option [value]="option.classId"> Class {{ option.classId }}</option> }
           </select>
         </label>
       </div>

@@ -28,7 +28,7 @@
         <select [value]="selectedClass()" (change)="onClassChange($event)">
           <option value="">Select a class</option>
           @for (option of classOptions(); track option.classId) {
-          <option [value]="option.classId"> {{ option.classId }}</option>
+          <option [value]="option.classId">Class {{ option.classId }}</option>
           }
         </select>
       </label>
@@ -36,7 +36,7 @@
         <select [value]="selectedSection()" (change)="onSectionChange($event)">
           <option value="">Select a section</option>
           @for (section of sectionOptions(); track section.sectionName) {
-          <option [value]="section.sectionName"> {{ section.sectionName }}</option>
+          <option [value]="section.sectionName">Section {{ section.sectionName }}</option>
           }
         </select>
       </label>
@@ -79,7 +79,7 @@
         <select [value]="selectedClass()" (change)="onClassChange($event)">
           <option value="">Select a class</option>
           @for (option of classOptions(); track option.classId) {
-          <option [value]="option.classId"> {{ option.classId }}</option>
+          <option [value]="option.classId">Class {{ option.classId }}</option>
           }
         </select>
       </label>
@@ -87,7 +87,7 @@
         <select [value]="selectedSection()" (change)="onSectionChange($event)">
           <option value="">Select a section</option>
           @for (section of sectionOptions(); track section.sectionName) {
-          <option [value]="section.sectionName"> {{ section.sectionName }}</option>
+          <option [value]="section.sectionName">Section {{ section.sectionName }}</option>
           }
         </select>
       </label>

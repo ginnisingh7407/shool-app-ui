@@ -21,7 +21,7 @@
   <section class="attendance-controls" aria-label="Mark attendance filters">
     <label>Class
       <select [value]="selectedClass()" (change)="onClassChange($event)">
-        @for (option of classOptions(); track option.classId) { <option [value]="option.classId">{{ option.classId }}</option> }
+        @for (option of classOptions(); track option.classId) { <option [value]="option.classId">Class {{ option.classId }}</option> }
       </select>
     </label>
     <label>Section
@@ -42,7 +42,7 @@
   <section class="attendance-controls history-controls" aria-label="Student attendance filters">
     <label>Class
       <select [value]="selectedClass()" (change)="onClassChange($event)">
-        @for (option of classOptions(); track option.classId) { <option [value]="option.classId">{{ option.classId }}</option> }
+        @for (option of classOptions(); track option.classId) { <option [value]="option.classId">Class {{ option.classId }}</option> }
       </select>
     </label>
     <label>Section

@@ -17,7 +17,7 @@
               @if (field === 'className') {
                 <select [value]="form[field] ?? ''" (change)="updateField(field, $event)" required>
                   <option value="" disabled>Select a class</option>
-                  @for (option of classOptions(); track option.classId) { <option [value]="option.classId">{{ option.classId }}</option> }
+                  @for (option of classOptions(); track option.classId) { <option [value]="option.classId">Class {{ option.classId }}</option> }
                 </select>
               } @else if (field === 'section') {
                 <select [value]="form[field] ?? ''" (change)="updateField(field, $event)" required>
@@ -35,7 +35,7 @@
         <div class="admin-manage-controls" aria-label="Student filters">
           <label>Class
             <select [value]="selectedClassId()" (change)="onManageClassChange($event)">
-              @for (option of classOptions(); track option.classId) { <option [value]="option.classId">{{ option.classId }}</option> }
+              @for (option of classOptions(); track option.classId) { <option [value]="option.classId">Class {{ option.classId }}</option> }
             </select>
           </label>
           <label>Section
