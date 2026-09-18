@@ -1,8 +1,9 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
-import {LeaveService} from './leave.service';
-import { LeaveApplication, LeaveStatus, LeaveStudent } from '../../common/model/models';
+import { LeaveService } from './leave.service';
+import { ClassSectionOption, LeaveApplication, LeaveStatus, LeaveStudent } from '../../common/model/models';
+import { ClassSectionService } from '../class-section/class-section.service';
 
 type LeaveTab = 'apply' | 'applied';
 
@@ -13,7 +14,12 @@ type LeaveTab = 'apply' | 'applied';
 })
 export class TeacherLeaveComponent {
   private readonly leaveService = inject(LeaveService);
+  private readonly classSectionService = inject(ClassSectionService);
   protected readonly activeTab = signal<LeaveTab>('apply');
+  protected readonly classOptions = signal<ClassSectionOption[]>([]);
+  protected readonly sectionOptions = computed(() => this.classOptions().find(option => option.classId === this.selectedClass())?.sections ?? []);
+  protected readonly selectedClass = signal('');
+  protected readonly selectedSection = signal('');
   protected readonly students = signal<LeaveStudent[]>([]);
   protected readonly applications = signal<LeaveApplication[]>([]);
   protected readonly selectedStudentId = signal<number | null>(null);
@@ -25,12 +31,40 @@ export class TeacherLeaveComponent {
   protected readonly message = signal('');
 
   constructor() {
-    this.leaveService.getStudents().subscribe(students => this.students.set(students));
+    this.loadClasses();
     this.loadApplications();
+  }
+
+  protected loadClasses(): void {
+    this.classSectionService.getAll().subscribe({
+      next: options => {
+        this.classOptions.set(options);
+        this.selectedClass.set(options[0]?.classId ?? '');
+        this.selectedSection.set(options[0]?.sections[0]?.sectionName ?? '');
+        this.loadStudents();
+      },
+      error: () => {
+        this.students.set([]);
+      }
+    });
   }
 
   protected selectTab(tab: LeaveTab): void {
     this.activeTab.set(tab);
+  }
+
+  protected onClassChange(event: Event): void {
+    const className = (event.target as HTMLSelectElement).value;
+    this.selectedClass.set(className);
+    this.selectedSection.set(this.classOptions().find(option => option.classId === className)?.sections[0]?.sectionName ?? '');
+    this.selectedStudentId.set(null);
+    this.loadStudents();
+  }
+
+  protected onSectionChange(event: Event): void {
+    this.selectedSection.set((event.target as HTMLSelectElement).value);
+    this.selectedStudentId.set(null);
+    this.loadStudents();
   }
 
   protected onStudentChange(event: Event): void {
@@ -92,6 +126,25 @@ export class TeacherLeaveComponent {
 
   protected statusLabel(status: LeaveStatus): string {
     return status.charAt(0) + status.slice(1).toLowerCase();
+  }
+
+  private loadStudents(): void {
+    const className = this.selectedClass();
+    const section = this.selectedSection();
+
+    if (!className || !section) {
+      this.students.set([]);
+      return;
+    }
+
+    this.leaveService.getStudents().subscribe(students => {
+      this.students.set(
+        students.filter(student =>
+          student.className === `Class ${className}` && student.section === section
+        )
+      );
+      this.selectedStudentId.set(null);
+    });
   }
 
   private loadApplications(): void {

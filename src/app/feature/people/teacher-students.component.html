@@ -12,12 +12,16 @@
   <section class="student-directory-controls" aria-label="Student directory filters">
     <label>Class
       <select [value]="selectedClass()" (change)="onClassChange($event)">
-        @for (classId of classOptions; track classId) { <option [value]="classId">Class {{ classId }}</option> }
+        @for (option of classOptions(); track option.classId) {
+          <option [value]="option.classId"> {{ option.classId }}</option>
+        }
       </select>
     </label>
     <label>Section
       <select [value]="selectedSection()" (change)="onSectionChange($event)">
-        @for (section of sectionOptions; track section) { <option [value]="section">Section {{ section }}</option> }
+        @for (section of sectionOptions(); track section.sectionName) {
+          <option [value]="section.sectionName"> {{ section.sectionName }}</option>
+        }
       </select>
     </label>
     <span class="directory-count">{{ students().length }} students</span>

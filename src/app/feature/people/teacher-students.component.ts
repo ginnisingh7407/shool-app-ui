@@ -1,8 +1,9 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
-import {  PeopleService } from './people.service';
-import { AdminStudent } from '../../common/model/models';
+import { PeopleService } from './people.service';
+import { AdminStudent, ClassSectionOption } from '../../common/model/models';
+import { ClassSectionService } from '../class-section/class-section.service';
 
 @Component({
   selector: 'app-teacher-students',
@@ -11,18 +12,35 @@ import { AdminStudent } from '../../common/model/models';
 })
 export class TeacherStudentsComponent {
   private readonly peopleService = inject(PeopleService);
-  protected readonly classOptions = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
-  protected readonly sectionOptions = ['A', 'B', 'C', 'D', 'E'];
-  protected readonly selectedClass = signal(1);
-  protected readonly selectedSection = signal('A');
+  private readonly classSectionService = inject(ClassSectionService);
+  protected readonly classOptions = signal<ClassSectionOption[]>([]);
+  protected readonly sectionOptions = computed(() => this.classOptions().find(option => option.classId === this.selectedClass())?.sections ?? []);
+  protected readonly selectedClass = signal('');
+  protected readonly selectedSection = signal('');
   protected readonly students = signal<AdminStudent[]>([]);
 
   constructor() {
-    this.loadStudents();
+    this.loadClasses();
+  }
+
+  protected loadClasses(): void {
+    this.classSectionService.getAll().subscribe({
+      next: options => {
+        this.classOptions.set(options);
+        this.selectedClass.set(options[0]?.classId ?? '');
+        this.selectedSection.set(options[0]?.sections[0]?.sectionName ?? '');
+        this.loadStudents();
+      },
+      error: () => {
+        this.students.set([]);
+      }
+    });
   }
 
   protected onClassChange(event: Event): void {
-    this.selectedClass.set(Number((event.target as HTMLSelectElement).value));
+    const className = (event.target as HTMLSelectElement).value;
+    this.selectedClass.set(className);
+    this.selectedSection.set(this.classOptions().find(option => option.classId === className)?.sections[0]?.sectionName ?? '');
     this.loadStudents();
   }
 
@@ -32,7 +50,15 @@ export class TeacherStudentsComponent {
   }
 
   private loadStudents(): void {
-    this.peopleService.getStudentsByClassAndSection(this.selectedClass(), this.selectedSection())
+    const classId = Number(this.selectedClass());
+    const section = this.selectedSection();
+
+    if (!this.selectedClass() || !section || Number.isNaN(classId)) {
+      this.students.set([]);
+      return;
+    }
+
+    this.peopleService.getStudentsByClassAndSection(classId, section)
       .subscribe(students => this.students.set(students));
   }
 }

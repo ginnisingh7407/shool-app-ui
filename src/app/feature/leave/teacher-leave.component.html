@@ -16,6 +16,22 @@
   <section class="leave-form-panel">
     <div class="leave-section-heading"><div><p class="eyebrow">New application</p><h2>Apply leave for a student</h2></div></div>
     <div class="leave-form">
+      <label>Class
+        <select [value]="selectedClass()" (change)="onClassChange($event)">
+          <option value="">Select a class</option>
+          @for (option of classOptions(); track option.classId) {
+            <option [value]="option.classId">Class {{ option.classId }}</option>
+          }
+        </select>
+      </label>
+      <label>Section
+        <select [value]="selectedSection()" (change)="onSectionChange($event)">
+          <option value="">Select a section</option>
+          @for (section of sectionOptions(); track section.sectionName) {
+            <option [value]="section.sectionName">Section {{ section.sectionName }}</option>
+          }
+        </select>
+      </label>
       <label>Student
         <select [value]="selectedStudentId() ?? ''" (change)="onStudentChange($event)">
           <option value="">Select a student</option>
