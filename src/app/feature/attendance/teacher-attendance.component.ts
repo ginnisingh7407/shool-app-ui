@@ -2,8 +2,9 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 import { AttendanceService } from './attendance.service';
-import { AttendanceRecord, AttendanceStudent, CalendarDay, CalendarMonth, LeaveApplication } from '../../common/model/models';
+import { AttendanceRecord, AttendanceStudent, CalendarDay, CalendarMonth, ClassSectionOption, LeaveApplication } from '../../common/model/models';
 import { LeaveService } from '../leave/leave.service';
+import { ClassSectionService } from '../class-section/class-section.service';
 
 
 type AttendanceMode = 'mark' | 'history';
@@ -17,11 +18,12 @@ type AttendanceMode = 'mark' | 'history';
 export class TeacherAttendanceComponent {
   private readonly attendanceService = inject(AttendanceService);
   private readonly leaveService = inject(LeaveService);
+  private readonly classSectionService = inject(ClassSectionService);
   protected readonly mode = signal<AttendanceMode>('mark');
-  protected readonly classOptions = ['Class 6', 'Class 7', 'Class 8', 'Class 9', 'Class 10'];
-  protected readonly sectionOptions = ['A', 'B', 'C'];
-  protected readonly selectedClass = signal('Class 8');
-  protected readonly selectedSection = signal('A');
+  protected readonly classOptions = signal<ClassSectionOption[]>([]);
+  protected readonly sectionOptions = computed(() => this.classOptions().find(option => option.classId === this.selectedClass())?.sections ?? []);
+  protected readonly selectedClass = signal('');
+  protected readonly selectedSection = signal('');
   protected readonly selectedStartDate = signal(this.today());
   protected readonly selectedEndDate = signal(this.today());
   protected readonly selectedStudentId = signal<number | null>(null);
@@ -38,7 +40,12 @@ export class TeacherAttendanceComponent {
       this.applyLeaveToStudents();
       if (this.selectedStudentId() !== null) this.loadHistory();
     });
-    this.loadStudents();
+    this.classSectionService.getAll().subscribe(options => {
+      this.classOptions.set(options);
+      this.selectedClass.set(options[0]?.classId ?? '');
+      this.selectedSection.set(options[0]?.sections[0]?.sectionName ?? '');
+      this.loadStudents();
+    });
   }
 
   protected get presentCount(): number {
@@ -72,7 +79,9 @@ export class TeacherAttendanceComponent {
   }
 
   protected onClassChange(event: Event): void {
-    this.selectedClass.set((event.target as HTMLSelectElement).value);
+    const className = (event.target as HTMLSelectElement).value;
+    this.selectedClass.set(className);
+    this.selectedSection.set(this.classOptions().find(option => option.classId === className)?.sections[0]?.sectionName ?? '');
     this.loadStudents();
   }
 

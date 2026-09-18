@@ -21,12 +21,12 @@
   <section class="attendance-controls" aria-label="Mark attendance filters">
     <label>Class
       <select [value]="selectedClass()" (change)="onClassChange($event)">
-        @for (className of classOptions; track className) { <option [value]="className">{{ className }}</option> }
+        @for (option of classOptions(); track option.classId) { <option [value]="option.classId">{{ option.classId }}</option> }
       </select>
     </label>
     <label>Section
       <select [value]="selectedSection()" (change)="onSectionChange($event)">
-        @for (section of sectionOptions; track section) { <option [value]="section">Section {{ section }}</option> }
+        @for (option of sectionOptions(); track option.sectionName) { <option [value]="option.sectionName">Section {{ option.sectionName }}</option> }
       </select>
     </label>
     <label>Date
@@ -42,12 +42,12 @@
   <section class="attendance-controls history-controls" aria-label="Student attendance filters">
     <label>Class
       <select [value]="selectedClass()" (change)="onClassChange($event)">
-        @for (className of classOptions; track className) { <option [value]="className">{{ className }}</option> }
+        @for (option of classOptions(); track option.classId) { <option [value]="option.classId">{{ option.classId }}</option> }
       </select>
     </label>
     <label>Section
       <select [value]="selectedSection()" (change)="onSectionChange($event)">
-        @for (section of sectionOptions; track section) { <option [value]="section">Section {{ section }}</option> }
+        @for (option of sectionOptions(); track option.sectionName) { <option [value]="option.sectionName">Section {{ option.sectionName }}</option> }
       </select>
     </label>
     <label>From date
