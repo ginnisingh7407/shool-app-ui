@@ -26,15 +26,16 @@ export class StudentLeaveComponent {
   protected changeStart(event: Event): void { this.startDate.set((event.target as HTMLInputElement).value); if (this.startDate() > this.endDate()) this.endDate.set(this.startDate()); }
   protected changeEnd(event: Event): void { this.endDate.set((event.target as HTMLInputElement).value); if (this.endDate() < this.startDate()) this.startDate.set(this.endDate()); }
   protected changeReason(event: Event): void { this.reason.set((event.target as HTMLTextAreaElement).value); }
+
   protected submit(): void {
     if (!this.reason().trim()) { this.message.set('Enter a reason before applying for leave.'); return; }
     this.submitting.set(true);
-    this.leaveService.applyLeave({ studentId: 1, studentName: 'Jordan Davis', leaveType: this.type(), startDate: this.startDate(), endDate: this.endDate(), reason: this.reason().trim() }).subscribe(application => {
+    this.leaveService.applyLeave({ admissionNumber: 1, fromDate: '12-12-2026', toDate: '12-12-2026', leaveType: this.type(), status: 'PENDING', reason: this.reason().trim() }).subscribe(application => {
       this.applications.update(items => [application as StudentLeaveApplication, ...items]);
       this.reason.set(''); this.submitting.set(false); this.message.set('Leave application submitted.'); this.tab.set('history');
     });
   }
   protected statusLabel(status: LeaveStatus): string { return status.charAt(0) + status.slice(1).toLowerCase(); }
-  private loadHistory(): void { this.leaveService.getMyApplications(1).subscribe(items => this.applications.set(items)); }
+  private loadHistory(): void { this.leaveService.getMyApplications('1').subscribe(result => this.applications.set(result.data)); }
   private today(): string { const date = new Date(); return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`; }
 }

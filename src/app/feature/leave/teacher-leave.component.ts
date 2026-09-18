@@ -2,8 +2,9 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 import { LeaveService } from './leave.service';
-import { ClassSectionOption, LeaveApplication, LeaveStatus, LeaveStudent } from '../../common/model/models';
+import { ClassSectionOption, LeaveApplication, LeaveStatus, Student } from '../../common/model/models';
 import { ClassSectionService } from '../class-section/class-section.service';
+import { PeopleService } from '../people/people.service';
 
 type LeaveTab = 'apply' | 'applied';
 
@@ -14,14 +15,18 @@ type LeaveTab = 'apply' | 'applied';
 })
 export class TeacherLeaveComponent {
   private readonly leaveService = inject(LeaveService);
+  private readonly peopleService = inject(PeopleService);
   private readonly classSectionService = inject(ClassSectionService);
   protected readonly activeTab = signal<LeaveTab>('apply');
   protected readonly classOptions = signal<ClassSectionOption[]>([]);
   protected readonly sectionOptions = computed(() => this.classOptions().find(option => option.classId === this.selectedClass())?.sections ?? []);
   protected readonly selectedClass = signal('');
   protected readonly selectedSection = signal('');
-  protected readonly students = signal<LeaveStudent[]>([]);
+  protected readonly students = signal<Student[]>([]);
   protected readonly applications = signal<LeaveApplication[]>([]);
+  protected readonly applicationsForSelectedClassSection = computed(() => this.applications().filter(application =>
+    this.students().some(student => student.admissionNumber === application.admissionNumber)
+  ));
   protected readonly selectedStudentId = signal<number | null>(null);
   protected readonly leaveType = signal('Medical');
   protected readonly startDate = signal(this.today());
@@ -99,13 +104,18 @@ export class TeacherLeaveComponent {
 
     this.isSubmitting.set(true);
     this.message.set('');
+
+
+
     this.leaveService.applyLeave({
-      studentId: student.id,
-      studentName: student.name,
+      status: 'PENDING',
+      admissionNumber: student.admissionNumber,
       leaveType: this.leaveType(),
-      startDate: this.startDate(),
-      endDate: this.endDate(),
-      reason: this.reason().trim()
+      fromDate: formatDateToYYYYMMDD(new Date(this.startDate())),
+      toDate: formatDateToYYYYMMDD(new Date(this.endDate())),
+      reason: this.reason()
+
+
     }).subscribe(application => {
       this.applications.update(applications => [application, ...applications]);
       this.isSubmitting.set(false);
@@ -117,7 +127,7 @@ export class TeacherLeaveComponent {
   }
 
   protected changeStatus(application: LeaveApplication, status: LeaveStatus): void {
-    this.leaveService.updateStatus(application.id, status).subscribe(() => {
+    this.leaveService.updateStatus(application.id!, status).subscribe(() => {
       this.applications.update(applications => applications.map(item =>
         item.id === application.id ? { ...item, status } : item
       ));
@@ -137,22 +147,41 @@ export class TeacherLeaveComponent {
       return;
     }
 
-    this.leaveService.getStudents().subscribe(students => {
-      this.students.set(
-        students.filter(student =>
-          student.className === `Class ${className}` && student.section === section
-        )
-      );
+    this.peopleService.getStudents(this.selectedClass(), this.selectedSection()).subscribe(res => {
+      this.students.set(res.data);
       this.selectedStudentId.set(null);
     });
   }
 
   private loadApplications(): void {
-    this.leaveService.getApplications().subscribe(applications => this.applications.set(applications));
+    this.leaveService.getApplications().subscribe(
+      result =>
+        this.applications.set(result.data));
+  }
+
+  private loadAllApplications(): void {
+    this.leaveService.getAllCurrentYearApplications().subscribe(
+      result =>
+        this.applications.set(result.data));
   }
 
   private today(): string {
     const date = new Date();
     return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
   }
+
+  showAllLeave(check: boolean): void {
+    if (check) {
+      this.loadAllApplications();
+    } else {
+      this.loadApplications();
+    }
+  }
+}
+
+function formatDateToYYYYMMDD(date: Date): string {
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0"); // months are 0-based
+  const year = date.getFullYear();
+  return `${year}-${month}-${day}`;
 }

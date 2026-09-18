@@ -46,7 +46,7 @@ export interface AttendanceStudent {
   rollNumber: string;
   present: boolean;
   onLeave?: boolean;
-  admissionNumber?: number;
+  admissionNumber: number;
   classId?: number;
   sectionName?: string;
   attendanceId?: number;
@@ -145,17 +145,7 @@ export interface School {
 }
 
 export interface PeopleSummary { students: number; teachers: number; classmates: number; }
-export interface StudentDirectoryEntry {
-  id: number;
-  name: string;
-  rollNumber: string;
-  className: string;
-  section: string;
-  gender: string;
-  parentName: string;
-  parentPhone: string;
-  parentRelation: string;
-}
+
 export interface AdminStudent {
   id: number | null;
   name: string;
@@ -362,15 +352,20 @@ export interface LeaveSummary { pending: number; approved: number; remaining: nu
 export interface LeaveStudent { id: number; name: string; className: string; section: string; }
 export type LeaveStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
 export interface LeaveApplication {
-  id: number;
-  studentId: number;
-  studentName: string;
-  leaveType: string;
-  startDate: string;
-  endDate: string;
+  id?: number;
+  admissionNumber: number;
   reason: string;
-  status: LeaveStatus;
+  fromDate: string; // ISO date format (YYYY-MM-DD)
+  toDate: string;   // ISO date format (YYYY-MM-DD)
+  totalDays?: number;
+  status: "PENDING" | "APPROVED" | "REJECTED"; // example enum values
+  approvedBy?: string;
+  approvalDate?: string; // ISO date-time format
+  remarks?: string;
+  leaveType: string; // e.g., "Sick Leave", "Casual Leave", etc.
 }
-export interface StudentLeaveApplication extends LeaveApplication { studentId: number; }
+
+
+export interface StudentLeaveApplication extends LeaveApplication { }
 
 export interface NotificationSummary { unread: number; latest: string; }

@@ -35,8 +35,8 @@ export class TeacherAttendanceComponent {
   protected readonly saveMessage = signal('');
 
   constructor() {
-    this.leaveService.getApplications().subscribe(applications => {
-      this.leaveApplications.set(applications);
+    this.leaveService.getApplications().subscribe(result => {
+      this.leaveApplications.set(result.data);
       this.applyLeaveToStudents();
       if (this.selectedStudentId() !== null) this.loadHistory();
     });
@@ -168,7 +168,7 @@ export class TeacherAttendanceComponent {
     const date = this.selectedStartDate();
     this.students.update(students => students.map(student => ({
       ...student,
-      onLeave: this.isLeaveDate(student.id, date)
+      onLeave: this.isLeaveDate(student.admissionNumber, date)
     })));
   }
 
@@ -180,10 +180,10 @@ export class TeacherAttendanceComponent {
     }));
   }
 
-  private isLeaveDate(studentId: number, date: string): boolean {
+  private isLeaveDate(studentNumber: number, date: string): boolean {
     return this.leaveApplications().some(application =>
-      application.studentId === studentId && application.status !== 'REJECTED' &&
-      application.startDate <= date && application.endDate >= date
+      application.admissionNumber === studentNumber && application.status !== 'REJECTED' &&
+      application.fromDate <= date && application.toDate >= date
     );
   }
 

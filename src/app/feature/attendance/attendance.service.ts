@@ -14,18 +14,6 @@ import {
   StudentRosterEntry
 } from '../../common/model/models';
 
-
-const FALLBACK_STUDENTS: AttendanceStudent[] = [
-  { id: 1, name: 'Aarav Sharma', rollNumber: 'OA-801', present: true },
-  { id: 2, name: 'Aanya Patel', rollNumber: 'OA-802', present: true },
-  { id: 3, name: 'Arjun Mehta', rollNumber: 'OA-803', present: false },
-  { id: 4, name: 'Diya Kapoor', rollNumber: 'OA-804', present: true },
-  { id: 5, name: 'Ishaan Rao', rollNumber: 'OA-805', present: true },
-  { id: 6, name: 'Meera Nair', rollNumber: 'OA-806', present: false },
-  { id: 7, name: 'Rohan Singh', rollNumber: 'OA-807', present: true },
-  { id: 8, name: 'Sara Thomas', rollNumber: 'OA-808', present: true }
-];
-
 @Injectable({ providedIn: 'root' })
 export class AttendanceService {
   private readonly http = inject(HttpClient);
@@ -60,7 +48,7 @@ export class AttendanceService {
           };
         });
       }),
-      catchError(() => of(FALLBACK_STUDENTS.map(student => ({ ...student }))))
+      catchError(() => of([]))
     );
   }
 

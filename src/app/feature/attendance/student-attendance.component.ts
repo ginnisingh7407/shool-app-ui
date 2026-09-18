@@ -23,7 +23,7 @@ export class StudentAttendanceComponent {
   protected readonly calendarMonths = computed(() => this.buildCalendar(this.records()));
   protected readonly sectionOptions = computed(() => this.classOptions().find(option => option.classId === this.className())?.sections ?? []);
   constructor() {
-    this.leaveService.getMyApplications(1).subscribe(applications => { this.leaveApplications.set(applications); this.load(); });
+    this.leaveService.getMyApplications('1').subscribe(res => { this.leaveApplications.set(res.data); this.load(); });
     this.classSectionService.getAll().subscribe(options => {
       this.classOptions.set(options);
       this.className.set(options[0]?.classId ?? '');
@@ -47,7 +47,7 @@ export class StudentAttendanceComponent {
     if (!this.className() || !this.section()) return;
     this.attendanceService.getStudentHistory(this.className(), this.section(), 1, this.startDate(), this.endDate()).subscribe(records => this.records.set(records.map(record => ({ ...record, onLeave: this.isLeaveDate(record.date), present: this.isLeaveDate(record.date) ? false : record.present }))));
   }
-  private isLeaveDate(date: string): boolean { return this.leaveApplications().some(application => application.status !== 'REJECTED' && application.startDate <= date && application.endDate >= date); }
+  private isLeaveDate(date: string): boolean { return this.leaveApplications().some(application => application.status !== 'REJECTED' && application.fromDate <= date && application.toDate >= date); }
   private buildCalendar(records: AttendanceRecord[]): CalendarMonth[] {
     const start = new Date(`${this.startDate()}T00:00:00`); const end = new Date(`${this.endDate()}T00:00:00`); const map = new Map(records.map(record => [record.date, record])); const months: CalendarMonth[] = []; const cursor = new Date(start.getFullYear(), start.getMonth(), 1);
     while (cursor <= end || (cursor.getMonth() === end.getMonth() && cursor.getFullYear() === end.getFullYear())) {
