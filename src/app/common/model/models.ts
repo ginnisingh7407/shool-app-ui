@@ -361,6 +361,40 @@ export interface FeesSummary { outstanding: number; paid: number; dueDate: strin
 
 export interface HomeworkSummary { pending: number; submitted: number; nextDue: string; }
 export interface HomeworkUploadResponse { success: boolean; message: string; }
+export interface HomeworkAttachment {
+  id: number;
+  fileName: string;
+  contentType: string;
+  fileSize: number;
+  fileData: string[];
+}
+export interface HomeworkUploadPayload {
+  id: number;
+  teacherId: number;
+  classId: number;
+  sectionName: string;
+  subjectId: number;
+  title: string;
+  description: string;
+  fileUrl: string;
+  dueDate: string;
+  workType: 'CLASSWORK' | 'HOMEWORK';
+  files: HomeworkAttachment[];
+}
+export interface Homework {
+  id?: number | null;
+  teacherId: number;
+  classId: number;
+  sectionName?: string;
+  subjectId?: number;
+  title: string;
+  description: string;
+  fileUrl?: string;
+  dueDate: string;
+  files: File[] | null;
+   // ISO date format (yyyy-MM-dd)
+  workType: "CLASSWORK" | "HOMEWORK"; // extend with other types if needed
+}
 export interface StudentWorkItem { id: number; type: 'CLASSWORK' | 'HOMEWORK'; date: string; title: string; description: string; fileName: string; fileUrl: string; }
 
 export interface LeaveSummary { pending: number; approved: number; remaining: number; }

@@ -12,6 +12,35 @@
   <section class="homework-form-panel">
     <div class="homework-form-heading"><div><p class="eyebrow">New assignment</p><h2>Work details</h2></div><span>Required fields are marked by the form</span></div>
     <div class="homework-form">
+      <label>Class
+        <select [value]="selectedClass()" (change)="onClassChange($event)">
+          <option value="" disabled>Select a class</option>
+          @for (option of classOptions(); track option.classId) {
+            <option [value]="option.classId">Class {{ option.classId }}</option>
+          }
+        </select>
+      </label>
+      <label>Section
+        <select [value]="selectedSection()" (change)="onSectionChange($event)" [disabled]="!selectedClass()">
+          <option value="" disabled>Select a section</option>
+          @for (section of sectionOptions(); track section.sectionName) {
+            <option [value]="section.sectionName">Section {{ section.sectionName }}</option>
+          }
+        </select>
+      </label>
+      <label class="full-width">Students in selected class/section
+        @if (isLoadingStudents()) {
+          <small>Loading students...</small>
+        } @else if (students().length) {
+          <div class="student-chip-list">
+            @for (student of students(); track student.id) {
+              <span>{{ student.name }}</span>
+            }
+          </div>
+        } @else {
+          <small>No students found for this class and section.</small>
+        }
+      </label>
       <label>Title
         <input type="text" placeholder="e.g. Fractions practice" [value]="title()" (input)="onTitleChange($event)" />
       </label>
@@ -25,8 +54,14 @@
         <textarea rows="6" placeholder="Add instructions or context for your students" [value]="description()" (input)="onDescriptionChange($event)"></textarea>
       </label>
       <label class="file-field full-width">Attachment <span class="optional-label">Optional</span>
-        <input type="file" (change)="onFileChange($event)" />
-        @if (selectedFile(); as file) { <small class="selected-file">{{ file.name }} ({{ file.size }} bytes)</small> }
+        <input type="file" multiple (change)="onFileChange($event)" />
+        @if (selectedFiles().length) {
+          <div class="selected-file-list">
+            @for (file of selectedFiles(); track file.name + file.size + $index) {
+              <small class="selected-file">{{ file.name }} ({{ file.size }} bytes)</small>
+            }
+          </div>
+        }
       </label>
     </div>
     <div class="homework-form-footer">

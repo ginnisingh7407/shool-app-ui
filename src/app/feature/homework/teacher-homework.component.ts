@@ -1,7 +1,12 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 import { HomeworkService } from './homework.service';
+import { ClassSectionService } from '../class-section/class-section.service';
+import { PeopleService } from '../people/people.service';
+import { ClassSectionOption, Student } from '../../common/model/models';
+import { ProfileService } from '../profile/profile.service';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-teacher-homework',
@@ -10,12 +15,64 @@ import { HomeworkService } from './homework.service';
 })
 export class TeacherHomeworkComponent {
   private readonly homeworkService = inject(HomeworkService);
+  private readonly classSectionService = inject(ClassSectionService);
+  private readonly peopleService = inject(PeopleService);
+  protected readonly profileService = inject(ProfileService);
+
   protected readonly title = signal('');
   protected readonly description = signal('');
   protected readonly workType = signal<'CLASSWORK' | 'HOMEWORK'>('HOMEWORK');
-  protected readonly selectedFile = signal<File | null>(null);
+  protected readonly selectedFiles = signal<File[]>([]);
   protected readonly isUploading = signal(false);
   protected readonly uploadMessage = signal('');
+  protected readonly classOptions = signal<ClassSectionOption[]>([]);
+  protected readonly selectedClass = signal('');
+  protected readonly selectedSection = signal('');
+  protected readonly sectionOptions = computed(() => this.classOptions().find(option => option.classId === this.selectedClass())?.sections ?? []);
+  protected readonly students = signal<Student[]>([]);
+  protected readonly isLoadingStudents = signal(false);
+  protected readonly profile = toSignal(this.profileService.getProfile());
+  protected readonly teacherId = computed(() => this.profile()?.role === 'TEACHER' ? this.profile()?.id ?? null : null);
+
+
+  constructor() {
+    this.loadClasses();
+  }
+
+  protected loadClasses(): void {
+    this.classSectionService.getAll().subscribe({
+      next: options => {
+        this.classOptions.set(options);
+        this.classSectionService.getTeacherDefaultClassSection().subscribe(defaultSelection => {
+          if (defaultSelection) {
+            this.selectedClass.set(defaultSelection.classId);
+            this.selectedSection.set(defaultSelection.sectionName);
+          } else {
+            const firstClass = options[0];
+            this.selectedClass.set(firstClass?.classId ?? '');
+            this.selectedSection.set(firstClass?.sections[0]?.sectionName ?? '');
+          }
+          this.loadStudents();
+        });
+      },
+      error: () => {
+        this.uploadMessage.set('Unable to load classes and sections.');
+      }
+    });
+  }
+
+  protected onClassChange(event: Event): void {
+    const className = (event.target as HTMLSelectElement).value;
+    this.selectedClass.set(className);
+    const firstSection = this.classOptions().find(option => option.classId === className)?.sections[0]?.sectionName ?? '';
+    this.selectedSection.set(firstSection);
+    this.loadStudents();
+  }
+
+  protected onSectionChange(event: Event): void {
+    this.selectedSection.set((event.target as HTMLSelectElement).value);
+    this.loadStudents();
+  }
 
   protected onTitleChange(event: Event): void {
     this.title.set((event.target as HTMLInputElement).value);
@@ -33,7 +90,8 @@ export class TeacherHomeworkComponent {
   }
 
   protected onFileChange(event: Event): void {
-    this.selectedFile.set((event.target as HTMLInputElement).files?.[0] ?? null);
+    const files = Array.from((event.target as HTMLInputElement).files ?? []);
+    this.selectedFiles.set(files);
     this.uploadMessage.set('');
   }
 
@@ -43,13 +101,41 @@ export class TeacherHomeworkComponent {
       return;
     }
 
+    if (!this.selectedClass() || !this.selectedSection()) {
+      this.uploadMessage.set('Select a class and section before uploading.');
+      return;
+    }
+
     this.isUploading.set(true);
     this.uploadMessage.set('');
-    this.homeworkService.uploadWork(
-      this.title().trim(), this.description().trim(), this.workType(), this.selectedFile()
-    ).subscribe(response => {
+    this.homeworkService.uploadWork({
+      title: this.title().trim(),
+      description: this.description().trim(),
+      workType: this.workType(),
+      classId: Number(this.selectedClass()),
+      sectionName: this.selectedSection(),
+      files: this.selectedFiles(),
+      teacherId: this.profile()?.id ?? 0,
+      dueDate: new Date().toISOString().split('T')[0]
+    }).subscribe(response => {
       this.isUploading.set(false);
       this.uploadMessage.set(response.message);
+    });
+  }
+
+  private loadStudents(): void {
+    const className = this.selectedClass();
+    const section = this.selectedSection();
+
+    if (!className || !section) {
+      this.students.set([]);
+      return;
+    }
+
+    this.isLoadingStudents.set(true);
+    this.peopleService.getStudents(className, section).subscribe(res => {
+      this.students.set(res.data ?? []);
+      this.isLoadingStudents.set(false);
     });
   }
 }

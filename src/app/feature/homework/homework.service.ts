@@ -1,8 +1,8 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { catchError, Observable, of } from 'rxjs';
+import { catchError, from, map, Observable, of, switchMap } from 'rxjs';
 import { homeworkApiUrl } from '../../core/config/api.config';
-import { StudentWorkItem, HomeworkSummary, HomeworkUploadResponse } from '../../common/model/models';
+import { StudentWorkItem, HomeworkSummary, HomeworkUploadResponse, Homework, HomeworkUploadPayload } from '../../common/model/models';
 
 const FALLBACK_STUDENT_WORK: StudentWorkItem[] = [
   { id: 1, type: 'CLASSWORK', date: '2026-09-15', title: 'Fractions practice', description: 'Complete the examples discussed in today\'s mathematics lesson.', fileName: 'fractions-practice.pdf', fileUrl: '/files/fractions-practice.pdf' },
@@ -20,16 +20,50 @@ export class HomeworkService {
     );
   }
 
-  uploadWork(title: string, description: string, workType: 'CLASSWORK' | 'HOMEWORK', file: File | null): Observable<HomeworkUploadResponse> {
-    const formData = new FormData();
-    formData.append('title', title);
-    formData.append('description', description);
-    formData.append('workType', workType);
-    if (file) formData.append('file', file, file.name);
-
-    return this.http.post<HomeworkUploadResponse>(homeworkApiUrl('/upload'), formData).pipe(
-      catchError(() => of({ success: true, message: 'Work uploaded using the local preview.' }))
+  uploadWork(homework: Homework): Observable<HomeworkUploadResponse> {
+    return from(this.buildUploadPayload(homework)).pipe(
+      switchMap(payload => this.http.post<HomeworkUploadResponse>(homeworkApiUrl(''), payload).pipe(
+        catchError(() => of({ success: true, message: 'Work uploaded using the local preview.' }))
+      ))
     );
+  }
+
+  private async buildUploadPayload(homework: Homework): Promise<HomeworkUploadPayload> {
+    const files = homework.files && homework.files.length > 0
+      ? await Promise.all(homework.files.map(async (file, index) => ({
+          id: index,
+          fileName: file.name,
+          contentType: file.type || 'application/octet-stream',
+          fileSize: file.size,
+          fileData: [await this.readFileAsBase64(file)]
+        })))
+      : [];
+
+    return {
+      id: 0,
+      teacherId: homework.teacherId,
+      classId: homework.classId,
+      sectionName: homework.sectionName || '',
+      subjectId: homework.subjectId ?? 0,
+      title: homework.title,
+      description: homework.description,
+      fileUrl: homework.fileUrl || '',
+      dueDate: homework.dueDate || new Date().toISOString().slice(0, 10),
+      workType: homework.workType,
+      files
+    };
+  }
+
+  private readFileAsBase64(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const result = typeof reader.result === 'string' ? reader.result : '';
+        resolve(result.includes(',') ? result.split(',')[1] : result);
+      };
+      reader.onerror = () => reject(new Error(`Failed to read file: ${file.name}`));
+      reader.readAsDataURL(file);
+    });
   }
 
   getStudentWork(studentId: number): Observable<StudentWorkItem[]> {
