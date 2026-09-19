@@ -49,9 +49,16 @@ export class TeacherAttendanceComponent {
 
   private loadLeaveApplications(): void {
     this.leaveService.getAllCurrentYearApplications().subscribe(result => {
-      this.leaveApplications.set(result.data);
-      this.applyLeaveToStudents();
-      if (this.selectedStudentId() !== null) this.loadHistory();
+      const studentAdmissionNumbers = this.students().length > 0 ? this.students().map(student => student.admissionNumber) : [];
+      // Filter leave applications to only include those for students in the current class and section
+      if (studentAdmissionNumbers.length > 0) {
+        const filteredApplications = result.data.filter(application => studentAdmissionNumbers.includes(application.admissionNumber));
+        this.leaveApplications.set(filteredApplications);
+        this.applyLeaveToStudents();
+        if (this.selectedStudentId() !== null) this.loadHistory();
+      } else {
+        this.leaveApplications.set([]);
+      }
     });
   }
 
@@ -89,18 +96,19 @@ export class TeacherAttendanceComponent {
     const className = (event.target as HTMLSelectElement).value;
     this.selectedClass.set(className);
     this.selectedSection.set(this.classOptions().find(option => option.classId === className)?.sections[0]?.sectionName ?? '');
+    this.loadLeaveApplications();
     this.loadStudents();
   }
 
   protected onSectionChange(event: Event): void {
     this.selectedSection.set((event.target as HTMLSelectElement).value);
+    this.loadLeaveApplications();
     this.loadStudents();
   }
 
   protected onStartDateChange(event: Event): void {
     this.selectedStartDate.set((event.target as HTMLInputElement).value);
     if (this.selectedStartDate() > this.selectedEndDate()) this.selectedEndDate.set(this.selectedStartDate());
-    this.loadLeaveApplications();
     this.mode() === 'mark' ? this.loadStudents() : this.loadHistory();
   }
 
@@ -180,12 +188,8 @@ export class TeacherAttendanceComponent {
   }
 
   private loadHistory(): void {
-    const studentId = this.selectedStudentId();
-    if (studentId === null) {
-      this.history.set([]);
-      return;
-    }
-    const admissionNumber = this.students().find(student => student.id === this.selectedStudentId())?.admissionNumber;
+
+    const admissionNumber = this.selectedStudentId() ? this.students().find(student => student.id === this.selectedStudentId())?.admissionNumber : null;
 
     this.attendanceService.getStudentHistory(
       this.selectedClass(), this.selectedSection(), admissionNumber!, this.selectedStartDate(), this.selectedEndDate()
@@ -203,20 +207,28 @@ export class TeacherAttendanceComponent {
 
   private applyLeaveToHistory(history: AttendanceRecord[], admissionNumber: number): AttendanceRecord[] {
 
-    let startDate = this.selectedStartDate();//yyyy-mm-dd
-    const endDate = this.selectedEndDate();// yyyy-mm-dd
+    const result = [] as AttendanceRecord[];
+    if (admissionNumber !== null) {
+      this.applyHistoryDateRange(result, history, admissionNumber);
+    } else if (this.students().length > 0) {
+      this.students().forEach(student => {
+        this.applyHistoryDateRange(result, history, student.admissionNumber);
+      });
 
-    const leaveHistory = this.leaveApplications().filter(application =>
-      application.admissionNumber === admissionNumber && application.status === 'APPROVED' &&
-      application.fromDate <= endDate && application.toDate >= startDate
-    );
+    }
+    return result;
+  }
 
-    const result = history.map(record => ({
+  private applyHistoryDateRange(result: AttendanceRecord[], history: AttendanceRecord[], admissionNumber: number): void {
+
+    history.map(record => ({
       ...record,
       onLeave: this.isLeaveDate(admissionNumber, record.date, true),
       present: this.isLeaveDate(admissionNumber, record.date, true) ? false : record.present
     }));
 
+    let startDate = this.selectedStartDate();//yyyy-mm-dd
+    const endDate = this.selectedEndDate();// yyyy-mm-dd
     while (startDate <= endDate) {
       const date = startDate;
       if (!result.some(record => record.date === date)) {
@@ -230,12 +242,11 @@ export class TeacherAttendanceComponent {
       nextDate.setDate(nextDate.getDate() + 1);
       startDate = nextDate.toISOString().split('T')[0];
     }
-    return result;
   }
 
   private isLeaveDate(admissionNumber: number, date: string, onlyApproved: boolean = false): boolean {
     return this.leaveApplications().some(application =>
-      application.admissionNumber === admissionNumber && (!onlyApproved || application.status === 'APPROVED') &&
+      (application.admissionNumber === admissionNumber) && (!onlyApproved || application.status === 'APPROVED') &&
       application.fromDate <= date && application.toDate >= date
     );
   }

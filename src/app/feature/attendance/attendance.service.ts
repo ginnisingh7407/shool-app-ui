@@ -52,8 +52,12 @@ export class AttendanceService {
     );
   }
 
-  getStudentHistory(className: string, section: string, admissionNumber: number, startDate: string, endDate: string): Observable<AttendanceRecord[]> {
-    const params = `classId=${Number(className)}&sectionName=${encodeURIComponent(section)}&admissionNumber=${admissionNumber}&fromDate=${startDate}&toDate=${endDate}`;
+  getStudentHistory(className: string, section: string, admissionNumber: number | null, startDate: string, endDate: string): Observable<AttendanceRecord[]> {
+    let adNumParam = '';
+    if (admissionNumber != null) {
+      adNumParam = `&admissionNumber=${admissionNumber}`;
+    }
+    const params = `classId=${Number(className)}&sectionName=${encodeURIComponent(section)}${adNumParam}&fromDate=${startDate}&toDate=${endDate}`;
     return this.http.get<{ status: string; code: number; message: string; data: AttendanceApiRecord[] }>(attendanceApiUrl(`/history/params?${params}`)).pipe(
       map(response => (response.data ?? []).map(record => ({
         date: record.attendanceDate,

@@ -65,14 +65,14 @@
   </section>
   }
 
-  <section class="attendance-summary" aria-label="Attendance summary">
-    <div class="attendance-stat present-stat"><span class="stat-mark">&#10003;</span><div><strong>{{ presentCount }}</strong><small>Present students</small></div></div>
-    <div class="attendance-stat absent-stat"><span class="stat-mark">&#10005;</span><div><strong>{{ absentCount }}</strong><small>Absent students</small></div></div>
-    <div class="attendance-stat leave-stat"><span class="stat-mark">L</span><div><strong>{{ leaveCount }}</strong><small>On leave</small></div></div>
-    <div class="attendance-stat total-stat"><span class="stat-mark">#</span><div><strong>{{ totalCount }}</strong><small>{{ mode() === 'mark' ? 'Total students' : 'Days in range' }}</small></div></div>
-  </section>
-
   @if (mode() === 'history') {
+    <section class="attendance-summary" aria-label="Attendance summary for selected date range">
+      <div class="attendance-stat present-stat"><span class="stat-mark">&#10003;</span><div><strong>{{ presentCount }}</strong><small>Present students</small></div></div>
+      <div class="attendance-stat absent-stat"><span class="stat-mark">&#10005;</span><div><strong>{{ absentCount }}</strong><small>Absent students</small></div></div>
+      <div class="attendance-stat leave-stat"><span class="stat-mark">L</span><div><strong>{{ leaveCount }}</strong><small>On leave</small></div></div>
+      <div class="attendance-stat total-stat"><span class="stat-mark">#</span><div><strong>{{ totalCount }}</strong><small>Days in range</small></div></div>
+    </section>
+
     <section class="student-history-panel" aria-labelledby="history-title">
       <div class="student-list-heading"><div><p class="eyebrow">{{ selectedClass() }} / Section {{ selectedSection() }}</p><h2 id="history-title">{{ selectedStudent() ? selectedStudent()?.name : 'Student attendance' }}</h2></div><span>{{ selectedStudent() ? 'Attendance history' : 'Select a student above' }}</span></div>
       @if (selectedStudentId() !== null && history().length) {
