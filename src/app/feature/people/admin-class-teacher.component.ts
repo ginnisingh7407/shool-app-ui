@@ -4,10 +4,11 @@ import { RouterLink } from '@angular/router';
 import { PeopleService } from './people.service';
 import { AdminTeacher, ClassSectionOption, ClassTeacherAssignment } from '../../common/model/models';
 import { ClassSectionService } from '../class-section/class-section.service';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-admin-class-teacher',
-  imports: [RouterLink],
+  imports: [RouterLink, FormsModule],
   templateUrl: './admin-class-teacher.component.html',
   styleUrl: './admin-people-management.css'
 })

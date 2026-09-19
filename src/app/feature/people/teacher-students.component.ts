@@ -4,10 +4,11 @@ import { RouterLink } from '@angular/router';
 import { PeopleService } from './people.service';
 import { ClassSectionOption, Student } from '../../common/model/models';
 import { ClassSectionService } from '../class-section/class-section.service';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-teacher-students',
-  imports: [RouterLink],
+  imports: [RouterLink, FormsModule],
   templateUrl: './teacher-students.component.html'
 })
 export class TeacherStudentsComponent {

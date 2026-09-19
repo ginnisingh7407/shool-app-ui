@@ -1,8 +1,10 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
-import { HomeworkService} from './homework.service';
+import { HomeworkService } from './homework.service';
 import { StudentWorkItem } from '../../common/model/models';
+import { ProfileService } from '../profile/profile.service';
+import { ProfileApiResponse, ProfilePayload, ProfileSummary } from '../../common/model/models';
 
 interface WeekDay { date: string; label: string; dayNumber: number; }
 
@@ -13,31 +15,61 @@ interface WeekDay { date: string; label: string; dayNumber: number; }
 })
 export class StudentHomeworkComponent {
   private readonly homeworkService = inject(HomeworkService);
+  private readonly profileService = inject(ProfileService);
   protected readonly tab = signal<'CLASSWORK' | 'HOMEWORK'>('CLASSWORK');
   protected readonly work = signal<StudentWorkItem[]>([]);
   protected readonly selectedDate = signal(this.today());
+
+  protected readonly profile = signal(<ProfileSummary | null>(null));
   protected readonly weekDays = computed(() => this.buildWeek(this.selectedDate()));
   protected readonly weekHeading = computed(() => this.getWeekHeading(this.selectedDate()));
   protected readonly weekRange = computed(() => this.getWeekRange(this.selectedDate()));
 
   constructor() {
-    this.homeworkService.getStudentWork(1).subscribe(work => this.work.set(work));
+    this.profileService.getProfile().subscribe(profile => {
+      this.profile.set(profile);
+      const classId = profile.className;
+      const sectionName = profile.sectionName;
+      if (classId && sectionName) {
+        this.loadWorkForDate(this.today());
+      }
+    });
+  }
+
+  protected loadWorkForDate(date: string): void {
+    this.selectedDate.set(date);
+
+    const classId = this.profile()?.className ?? '';
+    const sectionName = this.profile()?.sectionName ?? '';
+
+    if (!classId || !sectionName) {
+      this.work.set([]);
+      return;
+    }
+
+    this.homeworkService.getMyHomeWork(classId, sectionName, date).subscribe(work => this.work.set(work));
   }
 
   protected selectTab(tab: 'CLASSWORK' | 'HOMEWORK'): void {
     this.tab.set(tab);
   }
 
+  protected onWeekDateSelected(date: string): void {
+    this.loadWorkForDate(date);
+  }
+
   protected selectDate(date: string): void {
-    this.selectedDate.set(date);
+    this.onWeekDateSelected(date);
   }
 
   protected previousWeek(): void {
-    this.selectedDate.set(this.addDays(this.selectedDate(), -7));
+    const nextDate = this.addDays(this.selectedDate(), -7);
+    this.onWeekDateSelected(nextDate);
   }
 
   protected nextWeek(): void {
-    this.selectedDate.set(this.addDays(this.selectedDate(), 7));
+    const nextDate = this.addDays(this.selectedDate(), 7);
+    this.onWeekDateSelected(nextDate);
   }
 
   protected filteredWork(): StudentWorkItem[] {

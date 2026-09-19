@@ -68,6 +68,20 @@ export class AttendanceService {
     );
   }
 
+  getMyAttendanceHistory(startDate: string, endDate: string): Observable<AttendanceRecord[]> {
+
+    const params = `fromDate=${startDate}&toDate=${endDate}`;
+    return this.http.get<{ data: AttendanceApiRecord[] }>(attendanceApiUrl(`/history/self/params?${params}`)).pipe(
+      map(response => (response.data ?? []).map(record => ({
+        date: record.attendanceDate,
+        present: record.status === 'PRESENT',
+        onLeave: record.status === 'LEAVE'
+      }))),
+      catchError(() => of([] as AttendanceRecord[]))
+    );
+  }
+
+
   saveAttendance(className: string, section: string, date: string, students: AttendanceStudent[]): Observable<{ success: boolean }> {
     const classId = this.classIdFromName(className);
     return this.profileService.getProfile().pipe(

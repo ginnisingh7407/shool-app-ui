@@ -20,12 +20,12 @@
   @if (mode() === 'mark') {
   <section class="attendance-controls" aria-label="Mark attendance filters">
     <label>Class
-      <select [value]="selectedClass()" (change)="onClassChange($event)">
+      <select [ngModel]="selectedClass()" (change)="onClassChange($event)">
         @for (option of classOptions(); track option.classId) { <option [value]="option.classId">Class {{ option.classId }}</option> }
       </select>
     </label>
     <label>Section
-      <select [value]="selectedSection()" (change)="onSectionChange($event)">
+      <select [ngModel]="selectedSection()" (change)="onSectionChange($event)">
         @for (option of sectionOptions(); track option.sectionName) { <option [value]="option.sectionName">Section {{ option.sectionName }}</option> }
       </select>
     </label>
@@ -41,12 +41,12 @@
   } @else {
   <section class="attendance-controls history-controls" aria-label="Student attendance filters">
     <label>Class
-      <select [value]="selectedClass()" (change)="onClassChange($event)">
+      <select [ngModel]="selectedClass()" (change)="onClassChange($event)">
         @for (option of classOptions(); track option.classId) { <option [value]="option.classId">Class {{ option.classId }}</option> }
       </select>
     </label>
     <label>Section
-      <select [value]="selectedSection()" (change)="onSectionChange($event)">
+      <select [ngModel]="selectedSection()" (change)="onSectionChange($event)">
         @for (option of sectionOptions(); track option.sectionName) { <option [value]="option.sectionName">Section {{ option.sectionName }}</option> }
       </select>
     </label>
@@ -57,7 +57,7 @@
       <input type="date" [value]="selectedEndDate()" (change)="onEndDateChange($event)" />
     </label>
     <label class="student-filter">Student
-      <select [value]="selectedStudentId() ?? ''" (change)="onStudentChange($event)">
+      <select [ngModel]="selectedStudentId() ?? ''" (change)="onStudentChange($event)">
         <option value="">Select a student</option>
         @for (student of students(); track student.id) { <option [value]="student.id">{{ student.name }}</option> }
       </select>

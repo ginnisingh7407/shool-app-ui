@@ -25,7 +25,7 @@
     </div>
     <div class="leave-form">
       <label>Class
-        <select [value]="selectedClass()" (change)="onClassChange($event)">
+        <select [ngModel]="selectedClass()" (ngModelChange)="onClassChange($event)">
           <option value="">Select a class</option>
           @for (option of classOptions(); track option.classId) {
           <option [value]="option.classId">Class {{ option.classId }}</option>
@@ -33,7 +33,7 @@
         </select>
       </label>
       <label>Section
-        <select [value]="selectedSection()" (change)="onSectionChange($event)">
+        <select [ngModel]="selectedSection()" (ngModelChange)="onSectionChange($event)">
           <option value="">Select a section</option>
           @for (section of sectionOptions(); track section.sectionName) {
           <option [value]="section.sectionName">Section {{ section.sectionName }}</option>
@@ -41,13 +41,13 @@
         </select>
       </label>
       <label>Student
-        <select [value]="selectedStudentId() ?? ''" (change)="onStudentChange($event)">
+        <select [ngModel]="selectedStudentId()" (ngModelChange)="onStudentChange($event)">
           <option value="">Select a student</option>
           @for (student of students(); track student.admissionNumber) { <option [value]="student.id">{{ student.name }} </option> }
         </select>
       </label>
       <label>Leave type
-        <select [value]="leaveType()" (change)="onLeaveTypeChange($event)">
+        <select [ngModel]="leaveType()" (ngModelChange)="onLeaveTypeChange($event)">
           <option>Medical</option>
           <option>Personal</option>
           <option>Family</option>
@@ -76,7 +76,7 @@
     </div>
     <div class="leave-form" style="display: flex; flex-wrap: wrap; align-items: end; gap: 16px;">
       <label style="flex: 1 1 180px; min-width: 180px;">Class
-        <select [value]="selectedClass()" (change)="onClassChange($event)">
+        <select [ngModel]="selectedClass()" (ngModelChange)="onClassChange($event)">
           <option value="">Select a class</option>
           @for (option of classOptions(); track option.classId) {
           <option [value]="option.classId">Class {{ option.classId }}</option>
@@ -84,7 +84,7 @@
         </select>
       </label>
       <label style="flex: 1 1 180px; min-width: 180px;">Section
-        <select [value]="selectedSection()" (change)="onSectionChange($event)">
+        <select [ngModel]="selectedSection()" (ngModelChange)="onSectionChange($event)">
           <option value="">Select a section</option>
           @for (section of sectionOptions(); track section.sectionName) {
           <option [value]="section.sectionName">Section {{ section.sectionName }}</option>

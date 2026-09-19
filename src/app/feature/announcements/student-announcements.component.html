@@ -22,7 +22,7 @@
           @for (announcement of announcements(); track announcement.id) {
             <button type="button" class="announcement-row" [class.active]="selectedAnnouncement()?.id === announcement.id" (click)="selectAnnouncement(announcement)">
               <strong>{{ announcement.title }}</strong>
-              <small>{{ announcement.date }}</small>
+              <small>{{ announcement.postedDate }}</small>
             </button>
           }
         } @else {
@@ -38,14 +38,14 @@
             <p class="eyebrow">Announcement</p>
             <h2>{{ item.title }}</h2>
           </div>
-          <span>{{ item.date }}</span>
+          <span>{{ item.postedDate }}</span>
         </div>
 
         <div class="announcement-detail-scroll">
-          <p class="announcement-detail-message">{{ item.message }}</p>
+          <p class="announcement-detail-message">{{ item.content }}</p>
           <div class="announcement-meta">
-            <span>{{ item.className }}</span>
-            <span>{{ item.section === 'All' ? 'All sections' : 'Section ' + item.section }}</span>
+            <span>{{ item.classId }}</span>
+            <span>{{ item.sectionName === 'All' ? 'All sections' : 'Section ' + item.sectionName }}</span>
           </div>
         </div>
       } @else {

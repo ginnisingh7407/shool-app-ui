@@ -2,6 +2,7 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ClassSectionService } from '../class-section/class-section.service';
 import { ClassSectionOption } from '../../common/model/models';
+import { FormsModule } from '@angular/forms';
 
 interface PendingFee {
   studentName: string;
@@ -13,7 +14,7 @@ interface PendingFee {
 
 @Component({
   selector: 'app-admin-fees',
-  imports: [RouterLink],
+  imports: [RouterLink, FormsModule],
   templateUrl: './admin-fees.component.html',
   styleUrl: './admin-fees.component.css'
 })

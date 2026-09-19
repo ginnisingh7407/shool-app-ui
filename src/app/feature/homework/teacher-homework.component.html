@@ -26,7 +26,7 @@
     @if (activeTab() === 'new') {
       <div class="homework-form">
         <label>Class
-          <select [value]="selectedClass()" (change)="onClassChange($event)">
+          <select [ngModel]="selectedClass()" (ngModelChange)="onClassChange($event)">
             <option value="" disabled>Select a class</option>
             @for (option of classOptions(); track option.classId) {
               <option [value]="option.classId">Class {{ option.classId }}</option>
@@ -34,7 +34,7 @@
           </select>
         </label>
         <label>Section
-          <select [value]="selectedSection()" (change)="onSectionChange($event)" [disabled]="!selectedClass()">
+          <select [ngModel]="selectedSection()" (ngModelChange)="onSectionChange($event)" [disabled]="!selectedClass()">
             <option value="" disabled>Select a section</option>
             @for (section of sectionOptions(); track section.sectionName) {
               <option [value]="section.sectionName">Section {{ section.sectionName }}</option>
@@ -84,7 +84,7 @@
     } @else {
       <div class="homework-form">
         <label>Class
-          <select [value]="selectedClass()" (change)="onClassChange($event)">
+          <select [ngModel]="selectedClass()" (ngModelChange)="onClassChange($event)">
             <option value="" disabled>Select a class</option>
             @for (option of classOptions(); track option.classId) {
               <option [value]="option.classId">Class {{ option.classId }}</option>
@@ -92,7 +92,7 @@
           </select>
         </label>
         <label>Section
-          <select [value]="selectedSection()" (change)="onSectionChange($event)" [disabled]="!selectedClass()">
+          <select [ngModel]="selectedSection()" (ngModelChange)="onSectionChange($event)" [disabled]="!selectedClass()">
             <option value="" disabled>Select a section</option>
             @for (section of sectionOptions(); track section.sectionName) {
               <option [value]="section.sectionName">Section {{ section.sectionName }}</option>

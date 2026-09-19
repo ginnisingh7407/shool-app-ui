@@ -12,7 +12,7 @@
     </div>
     <div class="homework-week-grid">
       @for (day of weekDays(); track day.date) {
-        <button type="button" [class.active]="selectedDate() === day.date" [attr.aria-pressed]="selectedDate() === day.date" (click)="selectDate(day.date)"><small>{{ day.label }}</small><strong>{{ day.dayNumber }}</strong></button>
+        <button type="button" [class.active]="selectedDate() === day.date" [attr.aria-pressed]="selectedDate() === day.date" (click)="onWeekDateSelected(day.date)"><small>{{ day.label }}</small><strong>{{ day.dayNumber }}</strong></button>
       }
     </div>
   </section>
@@ -28,4 +28,4 @@
     } @else { <p class="empty-students">No {{ tab().toLowerCase() }} available for {{ selectedDate() }}.</p> }
   </section>
 </main>
-<footer><span>Oakridge School</span><span>Learning together since 1987</span></footer>
+<footer><span> School</span><span>Learning together since 1987</span></footer>

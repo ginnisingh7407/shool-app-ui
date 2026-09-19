@@ -3,11 +3,12 @@ import { RouterLink } from '@angular/router';
 
 import { AnnouncementsService } from './announcements.service';
 import { ClassSectionService } from '../class-section/class-section.service';
-import { Announcement, AnnouncementPayload, ClassSectionOption } from '../../common/model/models';
+import { Announcement, ClassSectionOption } from '../../common/model/models';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-teacher-announcements',
-  imports: [RouterLink],
+  imports: [RouterLink, FormsModule],
   templateUrl: './teacher-announcements.component.html'
 })
 export class TeacherAnnouncementsComponent {
@@ -69,18 +70,39 @@ export class TeacherAnnouncementsComponent {
   protected setPublished(event: Event): void { this.published.set((event.target as HTMLInputElement).checked); }
 
   protected edit(announcement: Announcement): void {
-    this.editingId.set(announcement.id); this.title.set(announcement.title); this.message.set(announcement.message);
-    this.className.set(announcement.className); this.section.set(announcement.section); this.published.set(announcement.published);
+    this.editingId.set(announcement.id); 
+    this.title.set(announcement.title); 
+    this.message.set(announcement.content);
+    this.className.set(announcement.classId.toString()); 
+    this.section.set(announcement.sectionName); 
+    this.published.set(announcement.active);
     this.statusMessage.set('');
+    this.activeTab.set('new');
   }
 
   protected cancelEdit(): void { this.editingId.set(null); this.title.set(''); this.message.set(''); this.statusMessage.set(''); }
 
   protected save(): void {
-    if (!this.title().trim() || !this.message().trim()) { this.statusMessage.set('Enter a title and message before saving.'); return; }
-    const payload: AnnouncementPayload = { title: this.title().trim(), message: this.message().trim(), className: this.className(), section: this.section(), published: this.published() };
+    if (!this.title().trim() || !this.message().trim()) {
+      this.statusMessage.set('Enter a title and message before saving.'); return;
+    }
+    const payload: Announcement = {
+      id: this.editingId() ?? null,
+      title: this.title().trim(),
+      content: this.message().trim(),
+      classId: parseInt(this.className()),
+      sectionName: this.section().at(0) === 'All' ? '' : this.section(),
+      postedDate: new Date().toISOString(),
+      expiresDate: '',
+      active: this.published(),
+      createdBy: 0,
+      fileUrl: ''
+    };
     this.isSaving.set(true);
-    const request = this.editingId() === null ? this.announcementsService.create(payload) : this.announcementsService.update(this.editingId()!, payload);
+
+    const request = this.editingId() === null ?
+      this.announcementsService.create(payload)
+      : this.announcementsService.update(this.editingId()!, payload);
     request.subscribe(saved => {
       const wasEditing = this.editingId() !== null;
       this.isSaving.set(false);

@@ -15,7 +15,7 @@
       @if (activeTab() === 'assign') {
         <form class="admin-people-form" (submit)="$event.preventDefault(); saveAssignment()">
           <label>Class
-            <select [value]="selectedClass()" (change)="onClassChange($event)" required>
+            <select [ngModel]="selectedClass()" (ngModelChange)="onClassChange($event)" required>
               <option value="" disabled>Select a class</option>
               @for (option of classOptions(); track option.classId) {
                 <option [value]="option.classId">Class {{ option.classId }}</option>
@@ -24,7 +24,7 @@
           </label>
 
           <label>Section
-            <select [value]="selectedSection()" (change)="onSectionChange($event)" required>
+            <select [ngModel]="selectedSection()" (ngModelChange)="onSectionChange($event)" required>
               <option value="" disabled>Select a section</option>
               @for (section of sectionOptions(); track section.sectionName) {
                 <option [value]="section.sectionName">Section {{ section.sectionName }}</option>
@@ -33,7 +33,7 @@
           </label>
 
           <label>Teacher
-            <select [value]="selectedTeacherId() ?? ''" (change)="onTeacherChange($event)" required>
+            <select [ngModel]="selectedTeacherId()" (ngModelChange)="onTeacherChange($event)" required>
               <option value="" disabled>Select a teacher</option>
               @for (teacher of teachers(); track teacher.id) {
                 <option [value]="teacher.id">{{ teacher.name }} ({{ teacher.employeeId }})</option>

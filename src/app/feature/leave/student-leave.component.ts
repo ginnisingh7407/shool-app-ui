@@ -36,6 +36,6 @@ export class StudentLeaveComponent {
     });
   }
   protected statusLabel(status: LeaveStatus): string { return status.charAt(0) + status.slice(1).toLowerCase(); }
-  private loadHistory(): void { this.leaveService.getMyApplications('1').subscribe(result => this.applications.set(result.data)); }
+  private loadHistory(): void { this.leaveService.getMyApplications().subscribe(result => this.applications.set(result.data)); }
   private today(): string { const date = new Date(); return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`; }
 }

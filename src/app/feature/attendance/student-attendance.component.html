@@ -1,1 +1,38 @@
-<main class="dashboard student-page"><a class="back-link" routerLink="/" queryParamsHandling="preserve">&#8592; Back to workspace</a><section class="student-page-heading"><p class="eyebrow">Student workspace</p><h1>My attendance</h1><p>See your attendance for a selected date range.</p></section><section class="student-directory-controls attendance-student-controls"><label>Class<select [value]="className()" (change)="changeClass($event)">@for (option of classOptions(); track option.classId) { <option [value]="option.classId">Class {{ option.classId }}</option> }</select></label><label>Section<select [value]="section()" (change)="changeSection($event)">@for (option of sectionOptions(); track option.sectionName) { <option [value]="option.sectionName">Section {{ option.sectionName }}</option> }</select></label><label>From date<input type="date" [value]="startDate()" (change)="changeStart($event)" /></label><label>To date<input type="date" [value]="endDate()" (change)="changeEnd($event)" /></label></section><section class="attendance-summary student-attendance-summary"><div class="attendance-stat present-stat"><span class="stat-mark">&#10003;</span><div><strong>{{ presentTotal }}</strong><small>Present</small></div></div><div class="attendance-stat absent-stat"><span class="stat-mark">&#10005;</span><div><strong>{{ absentTotal }}</strong><small>Absent</small></div></div><div class="attendance-stat leave-stat"><span class="stat-mark">L</span><div><strong>{{ leaveTotal }}</strong><small>On leave</small></div></div></section><section class="student-panel attendance-calendar" aria-label="My attendance calendar">@for (month of calendarMonths(); track month.key) { <section class="calendar-month"><h2>{{ month.label }}</h2><div class="calendar-weekdays" aria-hidden="true"><span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span></div><div class="calendar-grid">@for (day of month.days; track $index) { @if (day) { <div class="calendar-day" [class.outside-range]="!day.inRange" [class.day-present]="day.present === true && !day.onLeave" [class.day-absent]="day.present === false && !day.onLeave" [class.day-leave]="day.onLeave"><strong>{{ day.day }}</strong>@if (day.inRange && day.onLeave) { <small>Leave</small> } @else if (day.inRange && day.present !== null) { <small>{{ day.present ? 'Present' : 'Absent' }}</small> }</div> } @else { <span class="calendar-empty"></span> } }</div></section> }</section></main><footer><span>Oakridge School</span><span>Learning together since 1987</span></footer>
+<main class="dashboard student-page"><a class="back-link" routerLink="/" queryParamsHandling="preserve">&#8592; Back to
+        workspace</a>
+    <section class="student-page-heading">
+        <p class="eyebrow">Student workspace</p>
+        <h1>My attendance</h1>
+        <p>See your attendance for a selected date range.</p>
+    </section>
+    <section class="student-directory-controls attendance-student-controls">
+        <label>From date<input type="date" [value]="startDate()" (change)="changeStart($event)" /></label>
+
+        <label>To date<input type="date" [value]="endDate()" (change)="changeEnd($event)" /></label>
+    </section>
+    <section class="attendance-summary student-attendance-summary">
+        <div class="attendance-stat present-stat"><span class="stat-mark">&#10003;</span>
+            <div><strong>{{ presentTotal }}</strong><small>Present</small></div>
+        </div>
+        <div class="attendance-stat absent-stat"><span class="stat-mark">&#10005;</span>
+            <div><strong>{{ absentTotal }}</strong><small>Absent</small></div>
+        </div>
+        <div class="attendance-stat leave-stat"><span class="stat-mark">L</span>
+            <div><strong>{{ leaveTotal }}</strong><small>On leave</small></div>
+        </div>
+    </section>
+    <section class="student-panel attendance-calendar" aria-label="My attendance calendar">@for (month of
+        calendarMonths(); track month.key) { <section class="calendar-month">
+            <h2>{{ month.label }}</h2>
+            <div class="calendar-weekdays" aria-hidden="true">
+                <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+            </div>
+            <div class="calendar-grid">@for (day of month.days; track $index) { @if (day) { <div class="calendar-day"
+                    [class.outside-range]="!day.inRange" [class.day-present]="day.present === true && !day.onLeave"
+                    [class.day-absent]="day.present === false && !day.onLeave" [class.day-leave]="day.onLeave">
+                    <strong>{{ day.day }}</strong>@if (day.inRange && day.onLeave) { <small>Leave</small> } @else if
+                    (day.inRange && day.present !== null) { <small>{{ day.present ? 'Present' : 'Absent' }}</small> }
+                </div> } @else { <span class="calendar-empty"></span> } }</div>
+        </section> }</section>
+</main>
+<footer><span>Oakridge School</span><span>Learning together since 1987</span></footer>

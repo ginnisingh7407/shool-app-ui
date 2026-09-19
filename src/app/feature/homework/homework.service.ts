@@ -55,8 +55,22 @@ export class HomeworkService {
     );
   }
 
-  getStudentWork(studentId: number): Observable<StudentWorkItem[]> {
-    return this.http.get<StudentWorkItem[]>(homeworkApiUrl(`/student-work?studentId=${studentId}`)).pipe(
+  getMyHomeWork(classId: string, sectionName: string, date: string): Observable<StudentWorkItem[]> {
+    return this.http.get<HomeworkApiResponse>(homeworkApiUrl(`/class/${classId}/section/${encodeURIComponent(sectionName)}/date/${date}`)).pipe(
+      map(response => {
+        const records = response?.data ?? [];
+        return records
+          .filter(record => !date || record.dueDate === date)
+          .map(record => ({
+            id: record.id,
+            type: record.workType,
+            date: record.dueDate,
+            title: record.title,
+            description: record.description,
+            fileName: record.files?.[0]?.fileName ?? 'Attachment',
+            fileUrl: record.files?.[0]?.downloadUrl ?? record.fileUrl ?? ''
+          }));
+      }),
       catchError(() => of(FALLBACK_STUDENT_WORK.map(work => ({ ...work }))))
     );
   }

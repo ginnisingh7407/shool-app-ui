@@ -7,12 +7,13 @@ import { PeopleService } from '../people/people.service';
 import { ClassSectionOption, HomeworkRecord, Student } from '../../common/model/models';
 import { ProfileService } from '../profile/profile.service';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { FormsModule } from '@angular/forms';
 
 type HomeworkTab = 'new' | 'list';
 
 @Component({
   selector: 'app-teacher-homework',
-  imports: [RouterLink],
+  imports: [RouterLink, FormsModule],
   templateUrl: './teacher-homework.component.html',
   styleUrl: './teacher-homework.component.css'
 })

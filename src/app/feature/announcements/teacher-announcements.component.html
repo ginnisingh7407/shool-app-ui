@@ -26,10 +26,10 @@
       <div class="announcement-form">
         <label>Title<input type="text" [value]="title()" (input)="onTextChange($event, 'title')"
             placeholder="e.g. Parent meeting this Friday" /></label>
-        <label>Class<select [value]="className()" (change)="onSelectChange($event, 'className')">@for (option of
+        <label>Class<select [ngModel]="className()" (ngModelChange)="onSelectChange($event, 'className')">@for (option of
             classOptions(); track option.classId) { <option [value]="option.classId">Class {{ option.classId }}
             </option> }</select></label>
-        <label>Section<select [value]="section()" (change)="onSelectChange($event, 'section')">@for (option of
+        <label>Section<select [ngModel]="section()" (ngModelChange)="onSelectChange($event, 'section')">@for (option of
             sectionOptions(); track option) { <option [value]="option.sectionName">Section {{ option.sectionName
               }}</option> }</select></label>
         <label class="full-width">Message<textarea rows="6" [value]="message()"
@@ -59,12 +59,12 @@
         <div class="announcement-item">
           <div class="announcement-item-heading">
             <div>
-              <h3>{{ announcement.title }}</h3><small>{{ announcement.date }} · {{ announcement.className }} · {{
-                announcement.section === 'All' ? 'All sections' : 'Section ' + announcement.section }}</small>
+              <h3>{{ announcement.title }}</h3><small>{{ announcement.postedDate }} · {{ announcement.classId }} · {{
+                announcement.sectionName === 'All' ? 'All sections' : 'Section ' + announcement.sectionName }}</small>
             </div><button type="button" class="edit-link" (click)="edit(announcement)">Edit</button>
           </div>
-          <p>{{ announcement.message }}</p><span class="announcement-status"
-            [class.unpublished]="!announcement.published">{{ announcement.published ? 'Published' : 'Draft' }}</span>
+          <p>{{ announcement.content }}</p><span class="announcement-status"
+            [class.unpublished]="!announcement.active">{{ announcement.active ? 'Published' : 'Draft' }}</span>
         </div>
         }
       </div>

@@ -1,30 +1,189 @@
-.admin-fees-page { max-width: 900px; }
-.admin-fees-panel { padding-bottom: 30px; }
-.fee-tabs { display: flex; gap: 4px; margin-top: 27px; padding: 4px; border-radius: 4px; background: #e8e9df; }
-.fee-tabs button { flex: 1; padding: 10px 12px; border: 0; border-radius: 3px; color: #718081; background: transparent; font: 600 11px 'Trebuchet MS', sans-serif; cursor: pointer; }
-.fee-tabs button.active { color: #fff; background: #2e8581; }
-.fee-management-section { margin-top: 27px; padding-top: 22px; border-top: 1px solid #edf0e9; }
-.fee-section-heading { display: flex; align-items: end; justify-content: space-between; gap: 18px; margin-bottom: 17px; }
-.fee-section-heading h2 { margin: 0; font: 400 24px Georgia, serif; }
-.fee-section-heading label { display: flex; flex-direction: column; gap: 7px; color: #829191; font: 700 10px 'Trebuchet MS', sans-serif; text-transform: uppercase; }
-.fee-section-heading select, .fee-types-form input { min-height: 36px; padding: 0 9px; border: 1px solid #d9e0d8; border-radius: 3px; color: #17383b; background: #fbfcf8; font: 12px 'Trebuchet MS', sans-serif; }
-.fee-total-card { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; padding: 18px; border-radius: 4px; color: #fff; background: #2e8581; }
-.fee-total-card span { font: 600 12px 'Trebuchet MS', sans-serif; }
-.fee-total-card strong { font: 400 27px Georgia, serif; }
-.fee-types-form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 13px; margin-bottom: 17px; }
-.fee-types-form label { display: flex; flex-direction: column; gap: 7px; color: #829191; font: 700 10px 'Trebuchet MS', sans-serif; text-transform: uppercase; }
-.pending-count { color: #829191; font: 12px 'Trebuchet MS', sans-serif; }
-.pending-fees-list { display: grid; gap: 9px; }
-.pending-fee-card { display: flex; align-items: center; justify-content: space-between; gap: 15px; padding: 15px; border: 1px solid #e4e5d9; border-radius: 4px; background: #fbfcf8; }
-.pending-fee-card > div:first-child { display: flex; min-width: 0; flex-direction: column; gap: 6px; }
-.pending-fee-card strong { color: #17383b; font: 600 13px 'Trebuchet MS', sans-serif; }
-.pending-fee-card small { color: #829191; font: 11px 'Trebuchet MS', sans-serif; }
-.pending-fee-action { display: flex; align-items: end; flex-direction: column; gap: 8px; }
-.whatsapp-button { padding: 8px 10px; border: 0; border-radius: 3px; color: #fff; background: #2e8581; font: 600 10px 'Trebuchet MS', sans-serif; cursor: pointer; }
-.empty-fees, .fee-status { color: #527174; font: 12px 'Trebuchet MS', sans-serif; }
-.fee-status { margin: 17px 0 0; color: #2e8581; }
+.admin-fees-page {
+  max-width: 900px;
+}
+
+.admin-fees-panel {
+  padding-bottom: 30px;
+}
+
+.fee-tabs {
+  display: flex;
+  gap: 4px;
+  margin-top: 27px;
+  padding: 4px;
+  border-radius: 4px;
+  background: #e8e9df;
+}
+
+.fee-tabs button {
+  flex: 1;
+  padding: 10px 12px;
+  border: 0;
+  border-radius: 3px;
+  color: #718081;
+  background: transparent;
+  font: 600 11px 'Trebuchet MS', sans-serif;
+  cursor: pointer;
+}
+
+.fee-tabs button.active {
+  color: #fff;
+  background: #2e8581;
+}
+
+.fee-management-section {
+  margin-top: 27px;
+  padding-top: 22px;
+  border-top: 1px solid #edf0e9;
+}
+
+.fee-section-heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 17px;
+}
+
+.fee-section-heading h2 {
+  margin: 0;
+  font: 400 24px Georgia, serif;
+}
+
+.fee-section-heading label {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  color: #829191;
+  font: 700 10px 'Trebuchet MS', sans-serif;
+  text-transform: uppercase;
+}
+
+.fee-section-heading select,
+.fee-types-form input {
+  min-height: 36px;
+  padding: 0 9px;
+  border: 1px solid #d9e0d8;
+  border-radius: 3px;
+  color: #17383b;
+  background: #fbfcf8;
+  font: 12px 'Trebuchet MS', sans-serif;
+}
+
+.fee-total-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  padding: 18px;
+  border-radius: 4px;
+  color: #fff;
+  background: #2e8581;
+}
+
+.fee-total-card span {
+  font: 600 12px 'Trebuchet MS', sans-serif;
+}
+
+.fee-total-card strong {
+  font: 400 27px Georgia, serif;
+}
+
+.fee-types-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 13px;
+  margin-bottom: 17px;
+}
+
+.fee-types-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  color: #829191;
+  font: 700 10px 'Trebuchet MS', sans-serif;
+  text-transform: uppercase;
+}
+
+.pending-count {
+  color: #829191;
+  font: 12px 'Trebuchet MS', sans-serif;
+}
+
+.pending-fees-list {
+  display: grid;
+  gap: 9px;
+}
+
+.pending-fee-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  padding: 15px;
+  border: 1px solid #e4e5d9;
+  border-radius: 4px;
+  background: #fbfcf8;
+}
+
+.pending-fee-card>div:first-child {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.pending-fee-card strong {
+  color: #17383b;
+  font: 600 13px 'Trebuchet MS', sans-serif;
+}
+
+.pending-fee-card small {
+  color: #829191;
+  font: 11px 'Trebuchet MS', sans-serif;
+}
+
+.pending-fee-action {
+  display: flex;
+  align-items: end;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.whatsapp-button {
+  padding: 8px 10px;
+  border: 0;
+  border-radius: 3px;
+  color: #fff;
+  background: #2e8581;
+  font: 600 10px 'Trebuchet MS', sans-serif;
+  cursor: pointer;
+}
+
+.empty-fees,
+.fee-status {
+  color: #527174;
+  font: 12px 'Trebuchet MS', sans-serif;
+}
+
+.fee-status {
+  margin: 17px 0 0;
+  color: #2e8581;
+}
+
 @media (max-width: 520px) {
-  .fee-section-heading, .pending-fee-card { align-items: stretch; flex-direction: column; }
-  .pending-fee-action { align-items: start; }
-  .fee-types-form { grid-template-columns: 1fr; }
+
+  .fee-section-heading,
+  .pending-fee-card {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .pending-fee-action {
+    align-items: start;
+  }
+
+  .fee-types-form {
+    grid-template-columns: 1fr;
+  }
 }

@@ -219,6 +219,7 @@ export interface ProfileSummary {
   name: string;
   username: string;
   className: string;
+  sectionName?: string;
   email: string;
   mobile: string;
   role: string;
@@ -231,6 +232,7 @@ export interface ProfilePayload {
   name?: string;
   username?: string;
   className?: string;
+  sectionName?: string;
   email?: string;
   mobile?: string;
   phone?: string;
@@ -291,24 +293,19 @@ export interface ProfileResponse extends ProfilePayload {
   data?: ProfilePayload;
 }
 
+
 export interface Announcement {
-  id: number;
+  id: number | null;
+  createdBy: number;
   title: string;
-  message: string;
-  date: string;
-  className: string;
-  section: string;
-  published: boolean;
+  content: string;
+  fileUrl: string;
+  classId: number;
+  sectionName: string;
+  postedDate: string; // or Date
+  expiresDate: string; // or Date
+  active: boolean;
 }
-
-export interface AnnouncementPayload {
-  title: string;
-  message: string;
-  className: string;
-  section: string;
-  published: boolean;
-}
-
 
 export interface SchoolEvent {
   id?: number;
@@ -406,7 +403,7 @@ export interface Homework {
   fileUrl?: string;
   dueDate: string;
   files: File[] | null;
-   // ISO date format (yyyy-MM-dd)
+  // ISO date format (yyyy-MM-dd)
   workType: "CLASSWORK" | "HOMEWORK"; // extend with other types if needed
 }
 export interface StudentWorkItem { id: number; type: 'CLASSWORK' | 'HOMEWORK'; date: string; title: string; description: string; fileName: string; fileUrl: string; }

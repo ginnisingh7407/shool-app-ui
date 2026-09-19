@@ -20,7 +20,7 @@ export class LeaveService {
     );
   }
 
-    getApplicationsByDate(date: string): Observable<{ data: LeaveApplication[] }> {
+  getApplicationsByDate(date: string): Observable<{ data: LeaveApplication[] }> {
     return this.http.get<{ data: LeaveApplication[] }>(leaveApiUrl(`/date/${date}`)).pipe(
       catchError(() => of({ data: [] }))
     );
@@ -44,8 +44,8 @@ export class LeaveService {
     );
   }
 
-  getMyApplications(admissionNumber: string): Observable<{ data: StudentLeaveApplication[] }> {
-    return this.http.get<{ data: StudentLeaveApplication[] }>(leaveApiUrl(`/my-applications?admissionNumber=${admissionNumber}`)).pipe(
+  getMyApplications(): Observable<{ data: StudentLeaveApplication[] }> {
+    return this.http.get<{ data: StudentLeaveApplication[] }>(leaveApiUrl(`/self/applications`)).pipe(
       catchError(() => of({ data: [] }))
     );
   }

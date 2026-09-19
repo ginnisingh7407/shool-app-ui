@@ -35,10 +35,12 @@ export class ProfileService {
             email: studentProfile.email,
             mobile: studentProfile.parentPhone,
             phone: studentProfile.parentPhone,
+            className: studentProfile.classId?.toString(),
+            sectionName: studentProfile.sectionName,
             role: 'Student',
           }
           return this.toProfile(profile);
-        }else if (adminProfile) {
+        } else if (adminProfile) {
           const profile: ProfilePayload = {
             id: 0,
             name: 'Admin User',
@@ -49,7 +51,7 @@ export class ProfileService {
             role: 'Admin',
           }
           return this.toProfile(profile);
-        }else {
+        } else {
           throw new Error('Profile data is not available.');
         }
       }),
@@ -73,6 +75,7 @@ export class ProfileService {
       name: profile.name ?? 'Not available',
       username: profile.username ?? 'Not available',
       className: profile.className ?? 'Not available',
+      sectionName: profile.sectionName ?? 'Not available',
       email: profile.email ?? 'Not available',
       mobile: profile.mobile ?? profile.phone ?? 'Not available',
       role: profile.role ?? 'Not available',

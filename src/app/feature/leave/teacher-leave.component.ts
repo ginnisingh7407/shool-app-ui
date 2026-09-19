@@ -5,12 +5,14 @@ import { LeaveService } from './leave.service';
 import { ClassSectionOption, LeaveApplication, LeaveStatus, Student } from '../../common/model/models';
 import { ClassSectionService } from '../class-section/class-section.service';
 import { PeopleService } from '../people/people.service';
+import { FormsModule } from '@angular/forms';
 
 type LeaveTab = 'apply' | 'applied';
 
 @Component({
   selector: 'app-teacher-leave',
-  imports: [RouterLink],
+  imports: [RouterLink, FormsModule],
+
   templateUrl: './teacher-leave.component.html'
 })
 export class TeacherLeaveComponent {

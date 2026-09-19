@@ -6,6 +6,7 @@ import { AttendanceRecord, AttendanceStudent, CalendarDay, CalendarMonth, ClassS
 import { LeaveService } from '../leave/leave.service';
 import { ClassSectionService } from '../class-section/class-section.service';
 import { PeopleService } from '../people/people.service';
+import { FormsModule } from '@angular/forms';
 
 
 type AttendanceMode = 'mark' | 'history';
@@ -13,7 +14,7 @@ type AttendanceMode = 'mark' | 'history';
 
 @Component({
   selector: 'app-teacher-attendance',
-  imports: [RouterLink],
+  imports: [RouterLink, FormsModule],
   templateUrl: './teacher-attendance.component.html'
 })
 export class TeacherAttendanceComponent {
@@ -37,13 +38,13 @@ export class TeacherAttendanceComponent {
   protected readonly saveMessage = signal('');
 
   constructor() {
-    this.loadLeaveApplications();
     this.classSectionService.getAllWithTeacherDefaultSelection().subscribe(({ classOptions, defaultSelection }) => {
       this.classOptions.set(classOptions);
       const resolved = this.classSectionService.resolveDefaultClassSection(classOptions, defaultSelection);
       this.selectedClass.set(resolved.classId);
       this.selectedSection.set(resolved.sectionName);
       this.loadStudents();
+      this.loadLeaveApplications();
     });
   }
 
