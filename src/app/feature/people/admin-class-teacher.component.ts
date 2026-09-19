@@ -39,19 +39,20 @@ export class AdminClassTeacherComponent {
     this.activeTab.set(tab);
   }
 
-  protected onClassChange(event: Event): void {
-    const classId = (event.target as HTMLSelectElement).value;
-    this.selectedClass.set(classId);
-    this.selectedSection.set(this.classOptions().find(option => option.classId === classId)?.sections[0]?.sectionName ?? '');
+  protected onClassChange(classId: string | number): void {
+    const nextClassId = String(classId ?? '');
+    this.selectedClass.set(nextClassId);
+    const nextSection = this.classOptions().find(option => option.classId === nextClassId)?.sections[0]?.sectionName ?? '';
+    this.selectedSection.set(nextSection);
   }
 
-  protected onSectionChange(event: Event): void {
-    this.selectedSection.set((event.target as HTMLSelectElement).value);
+  protected onSectionChange(sectionName: string | number): void {
+    this.selectedSection.set(String(sectionName ?? ''));
   }
 
-  protected onTeacherChange(event: Event): void {
-    const value = Number((event.target as HTMLSelectElement).value);
-    this.selectedTeacherId.set(Number.isFinite(value) ? value : null);
+  protected onTeacherChange(value: string | number): void {
+    const teacherId = Number(value);
+    this.selectedTeacherId.set(Number.isFinite(teacherId) ? teacherId : null);
   }
 
   protected saveAssignment(): void {
@@ -110,12 +111,11 @@ export class AdminClassTeacherComponent {
   private loadClasses(): void {
     this.classSectionService.getAll().subscribe(options => {
       this.classOptions.set(options);
-      if (!this.selectedClass()) {
-        this.selectedClass.set(options[0]?.classId ?? '');
-      }
-      if (!this.selectedSection()) {
-        this.selectedSection.set(this.classOptions().find(option => option.classId === this.selectedClass())?.sections[0]?.sectionName ?? '');
-      }
+      const nextClass = this.selectedClass() || options[0]?.classId || '';
+      const classOption = options.find(option => option.classId === nextClass) ?? options[0];
+
+      this.selectedClass.set(classOption?.classId ?? '');
+      this.selectedSection.set(classOption?.sections[0]?.sectionName ?? '');
     });
   }
 
