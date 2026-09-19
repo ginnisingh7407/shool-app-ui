@@ -1,31 +1,83 @@
 <main class="dashboard student-page">
   <a class="back-link" routerLink="/" queryParamsHandling="preserve">&#8592; Back to workspace</a>
-  <section class="student-page-heading"><p class="eyebrow">Student workspace</p><h1>My work</h1><p>Review your classwork and homework with the attached resources.</p></section>
+  <section class="student-page-heading">
+    <p class="eyebrow">Student workspace</p>
+    <h1>My work</h1>
+    <p>Review your classwork and homework with the attached resources.</p>
+  </section>
   <section class="homework-week" aria-label="Select a homework date">
     <div class="homework-week-heading">
-      <div class="homework-week-title"><p class="eyebrow">{{ weekHeading() }}</p><h2>Choose a day</h2></div>
+      <div class="homework-week-title">
+        <p class="eyebrow">{{ weekHeading() }}</p>
+        <h2>Choose a day</h2>
+      </div>
       <div class="week-nav-controls" aria-label="Homework week navigation">
-        <button type="button" class="week-nav-button" (click)="previousWeek()" aria-label="View previous week">&#8592; Prev</button>
+        <button type="button" class="week-nav-button" (click)="previousWeek()" aria-label="View previous week">&#8592;
+          Prev</button>
         <span>{{ weekRange() }}</span>
-        <button type="button" class="week-nav-button" (click)="nextWeek()" aria-label="View next week">Next &#8594;</button>
+        <button type="button" class="week-nav-button" (click)="nextWeek()" aria-label="View next week">Next
+          &#8594;</button>
       </div>
     </div>
     <div class="homework-week-grid">
       @for (day of weekDays(); track day.date) {
-        <button type="button" [class.active]="selectedDate() === day.date" [attr.aria-pressed]="selectedDate() === day.date" (click)="onWeekDateSelected(day.date)"><small>{{ day.label }}</small><strong>{{ day.dayNumber }}</strong></button>
+      <button type="button" [class.active]="selectedDate() === day.date"
+        [attr.aria-pressed]="selectedDate() === day.date" (click)="onWeekDateSelected(day.date)"><small>{{ day.label
+          }}</small><strong>{{ day.dayNumber }}</strong></button>
       }
     </div>
   </section>
   <div class="leave-tabs student-tabs homework-tabs" role="tablist" aria-label="Student work sections">
-    <button type="button" role="tab" [class.active]="tab() === 'CLASSWORK'" [attr.aria-selected]="tab() === 'CLASSWORK'" (click)="selectTab('CLASSWORK')">Classwork <span>{{ work().filter(item => item.type === 'CLASSWORK').length }}</span></button>
-    <button type="button" role="tab" [class.active]="tab() === 'HOMEWORK'" [attr.aria-selected]="tab() === 'HOMEWORK'" (click)="selectTab('HOMEWORK')">Homework <span>{{ work().filter(item => item.type === 'HOMEWORK').length }}</span></button>
+    <button type="button" role="tab" [class.active]="tab() === 'CLASSWORK'" [attr.aria-selected]="tab() === 'CLASSWORK'"
+      (click)="selectTab('CLASSWORK')">Classwork <span>{{ this.groupedAssignments().at(0)?.classwork?.length || 0
+        }}</span>
+    </button>
+    <button type="button" role="tab" [class.active]="tab() === 'HOMEWORK'" [attr.aria-selected]="tab() === 'HOMEWORK'"
+      (click)="selectTab('HOMEWORK')">Homework <span>{{ this.groupedAssignments().at(0)?.homework?.length || 0
+        }}</span></button>
   </div>
   <section class="student-work-list" aria-live="polite">
     @if (filteredWork().length) {
-      @for (item of filteredWork(); track item.id) {
-        <article class="student-work-card"><div class="student-work-date">{{ item.date }}</div><div class="student-work-content"><h2>{{ item.title }}</h2><p>{{ item.description }}</p><a class="work-attachment" [href]="item.fileUrl" target="_blank" rel="noopener">&#128206; {{ item.fileName }}</a></div></article>
-      }
+    <div class="student-work-content">
+      <div class="homework-assignment-list">
+        @for (assignment of filteredWork(); track assignment.id) {
+        <article class="homework-assignment-item">
+          <div class="homework-assignment-header">
+            <div class="homework-assignment-main">
+              <strong>{{ assignment.title }}</strong>
+            </div>
+            <span class="homework-assignment-badge">{{ assignment.workType }}</span>
+          </div>
+          @if (assignment.description) {
+          <p class="homework-assignment-description">{{ assignment.description }}</p>
+          }
+          <div class="homework-assignment-files">
+            @if (assignment.files?.length) {
+            <span class="homework-files-label">Files ({{ assignment.files.length }})</span>
+            <div class="homework-file-links">
+              @for (file of assignment.files; track file.id) {
+              @if (file.downloadUrl) {
+              <button type="button" class="homework-file-button" (click)="downloadAttachment(file)">{{ file.fileName
+                }}</button>
+              } @else {
+              <span>{{ file.fileName }}</span>
+              }
+              }
+            </div>
+            } @else {
+            <span class="homework-files-label no-files">No files attached</span>
+            }
+          </div>
+        </article>
+        }
+      </div>
+    </div>
     } @else { <p class="empty-students">No {{ tab().toLowerCase() }} available for {{ selectedDate() }}.</p> }
   </section>
+
+
+
+
+
 </main>
 <footer><span> School</span><span>Learning together since 1987</span></footer>

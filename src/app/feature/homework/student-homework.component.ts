@@ -2,7 +2,7 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 import { HomeworkService } from './homework.service';
-import { StudentWorkItem } from '../../common/model/models';
+import { HomeworkRecord, StudentWorkItem } from '../../common/model/models';
 import { ProfileService } from '../profile/profile.service';
 import { ProfileApiResponse, ProfilePayload, ProfileSummary } from '../../common/model/models';
 
@@ -11,7 +11,9 @@ interface WeekDay { date: string; label: string; dayNumber: number; }
 @Component({
   selector: 'app-student-homework',
   imports: [RouterLink],
-  templateUrl: './student-homework.component.html'
+  templateUrl: './student-homework.component.html',
+  styleUrl: './teacher-homework.component.css'
+
 })
 export class StudentHomeworkComponent {
   private readonly homeworkService = inject(HomeworkService);
@@ -24,6 +26,31 @@ export class StudentHomeworkComponent {
   protected readonly weekDays = computed(() => this.buildWeek(this.selectedDate()));
   protected readonly weekHeading = computed(() => this.getWeekHeading(this.selectedDate()));
   protected readonly weekRange = computed(() => this.getWeekRange(this.selectedDate()));
+
+  protected readonly assignments = signal<HomeworkRecord[]>([]);
+
+  protected readonly groupedAssignments = computed(() => {
+    const groups = new Map<string, { homework: HomeworkRecord[]; classwork: HomeworkRecord[] }>();
+
+    this.assignments().forEach(assignment => {
+      const date = assignment.dueDate || 'Unknown date';
+      const bucket = groups.get(date) ?? { homework: [], classwork: [] };
+
+      if (assignment.workType === 'HOMEWORK') {
+        bucket.homework.push(assignment);
+      } else {
+        bucket.classwork.push(assignment);
+      }
+
+      groups.set(date, bucket);
+    });
+
+    return Array.from(groups.entries()).map(([date, value]) => ({
+      date,
+      homework: [...value.homework].sort((a, b) => a.title.localeCompare(b.title)),
+      classwork: [...value.classwork].sort((a, b) => a.title.localeCompare(b.title))
+    })).sort((a, b) => b.date.localeCompare(a.date));
+  });
 
   constructor() {
     this.profileService.getProfile().subscribe(profile => {
@@ -47,7 +74,7 @@ export class StudentHomeworkComponent {
       return;
     }
 
-    this.homeworkService.getMyHomeWork(classId, sectionName, date).subscribe(work => this.work.set(work));
+    this.homeworkService.getMyHomeWork(classId, sectionName, date).subscribe(work => this.assignments.set(work));
   }
 
   protected selectTab(tab: 'CLASSWORK' | 'HOMEWORK'): void {
@@ -72,8 +99,14 @@ export class StudentHomeworkComponent {
     this.onWeekDateSelected(nextDate);
   }
 
-  protected filteredWork(): StudentWorkItem[] {
-    return this.work().filter(item => item.type === this.tab() && item.date === this.selectedDate());
+  protected filteredWork(): HomeworkRecord[] {
+
+    if (this.tab() === 'CLASSWORK') {
+      return this.groupedAssignments().at(0)?.classwork.sort((a, b) => a.title.localeCompare(b.title)) ?? [];
+    } else if (this.tab() === 'HOMEWORK') {
+      return this.groupedAssignments().at(0)?.homework.sort((a, b) => a.title.localeCompare(b.title)) ?? [];
+    }
+    return [];
   }
 
   private buildWeek(selectedDate: string): WeekDay[] {
@@ -125,5 +158,13 @@ export class StudentHomeworkComponent {
 
   private toDateString(date: Date): string {
     return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+  }
+
+  protected downloadAttachment(file: { fileName: string; downloadUrl?: string }): void {
+    if (!file.downloadUrl) {
+      return;
+    }
+
+    this.homeworkService.downloadFile(file.downloadUrl, file.fileName).subscribe();
   }
 }
