@@ -37,17 +37,21 @@ export class TeacherAttendanceComponent {
   protected readonly saveMessage = signal('');
 
   constructor() {
-    this.leaveService.getApplications().subscribe(result => {
-      this.leaveApplications.set(result.data);
-      this.applyLeaveToStudents();
-      if (this.selectedStudentId() !== null) this.loadHistory();
-    });
+    this.loadLeaveApplications();
     this.classSectionService.getAllWithTeacherDefaultSelection().subscribe(({ classOptions, defaultSelection }) => {
       this.classOptions.set(classOptions);
       const resolved = this.classSectionService.resolveDefaultClassSection(classOptions, defaultSelection);
       this.selectedClass.set(resolved.classId);
       this.selectedSection.set(resolved.sectionName);
       this.loadStudents();
+    });
+  }
+
+  private loadLeaveApplications(): void {
+    this.leaveService.getAllCurrentYearApplications().subscribe(result => {
+      this.leaveApplications.set(result.data);
+      this.applyLeaveToStudents();
+      if (this.selectedStudentId() !== null) this.loadHistory();
     });
   }
 
@@ -96,6 +100,7 @@ export class TeacherAttendanceComponent {
   protected onStartDateChange(event: Event): void {
     this.selectedStartDate.set((event.target as HTMLInputElement).value);
     if (this.selectedStartDate() > this.selectedEndDate()) this.selectedEndDate.set(this.selectedStartDate());
+    this.loadLeaveApplications();
     this.mode() === 'mark' ? this.loadStudents() : this.loadHistory();
   }
 
@@ -175,15 +180,13 @@ export class TeacherAttendanceComponent {
   }
 
   private loadHistory(): void {
-
-
     const studentId = this.selectedStudentId();
     if (studentId === null) {
       this.history.set([]);
       return;
     }
-    
     const admissionNumber = this.students().find(student => student.id === this.selectedStudentId())?.admissionNumber;
+
     this.attendanceService.getStudentHistory(
       this.selectedClass(), this.selectedSection(), admissionNumber!, this.selectedStartDate(), this.selectedEndDate()
     ).subscribe(history => this.history.set(this.applyLeaveToHistory(history, admissionNumber!)));
@@ -199,16 +202,40 @@ export class TeacherAttendanceComponent {
   }
 
   private applyLeaveToHistory(history: AttendanceRecord[], admissionNumber: number): AttendanceRecord[] {
-    return history.map(record => ({
+
+    let startDate = this.selectedStartDate();//yyyy-mm-dd
+    const endDate = this.selectedEndDate();// yyyy-mm-dd
+
+    const leaveHistory = this.leaveApplications().filter(application =>
+      application.admissionNumber === admissionNumber && application.status === 'APPROVED' &&
+      application.fromDate <= endDate && application.toDate >= startDate
+    );
+
+    const result = history.map(record => ({
       ...record,
-      onLeave: this.isLeaveDate(admissionNumber, record.date),
-      present: this.isLeaveDate(admissionNumber, record.date) ? false : record.present
+      onLeave: this.isLeaveDate(admissionNumber, record.date, true),
+      present: this.isLeaveDate(admissionNumber, record.date, true) ? false : record.present
     }));
+
+    while (startDate <= endDate) {
+      const date = startDate;
+      if (!result.some(record => record.date === date)) {
+        result.push({
+          date,
+          present: false,
+          onLeave: this.isLeaveDate(admissionNumber, date, true)
+        });
+      }
+      const nextDate = new Date(startDate);
+      nextDate.setDate(nextDate.getDate() + 1);
+      startDate = nextDate.toISOString().split('T')[0];
+    }
+    return result;
   }
 
-  private isLeaveDate(admissionNumber: number, date: string): boolean {
+  private isLeaveDate(admissionNumber: number, date: string, onlyApproved: boolean = false): boolean {
     return this.leaveApplications().some(application =>
-      application.admissionNumber === admissionNumber && application.status !== 'REJECTED' &&
+      application.admissionNumber === admissionNumber && (!onlyApproved || application.status === 'APPROVED') &&
       application.fromDate <= date && application.toDate >= date
     );
   }

@@ -20,6 +20,12 @@ export class LeaveService {
     );
   }
 
+    getApplicationsByDate(date: string): Observable<{ data: LeaveApplication[] }> {
+    return this.http.get<{ data: LeaveApplication[] }>(leaveApiUrl(`/date/${date}`)).pipe(
+      catchError(() => of({ data: [] }))
+    );
+  }
+
   getAllCurrentYearApplications(): Observable<{ data: LeaveApplication[] }> {
     return this.http.get<{ data: LeaveApplication[] }>(leaveApiUrl('/year/all')).pipe(
       catchError(() => of({ data: [] }))
