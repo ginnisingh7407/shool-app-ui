@@ -166,12 +166,13 @@ export class StudentAttendanceComponent {
 
 
 
-  private applyHistoryDateRange(result: AttendanceRecord[],): void {
+  private applyHistoryDateRange(result: AttendanceRecord[]): void {
+    const start = new Date(`${this.startDate()}T00:00:00`);
+    const end = new Date(`${this.endDate()}T00:00:00`);
+    const cursor = new Date(start);
 
-    let startDate = this.startDate();
-    const endDate = this.endDate();
-    while (startDate <= endDate) {
-      const date = startDate;
+    while (cursor <= end) {
+      const date = this.formatLocalDate(cursor);
       if (!result.some(record => record.date === date)) {
         result.push({
           date,
@@ -179,9 +180,7 @@ export class StudentAttendanceComponent {
           onLeave: this.isLeaveDate(date)
         });
       }
-      const nextDate = new Date(startDate);
-      nextDate.setDate(nextDate.getDate() + 1);
-      startDate = nextDate.toISOString().split('T')[0];
+      cursor.setDate(cursor.getDate() + 1);
     }
   }
 }
