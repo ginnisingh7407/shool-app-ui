@@ -54,8 +54,8 @@ export class AdminFeesComponent {
     });
   }
 
-  protected selectClass(event: Event): void {
-    this.selectedClass.set((event.target as HTMLSelectElement).value);
+  protected selectClass(value: string | number): void {
+    this.selectedClass.set(String(value ?? ''));
     this.statusMessage = '';
   }
 

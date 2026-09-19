@@ -7,67 +7,76 @@
     <section class="admin-people-tools" aria-labelledby="admin-students-title">
       <h2 id="admin-students-title">Student records</h2>
       <div class="admin-data-tabs" role="tablist" aria-label="Student management actions">
-        <button type="button" role="tab" [attr.aria-selected]="activeTab === 'add'" [class.active]="activeTab === 'add'" (click)="activeTab = 'add'">{{ editingStudentId === null ? 'Add new' : 'Update' }}</button>
-        <button type="button" role="tab" [attr.aria-selected]="activeTab === 'manage'" [class.active]="activeTab === 'manage'" (click)="showManage()">Manage</button>
+        <button type="button" role="tab" [attr.aria-selected]="activeTab === 'add'" [class.active]="activeTab === 'add'"
+          (click)="activeTab = 'add'">{{ editingStudentId === null ? 'Add new' : 'Update' }}</button>
+        <button type="button" role="tab" [attr.aria-selected]="activeTab === 'manage'"
+          [class.active]="activeTab === 'manage'" (click)="showManage()">Manage</button>
       </div>
       @if (activeTab === 'add') {
-        <form class="admin-people-form" (submit)="$event.preventDefault(); save()">
-          @for (field of fields; track field) {
-            <label>{{ labelFor(field) }}
-              @if (field === 'className') {
-                <select [value]="form[field] ?? ''" (change)="updateField(field, $event)" required>
-                  <option value="" disabled>Select a class</option>
-                  @for (option of classOptions(); track option.classId) { <option [value]="option.classId">Class {{ option.classId }}</option> }
-                </select>
-              } @else if (field === 'section') {
-                <select [value]="form[field] ?? ''" (change)="updateField(field, $event)" required>
-                  <option value="" disabled>Select a section</option>
-                  @for (option of sectionOptions(); track option.sectionName) { <option [value]="option.sectionName">Section {{ option.sectionName }}</option> }
-                </select>
-              } @else {
-                <input [type]="field === 'email' ? 'email' : field === 'dob' ? 'date' : 'text'" [value]="form[field] ?? ''" (input)="updateField(field, $event)" required>
-              }
-            </label>
+      <form class="admin-people-form" (submit)="$event.preventDefault(); save()">
+        @for (field of fields; track field) {
+        <label>{{ labelFor(field) }}
+          @if (field === 'className') {
+          <select [value]="form[field] ?? ''" (change)="updateField(field, $event)" required>
+            <option value="" disabled>Select a class</option>
+            @for (option of classOptions(); track option.classId) { <option [value]="option.classId">Class {{
+              option.classId }}</option> }
+          </select>
+          } @else if (field === 'section') {
+          <select [value]="form[field] ?? ''" (change)="updateField(field, $event)" required>
+            <option value="" disabled>Select a section</option>
+            @for (option of sectionOptions(); track option.sectionName) { <option [value]="option.sectionName">Section
+              {{ option.sectionName }}</option> }
+          </select>
+          } @else {
+          <input [type]="field === 'email' ? 'email' : field === 'dob' ? 'date' : 'text'" [value]="form[field] ?? ''"
+            (input)="updateField(field, $event)" required>
           }
-          <button class="save-attendance" type="submit">{{ editingStudentId === null ? 'Add student' : 'Update student' }}</button>
-        </form>
-      } @else {
-        <div class="admin-manage-controls" aria-label="Student filters">
-          <label>Class
-            <select [value]="selectedClassId()" (change)="onManageClassChange($event)">
-              @for (option of classOptions(); track option.classId) { <option [value]="option.classId">Class {{ option.classId }}</option> }
-            </select>
-          </label>
-          <label>Section
-            <select [value]="selectedSection()" (change)="onManageSectionChange($event)">
-              @for (option of sectionOptions(); track option.sectionName) { <option [value]="option.sectionName">Section {{ option.sectionName }}</option> }
-            </select>
-          </label>
-        </div>
-        @if (loadingStudents()) {
-          <div class="admin-manage-placeholder" role="status">Loading students...</div>
-        } @else if (students().length) {
-          <div class="admin-student-list" aria-label="Students in selected class and section">
-            @for (student of students(); track student.id) {
-              <article class="admin-student-card">
-                <div>
-                  <strong>{{ student.name }}</strong>
-                  <span>{{ student.gender }} · Roll no {{ student.rollNumber }} · Admission no {{ student.admissionNumber }}</span>
-                </div>
-                <div>
-                  <span>{{ student.email }}</span>
-                  <span>{{ student.parentPhone }}</span>
-                  <button type="button" class="edit-link" (click)="editStudent(student)">Edit</button>
-                </div>
-              </article>
-            }
-          </div>
-        } @else {
-          <div class="admin-manage-placeholder" role="status">
-            <strong>No students found</strong>
-            <span>No students are available for Class {{ selectedClassId() }}, Section {{ selectedSection() }}.</span>
-          </div>
+        </label>
         }
+        <button class="save-attendance" type="submit">{{ editingStudentId === null ? 'Add student' : 'Update student'
+          }}</button>
+      </form>
+      } @else {
+      <div class="admin-manage-controls" aria-label="Student filters">
+        <label>Class
+          <select [value]="selectedClassId()" (change)="onManageClassChange($event)">
+            @for (option of classOptions(); track option.classId) { <option [value]="option.classId">Class {{
+              option.classId }}</option> }
+          </select>
+        </label>
+        <label>Section
+          <select [value]="selectedSection()" (change)="onManageSectionChange($event)">
+            @for (option of sectionOptions(); track option.sectionName) { <option [value]="option.sectionName">Section
+              {{ option.sectionName }}</option> }
+          </select>
+        </label>
+      </div>
+      @if (loadingStudents()) {
+      <div class="admin-manage-placeholder" role="status">Loading students...</div>
+      } @else if (students().length) {
+      <div class="admin-student-list" aria-label="Students in selected class and section">
+        @for (student of students(); track student.admissionNumber) {
+        <article class="admin-student-card">
+          <div>
+            <strong>{{ student.name }}</strong>
+            <span>{{ student.gender }} · Roll no {{ student.rollNumber }} · Admission no {{ student.admissionNumber
+              }}</span>
+          </div>
+          <div>
+            <span>{{ student.email }}</span>
+            <span>{{ student.parentPhone }}</span>
+            <button type="button" class="edit-link" (click)="editStudent(student)">Edit</button>
+          </div>
+        </article>
+        }
+      </div>
+      } @else {
+      <div class="admin-manage-placeholder" role="status">
+        <strong>No students found</strong>
+        <span>No students are available for Class {{ selectedClassId() }}, Section {{ selectedSection() }}.</span>
+      </div>
+      }
       }
       @if (message) { <p class="admin-data-message">{{ message }}</p> }
       @if (error) { <p class="admin-data-error" role="alert">{{ error }}</p> }

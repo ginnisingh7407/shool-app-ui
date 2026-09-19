@@ -6,17 +6,23 @@
     <p>Configure monthly class fees and follow up on pending student payments.</p>
 
     <div class="fee-tabs" role="tablist" aria-label="Fee management sections">
-      <button type="button" role="tab" [attr.aria-selected]="activeTab === 'structure'" [class.active]="activeTab === 'structure'" (click)="selectTab('structure')">Monthly fee structure</button>
-      <button type="button" role="tab" [attr.aria-selected]="activeTab === 'pending'" [class.active]="activeTab === 'pending'" (click)="selectTab('pending')">Pending student fees</button>
+      <button type="button" role="tab" [attr.aria-selected]="activeTab === 'structure'"
+        [class.active]="activeTab === 'structure'" (click)="selectTab('structure')">Monthly fee structure</button>
+      <button type="button" role="tab" [attr.aria-selected]="activeTab === 'pending'"
+        [class.active]="activeTab === 'pending'" (click)="selectTab('pending')">Pending student fees</button>
     </div>
 
     @if (activeTab === 'structure') {
     <section class="fee-management-section" aria-labelledby="class-fees-title" role="tabpanel">
       <div class="fee-section-heading">
-        <div><p class="eyebrow">Class-wise setup</p><h2 id="class-fees-title">Monthly fee structure</h2></div>
+        <div>
+          <p class="eyebrow">Class-wise setup</p>
+          <h2 id="class-fees-title">Monthly fee structure</h2>
+        </div>
         <label>Class
-          <select [ngModel]="selectedClass()" (change)="selectClass($event)">
-            @for (option of classOptions(); track option.classId) { <option [value]="option.classId"> Class {{ option.classId }}</option> }
+          <select name="adminFeesClass" [ngModel]="selectedClass()" (ngModelChange)="selectClass($event)">
+            @for (option of classOptions(); track option.classId) { <option [value]="option.classId"> Class {{
+              option.classId }}</option> }
           </select>
         </label>
       </div>
@@ -26,9 +32,10 @@
       </div>
       <div class="fee-types-form">
         @for (feeType of feeTypes; track feeType.key) {
-          <label>{{ feeType.label }}
-            <input type="number" min="0" step="1" [value]="feeAmounts()[feeType.key]" (input)="updateFee(feeType.key, $event)">
-          </label>
+        <label>{{ feeType.label }}
+          <input type="number" min="0" step="1" [value]="feeAmounts()[feeType.key]"
+            (input)="updateFee(feeType.key, $event)">
+        </label>
         }
       </div>
       <button class="save-attendance" type="button" (click)="saveClassFees()">Save class fee</button>
@@ -38,26 +45,29 @@
     @if (activeTab === 'pending') {
     <section class="fee-management-section" aria-labelledby="pending-fees-title" role="tabpanel">
       <div class="fee-section-heading">
-        <div><p class="eyebrow">Payment follow-up</p><h2 id="pending-fees-title">Pending student fees</h2></div>
+        <div>
+          <p class="eyebrow">Payment follow-up</p>
+          <h2 id="pending-fees-title">Pending student fees</h2>
+        </div>
         <span class="pending-count">{{ pendingFees().length }} students</span>
       </div>
       @if (pendingFees().length) {
-        <div class="pending-fees-list">
-          @for (student of pendingFees(); track student.studentName) {
-            <article class="pending-fee-card">
-              <div>
-                <strong>{{ student.studentName }}</strong>
-                <small>{{ student.className }} · Section {{ student.section }} · {{ student.parentMobile }}</small>
-              </div>
-              <div class="pending-fee-action">
-                <strong>{{ formatCurrency(student.amount) }}</strong>
-                <button class="whatsapp-button" type="button" (click)="notifyParent(student)">Notify on WhatsApp</button>
-              </div>
-            </article>
-          }
-        </div>
+      <div class="pending-fees-list">
+        @for (student of pendingFees(); track student.studentName) {
+        <article class="pending-fee-card">
+          <div>
+            <strong>{{ student.studentName }}</strong>
+            <small>{{ student.className }} · Section {{ student.section }} · {{ student.parentMobile }}</small>
+          </div>
+          <div class="pending-fee-action">
+            <strong>{{ formatCurrency(student.amount) }}</strong>
+            <button class="whatsapp-button" type="button" (click)="notifyParent(student)">Notify on WhatsApp</button>
+          </div>
+        </article>
+        }
+      </div>
       } @else {
-        <p class="empty-fees">No pending student fees are available.</p>
+      <p class="empty-fees">No pending student fees are available.</p>
       }
     </section>
     }

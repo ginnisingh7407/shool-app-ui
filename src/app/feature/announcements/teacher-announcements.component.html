@@ -26,10 +26,12 @@
       <div class="announcement-form">
         <label>Title<input type="text" [value]="title()" (input)="onTextChange($event, 'title')"
             placeholder="e.g. Parent meeting this Friday" /></label>
-        <label>Class<select [ngModel]="className()" (ngModelChange)="onSelectChange($event, 'className')">@for (option of
+        <label>Class<select name="className" [ngModel]="className()"
+            (ngModelChange)="onSelectChange($event, 'className')">@for (option of
             classOptions(); track option.classId) { <option [value]="option.classId">Class {{ option.classId }}
             </option> }</select></label>
-        <label>Section<select [ngModel]="section()" (ngModelChange)="onSelectChange($event, 'section')">@for (option of
+        <label>Section<select name="section" [ngModel]="section()"
+            (ngModelChange)="onSelectChange($event, 'section')">@for (option of
             sectionOptions(); track option) { <option [value]="option.sectionName">Section {{ option.sectionName
               }}</option> }</select></label>
         <label class="full-width">Message<textarea rows="6" [value]="message()"

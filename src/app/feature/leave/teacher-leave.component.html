@@ -25,7 +25,7 @@
     </div>
     <div class="leave-form">
       <label>Class
-        <select [ngModel]="selectedClass()" (ngModelChange)="onClassChange($event)">
+        <select name="teacherLeaveClass" [ngModel]="selectedClass()" (ngModelChange)="onClassChange($event)">
           <option value="">Select a class</option>
           @for (option of classOptions(); track option.classId) {
           <option [value]="option.classId">Class {{ option.classId }}</option>
@@ -33,7 +33,7 @@
         </select>
       </label>
       <label>Section
-        <select [ngModel]="selectedSection()" (ngModelChange)="onSectionChange($event)">
+        <select name="teacherLeaveSection" [ngModel]="selectedSection()" (ngModelChange)="onSectionChange($event)">
           <option value="">Select a section</option>
           @for (section of sectionOptions(); track section.sectionName) {
           <option [value]="section.sectionName">Section {{ section.sectionName }}</option>
@@ -41,13 +41,15 @@
         </select>
       </label>
       <label>Student
-        <select [ngModel]="selectedStudentId()" (ngModelChange)="onStudentChange($event)">
+        <select name="teacherLeaveStudent" [ngModel]="selectedStudentId()" (ngModelChange)="onStudentChange($event)">
           <option value="">Select a student</option>
-          @for (student of students(); track student.admissionNumber) { <option [value]="student.id">{{ student.name }} </option> }
+          @for (student of students(); track student.admissionNumber) { <option [value]="student.admissionNumber">{{
+            student.name }}
+          </option> }
         </select>
       </label>
       <label>Leave type
-        <select [ngModel]="leaveType()" (ngModelChange)="onLeaveTypeChange($event)">
+        <select name="teacherLeaveType" [ngModel]="leaveType()" (ngModelChange)="onLeaveTypeChange($event)">
           <option>Medical</option>
           <option>Personal</option>
           <option>Family</option>
@@ -62,7 +64,8 @@
     <div class="leave-form-footer"><span>Applications start as Pending.</span><button class="apply-leave-button"
         type="button" [disabled]="isSubmitting()" (click)="submitLeave()">{{ isSubmitting() ? 'Applying...' : 'Apply
         leave' }}</button></div>
-    @if (message()) { <p class="leave-message">{{ message() }}</p> }
+    @if (message()) {
+    <p class="leave-message">{{ message() }}</p> }
   </section>
   }
 
@@ -76,7 +79,7 @@
     </div>
     <div class="leave-form" style="display: flex; flex-wrap: wrap; align-items: end; gap: 16px;">
       <label style="flex: 1 1 180px; min-width: 180px;">Class
-        <select [ngModel]="selectedClass()" (ngModelChange)="onClassChange($event)">
+        <select name="teacherLeaveReviewClass" [ngModel]="selectedClass()" (ngModelChange)="onClassChange($event)">
           <option value="">Select a class</option>
           @for (option of classOptions(); track option.classId) {
           <option [value]="option.classId">Class {{ option.classId }}</option>
@@ -84,7 +87,8 @@
         </select>
       </label>
       <label style="flex: 1 1 180px; min-width: 180px;">Section
-        <select [ngModel]="selectedSection()" (ngModelChange)="onSectionChange($event)">
+        <select name="teacherLeaveReviewSection" [ngModel]="selectedSection()"
+          (ngModelChange)="onSectionChange($event)">
           <option value="">Select a section</option>
           @for (section of sectionOptions(); track section.sectionName) {
           <option [value]="section.sectionName">Section {{ section.sectionName }}</option>
@@ -93,7 +97,7 @@
       </label>
       <label style="display: inline-flex; align-items: center; gap: 8px; margin-top: 4px; min-width: 220px;">
         <input type="checkbox" (change)="showAllLeave($event.target.checked)" />
-        <span>Show all leave applications</span>
+        <span>Show applications In All Status</span>
       </label>
     </div>
     @if (applicationsForSelectedClassSection().length) {

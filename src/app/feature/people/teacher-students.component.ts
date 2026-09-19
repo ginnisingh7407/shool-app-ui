@@ -39,15 +39,15 @@ export class TeacherStudentsComponent {
     });
   }
 
-  protected onClassChange(event: Event): void {
-    const className = (event.target as HTMLSelectElement).value;
+  protected onClassChange(value: string | number): void {
+    const className = String(value ?? '');
     this.selectedClass.set(className);
     this.selectedSection.set(this.classOptions().find(option => option.classId === className)?.sections[0]?.sectionName ?? '');
     this.loadStudents();
   }
 
-  protected onSectionChange(event: Event): void {
-    this.selectedSection.set((event.target as HTMLSelectElement).value);
+  protected onSectionChange(value: string | number): void {
+    this.selectedSection.set(String(value ?? ''));
     this.loadStudents();
   }
 

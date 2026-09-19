@@ -83,8 +83,8 @@ export class TeacherHomeworkComponent {
     });
   }
 
-  protected onClassChange(event: Event): void {
-    const className = (event.target as HTMLSelectElement).value;
+  protected onClassChange(value: string | number): void {
+    const className = String(value ?? '');
     this.selectedClass.set(className);
     const firstSection = this.classOptions().find(option => option.classId === className)?.sections[0]?.sectionName ?? '';
     this.selectedSection.set(firstSection);
@@ -92,8 +92,8 @@ export class TeacherHomeworkComponent {
     this.loadAssignments();
   }
 
-  protected onSectionChange(event: Event): void {
-    this.selectedSection.set((event.target as HTMLSelectElement).value);
+  protected onSectionChange(value: string | number): void {
+    this.selectedSection.set(String(value ?? ''));
     this.loadStudents();
     this.loadAssignments();
   }

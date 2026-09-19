@@ -55,13 +55,13 @@ export class TeacherAnnouncementsComponent {
     this.statusMessage.set('');
   }
 
-  protected onSelectChange(event: Event, field: 'className' | 'section'): void {
-    const value = (event.target as HTMLSelectElement).value;
+  protected onSelectChange(value: string | number, field: 'className' | 'section'): void {
+    const nextValue = String(value ?? '');
     if (field === 'className') {
-      this.className.set(value);
+      this.className.set(nextValue);
       this.section.set('All');
     } else {
-      this.section.set(value);
+      this.section.set(nextValue);
     }
     this.statusMessage.set('');
     if (!this.editingId()) this.loadAnnouncements();
@@ -70,11 +70,11 @@ export class TeacherAnnouncementsComponent {
   protected setPublished(event: Event): void { this.published.set((event.target as HTMLInputElement).checked); }
 
   protected edit(announcement: Announcement): void {
-    this.editingId.set(announcement.id); 
-    this.title.set(announcement.title); 
+    this.editingId.set(announcement.id);
+    this.title.set(announcement.title);
     this.message.set(announcement.content);
-    this.className.set(announcement.classId.toString()); 
-    this.section.set(announcement.sectionName); 
+    this.className.set(announcement.classId.toString());
+    this.section.set(announcement.sectionName);
     this.published.set(announcement.active);
     this.statusMessage.set('');
     this.activeTab.set('new');

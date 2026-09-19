@@ -19,187 +19,196 @@
     </div>
 
     <div class="admin-data-tabs" role="tablist" aria-label="Homework actions">
-      <button type="button" role="tab" [class.active]="activeTab() === 'new'" [attr.aria-selected]="activeTab() === 'new'" (click)="switchTab('new')">New assignment</button>
-      <button type="button" role="tab" [class.active]="activeTab() === 'list'" [attr.aria-selected]="activeTab() === 'list'" (click)="switchTab('list')">Existing work</button>
+      <button type="button" role="tab" [class.active]="activeTab() === 'new'"
+        [attr.aria-selected]="activeTab() === 'new'" (click)="switchTab('new')">New assignment</button>
+      <button type="button" role="tab" [class.active]="activeTab() === 'list'"
+        [attr.aria-selected]="activeTab() === 'list'" (click)="switchTab('list')">Existing work</button>
     </div>
 
     @if (activeTab() === 'new') {
-      <div class="homework-form">
-        <label>Class
-          <select [ngModel]="selectedClass()" (ngModelChange)="onClassChange($event)">
-            <option value="" disabled>Select a class</option>
-            @for (option of classOptions(); track option.classId) {
-              <option [value]="option.classId">Class {{ option.classId }}</option>
-            }
-          </select>
-        </label>
-        <label>Section
-          <select [ngModel]="selectedSection()" (ngModelChange)="onSectionChange($event)" [disabled]="!selectedClass()">
-            <option value="" disabled>Select a section</option>
-            @for (section of sectionOptions(); track section.sectionName) {
-              <option [value]="section.sectionName">Section {{ section.sectionName }}</option>
-            }
-          </select>
-        </label>
-        <label class="full-width">Students in selected class/section
-          @if (isLoadingStudents()) {
-            <small>Loading students...</small>
-          } @else if (students().length) {
-            <div class="student-chip-list">
-              @for (student of students(); track student.id) {
-                <span>{{ student.name }}</span>
-              }
-            </div>
-          } @else {
-            <small>No students found for this class and section.</small>
+    <div class="homework-form">
+      <label>Class
+        <select name="teacherHomeworkNewClass" [ngModel]="selectedClass()" (ngModelChange)="onClassChange($event)">
+          <option value="" disabled>Select a class</option>
+          @for (option of classOptions(); track option.classId) {
+          <option [value]="option.classId">Class {{ option.classId }}</option>
           }
-        </label>
-        <label>Title
-          <input type="text" placeholder="e.g. Fractions practice" [value]="title()" (input)="onTitleChange($event)" />
-        </label>
-        <label>Type
-          <select [value]="workType()" (change)="onWorkTypeChange($event)">
-            <option value="CLASSWORK">CLASSWORK</option>
-            <option value="HOMEWORK">HOMEWORK</option>
-          </select>
-        </label>
-        <label class="full-width">Description
-          <textarea rows="6" placeholder="Add instructions or context for your students" [value]="description()" (input)="onDescriptionChange($event)"></textarea>
-        </label>
-        <label class="file-field full-width">Attachment <span class="optional-label">Optional</span>
-          <input type="file" multiple (change)="onFileChange($event)" />
-          @if (selectedFiles().length) {
-            <div class="selected-file-list">
-              @for (file of selectedFiles(); track file.name + file.size + $index) {
-                <small class="selected-file">{{ file.name }} ({{ file.size }} bytes)</small>
-              }
-            </div>
+        </select>
+      </label>
+      <label>Section
+        <select name="teacherHomeworkNewSection" [ngModel]="selectedSection()" (ngModelChange)="onSectionChange($event)"
+          [disabled]="!selectedClass()">
+          <option value="" disabled>Select a section</option>
+          @for (section of sectionOptions(); track section.sectionName) {
+          <option [value]="section.sectionName">Section {{ section.sectionName }}</option>
           }
-        </label>
-      </div>
-      <div class="homework-form-footer">
-        <span>Accepted file types depend on the connected API.</span>
-        <button class="upload-work-button" type="button" [disabled]="isUploading()" (click)="uploadWork()">{{ isUploading() ? 'Uploading...' : 'Upload work' }}</button>
-      </div>
+        </select>
+      </label>
+      <label class="full-width">Students in selected class/section
+        @if (isLoadingStudents()) {
+        <small>Loading students...</small>
+        } @else if (students().length) {
+        <div class="student-chip-list">
+          @for (student of students(); track student.admissionNumber) {
+          <span>{{ student.name }}</span>
+          }
+        </div>
+        } @else {
+        <small>No students found for this class and section.</small>
+        }
+      </label>
+      <label>Title
+        <input type="text" placeholder="e.g. Fractions practice" [value]="title()" (input)="onTitleChange($event)" />
+      </label>
+      <label>Type
+        <select [value]="workType()" (change)="onWorkTypeChange($event)">
+          <option value="CLASSWORK">CLASSWORK</option>
+          <option value="HOMEWORK">HOMEWORK</option>
+        </select>
+      </label>
+      <label class="full-width">Description
+        <textarea rows="6" placeholder="Add instructions or context for your students" [value]="description()"
+          (input)="onDescriptionChange($event)"></textarea>
+      </label>
+      <label class="file-field full-width">Attachment <span class="optional-label">Optional</span>
+        <input type="file" multiple (change)="onFileChange($event)" />
+        @if (selectedFiles().length) {
+        <div class="selected-file-list">
+          @for (file of selectedFiles(); track file.name + file.size + $index) {
+          <small class="selected-file">{{ file.name }} ({{ file.size }} bytes)</small>
+          }
+        </div>
+        }
+      </label>
+    </div>
+    <div class="homework-form-footer">
+      <span>Accepted file types depend on the connected API.</span>
+      <button class="upload-work-button" type="button" [disabled]="isUploading()" (click)="uploadWork()">{{
+        isUploading() ? 'Uploading...' : 'Upload work' }}</button>
+    </div>
     } @else {
-      <div class="homework-form">
-        <label>Class
-          <select [ngModel]="selectedClass()" (ngModelChange)="onClassChange($event)">
-            <option value="" disabled>Select a class</option>
-            @for (option of classOptions(); track option.classId) {
-              <option [value]="option.classId">Class {{ option.classId }}</option>
-            }
-          </select>
-        </label>
-        <label>Section
-          <select [ngModel]="selectedSection()" (ngModelChange)="onSectionChange($event)" [disabled]="!selectedClass()">
-            <option value="" disabled>Select a section</option>
-            @for (section of sectionOptions(); track section.sectionName) {
-              <option [value]="section.sectionName">Section {{ section.sectionName }}</option>
-            }
-          </select>
-        </label>
-      </div>
-      @if (isLoadingAssignments()) {
-        <div class="admin-manage-placeholder" role="status">Loading assignments...</div>
-      } @else if (groupedAssignments().length) {
-        <div class="homework-assignment-groups" aria-label="Homework assignments grouped by due date">
-          @for (group of groupedAssignments(); track group.date) {
-            <section class="homework-date-group">
-              <div class="homework-date-header">Due {{ group.date }}</div>
+    <div class="homework-form">
+      <label>Class
+        <select name="teacherHomeworkListClass" [ngModel]="selectedClass()" (ngModelChange)="onClassChange($event)">
+          <option value="" disabled>Select a class</option>
+          @for (option of classOptions(); track option.classId) {
+          <option [value]="option.classId">Class {{ option.classId }}</option>
+          }
+        </select>
+      </label>
+      <label>Section
+        <select name="teacherHomeworkListSection" [ngModel]="selectedSection()"
+          (ngModelChange)="onSectionChange($event)" [disabled]="!selectedClass()">
+          <option value="" disabled>Select a section</option>
+          @for (section of sectionOptions(); track section.sectionName) {
+          <option [value]="section.sectionName">Section {{ section.sectionName }}</option>
+          }
+        </select>
+      </label>
+    </div>
+    @if (isLoadingAssignments()) {
+    <div class="admin-manage-placeholder" role="status">Loading assignments...</div>
+    } @else if (groupedAssignments().length) {
+    <div class="homework-assignment-groups" aria-label="Homework assignments grouped by due date">
+      @for (group of groupedAssignments(); track group.date) {
+      <section class="homework-date-group">
+        <div class="homework-date-header">Due {{ group.date }}</div>
 
-              <div class="homework-type-section">
-                <h3>Homework</h3>
-                @if (group.homework.length) {
-                  <div class="homework-assignment-list">
-                    @for (assignment of group.homework; track assignment.id) {
-                      <article class="homework-assignment-item">
-                        <div class="homework-assignment-header">
-                          <div class="homework-assignment-main">
-                            <strong>{{ assignment.title }}</strong>
-                            <span class="homework-assignment-meta">{{ assignment.workType }} · Due {{ assignment.dueDate }}</span>
-                          </div>
-                          <span class="homework-assignment-badge">{{ assignment.workType }}</span>
-                        </div>
-
-                        @if (assignment.description) {
-                          <p class="homework-assignment-description">{{ assignment.description }}</p>
-                        }
-
-                        <div class="homework-assignment-files">
-                          @if (assignment.files?.length) {
-                            <span class="homework-files-label">Files ({{ assignment.files.length }})</span>
-                            <div class="homework-file-links">
-                              @for (file of assignment.files; track file.id) {
-                                @if (file.downloadUrl) {
-                                  <button type="button" class="homework-file-button" (click)="downloadAttachment(file)">{{ file.fileName }}</button>
-                                } @else {
-                                  <span>{{ file.fileName }}</span>
-                                }
-                              }
-                            </div>
-                          } @else {
-                            <span class="homework-files-label no-files">No files attached</span>
-                          }
-                        </div>
-                      </article>
-                    }
-                  </div>
-                } @else {
-                  <p class="homework-empty-state">No homework for this date.</p>
-                }
+        <div class="homework-type-section">
+          <h3>Homework</h3>
+          @if (group.homework.length) {
+          <div class="homework-assignment-list">
+            @for (assignment of group.homework; track assignment.id) {
+            <article class="homework-assignment-item">
+              <div class="homework-assignment-header">
+                <div class="homework-assignment-main">
+                  <strong>{{ assignment.title }}</strong>
+                  <span class="homework-assignment-meta">{{ assignment.workType }} · Due {{ assignment.dueDate }}</span>
+                </div>
+                <span class="homework-assignment-badge">{{ assignment.workType }}</span>
               </div>
 
-              <div class="homework-type-section">
-                <h3>Classwork</h3>
-                @if (group.classwork.length) {
-                  <div class="homework-assignment-list">
-                    @for (assignment of group.classwork; track assignment.id) {
-                      <article class="homework-assignment-item">
-                        <div class="homework-assignment-header">
-                          <div class="homework-assignment-main">
-                            <strong>{{ assignment.title }}</strong>
-                            <span class="homework-assignment-meta">{{ assignment.workType }} · Due {{ assignment.dueDate }}</span>
-                          </div>
-                          <span class="homework-assignment-badge">{{ assignment.workType }}</span>
-                        </div>
+              @if (assignment.description) {
+              <p class="homework-assignment-description">{{ assignment.description }}</p>
+              }
 
-                        @if (assignment.description) {
-                          <p class="homework-assignment-description">{{ assignment.description }}</p>
-                        }
-
-                        <div class="homework-assignment-files">
-                          @if (assignment.files?.length) {
-                            <span class="homework-files-label">Files ({{ assignment.files.length }})</span>
-                            <div class="homework-file-links">
-                              @for (file of assignment.files; track file.id) {
-                                @if (file.downloadUrl) {
-                                  <button type="button" class="homework-file-button" (click)="downloadAttachment(file)">{{ file.fileName }}</button>
-                                } @else {
-                                  <span>{{ file.fileName }}</span>
-                                }
-                              }
-                            </div>
-                          } @else {
-                            <span class="homework-files-label no-files">No files attached</span>
-                          }
-                        </div>
-                      </article>
-                    }
-                  </div>
+              <div class="homework-assignment-files">
+                @if (assignment.files?.length) {
+                <span class="homework-files-label">Files ({{ assignment.files.length }})</span>
+                <div class="homework-file-links">
+                  @for (file of assignment.files; track file.id) {
+                  @if (file.downloadUrl) {
+                  <button type="button" class="homework-file-button" (click)="downloadAttachment(file)">{{ file.fileName
+                    }}</button>
+                  } @else {
+                  <span>{{ file.fileName }}</span>
+                  }
+                  }
+                </div>
                 } @else {
-                  <p class="homework-empty-state">No classwork for this date.</p>
+                <span class="homework-files-label no-files">No files attached</span>
                 }
               </div>
-            </section>
+            </article>
+            }
+          </div>
+          } @else {
+          <p class="homework-empty-state">No homework for this date.</p>
           }
         </div>
-      } @else {
-        <div class="admin-manage-placeholder" role="status">
-          <strong>No assignments found</strong>
-          <span>No HOMEWORK or CLASSWORK is available for Class {{ selectedClass() }}, Section {{ selectedSection() }}.</span>
+
+        <div class="homework-type-section">
+          <h3>Classwork</h3>
+          @if (group.classwork.length) {
+          <div class="homework-assignment-list">
+            @for (assignment of group.classwork; track assignment.id) {
+            <article class="homework-assignment-item">
+              <div class="homework-assignment-header">
+                <div class="homework-assignment-main">
+                  <strong>{{ assignment.title }}</strong>
+                  <span class="homework-assignment-meta">{{ assignment.workType }} · Due {{ assignment.dueDate }}</span>
+                </div>
+                <span class="homework-assignment-badge">{{ assignment.workType }}</span>
+              </div>
+
+              @if (assignment.description) {
+              <p class="homework-assignment-description">{{ assignment.description }}</p>
+              }
+
+              <div class="homework-assignment-files">
+                @if (assignment.files?.length) {
+                <span class="homework-files-label">Files ({{ assignment.files.length }})</span>
+                <div class="homework-file-links">
+                  @for (file of assignment.files; track file.id) {
+                  @if (file.downloadUrl) {
+                  <button type="button" class="homework-file-button" (click)="downloadAttachment(file)">{{ file.fileName
+                    }}</button>
+                  } @else {
+                  <span>{{ file.fileName }}</span>
+                  }
+                  }
+                </div>
+                } @else {
+                <span class="homework-files-label no-files">No files attached</span>
+                }
+              </div>
+            </article>
+            }
+          </div>
+          } @else {
+          <p class="homework-empty-state">No classwork for this date.</p>
+          }
         </div>
+      </section>
       }
+    </div>
+    } @else {
+    <div class="admin-manage-placeholder" role="status">
+      <strong>No assignments found</strong>
+      <span>No HOMEWORK or CLASSWORK is available for Class {{ selectedClass() }}, Section {{ selectedSection()
+        }}.</span>
+    </div>
+    }
     }
 
     @if (uploadMessage()) { <p class="upload-message">{{ uploadMessage() }}</p> }

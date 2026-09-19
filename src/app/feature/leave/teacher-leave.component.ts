@@ -61,27 +61,28 @@ export class TeacherLeaveComponent {
     this.activeTab.set(tab);
   }
 
-  protected onClassChange(event: Event): void {
-    const className = (event.target as HTMLSelectElement).value;
+  protected onClassChange(value: string | number): void {
+    const className = String(value ?? '');
     this.selectedClass.set(className);
     this.selectedSection.set(this.classOptions().find(option => option.classId === className)?.sections[0]?.sectionName ?? '');
     this.selectedStudentId.set(null);
     this.loadStudents();
   }
 
-  protected onSectionChange(event: Event): void {
-    this.selectedSection.set((event.target as HTMLSelectElement).value);
+  protected onSectionChange(value: string | number): void {
+    this.selectedSection.set(String(value ?? ''));
     this.selectedStudentId.set(null);
     this.loadStudents();
   }
 
-  protected onStudentChange(event: Event): void {
-    this.selectedStudentId.set(Number((event.target as HTMLSelectElement).value) || null);
+  protected onStudentChange(value: string | number): void {
+    const nextValue = value === '' || value === null || value === undefined ? null : Number(value);
+    this.selectedStudentId.set(Number.isFinite(nextValue as number) ? (nextValue as number) : null);
     this.message.set('');
   }
 
-  protected onLeaveTypeChange(event: Event): void {
-    this.leaveType.set((event.target as HTMLSelectElement).value);
+  protected onLeaveTypeChange(value: string | number): void {
+    this.leaveType.set(String(value ?? 'Medical'));
   }
 
   protected onStartDateChange(event: Event): void {

@@ -6,7 +6,7 @@ import { AttendanceRecord, AttendanceStudent, CalendarDay, CalendarMonth, ClassS
 import { LeaveService } from '../leave/leave.service';
 import { ClassSectionService } from '../class-section/class-section.service';
 import { PeopleService } from '../people/people.service';
-import { FormsModule } from '@angular/forms';
+import { FormsModule } from "@angular/forms";
 
 
 type AttendanceMode = 'mark' | 'history';
@@ -38,13 +38,13 @@ export class TeacherAttendanceComponent {
   protected readonly saveMessage = signal('');
 
   constructor() {
+    this.loadLeaveApplications();
     this.classSectionService.getAllWithTeacherDefaultSelection().subscribe(({ classOptions, defaultSelection }) => {
       this.classOptions.set(classOptions);
       const resolved = this.classSectionService.resolveDefaultClassSection(classOptions, defaultSelection);
       this.selectedClass.set(resolved.classId);
       this.selectedSection.set(resolved.sectionName);
       this.loadStudents();
-      this.loadLeaveApplications();
     });
   }
 
@@ -82,7 +82,7 @@ export class TeacherAttendanceComponent {
   }
 
   protected get totalCount(): number {
-    return this.mode() === 'mark' ? this.students().length : this.history().length;
+    return this.mode() === 'mark' ? this.students().length : daysBetween(this.selectedStartDate(), this.selectedEndDate());
   }
 
   protected switchMode(mode: AttendanceMode): void {
@@ -93,16 +93,16 @@ export class TeacherAttendanceComponent {
     this.loadStudents();
   }
 
-  protected onClassChange(event: Event): void {
-    const className = (event.target as HTMLSelectElement).value;
+  protected onClassChange(event: string): void {
+    const className = event
     this.selectedClass.set(className);
     this.selectedSection.set(this.classOptions().find(option => option.classId === className)?.sections[0]?.sectionName ?? '');
     this.loadLeaveApplications();
     this.loadStudents();
   }
 
-  protected onSectionChange(event: Event): void {
-    this.selectedSection.set((event.target as HTMLSelectElement).value);
+  protected onSectionChange(event: string): void {
+    this.selectedSection.set(event);
     this.loadLeaveApplications();
     this.loadStudents();
   }
@@ -119,14 +119,14 @@ export class TeacherAttendanceComponent {
     this.loadHistory();
   }
 
-  protected onStudentChange(event: Event): void {
-    const value = (event.target as HTMLSelectElement).value;
+  protected onStudentChange(admissionNumber: string): void {
+    const value = admissionNumber;
     this.selectedStudentId.set(value ? Number(value) : null);
     this.loadHistory();
   }
 
   protected selectedStudent(): AttendanceStudent | undefined {
-    return this.students().find(student => student.id === this.selectedStudentId());
+    return this.students().find(student => student.admissionNumber === this.selectedStudentId());
   }
 
   protected markStudent(studentId: number | null, present: boolean, onLeave = false): void {
@@ -135,7 +135,7 @@ export class TeacherAttendanceComponent {
     }
 
     this.students.update(students => students.map(student =>
-      student.id === studentId ? { ...student, present, onLeave } : student
+      student.admissionNumber === studentId ? { ...student, present, onLeave } : student
     ));
     this.saveMessage.set('');
   }
@@ -190,7 +190,7 @@ export class TeacherAttendanceComponent {
 
   private loadHistory(): void {
 
-    const admissionNumber = this.selectedStudentId() ? this.students().find(student => student.id === this.selectedStudentId())?.admissionNumber : null;
+    const admissionNumber = this.selectedStudentId() ? this.students().find(student => student.admissionNumber === this.selectedStudentId())?.admissionNumber : null;
 
     this.attendanceService.getStudentHistory(
       this.selectedClass(), this.selectedSection(), admissionNumber!, this.selectedStartDate(), this.selectedEndDate()
@@ -207,26 +207,25 @@ export class TeacherAttendanceComponent {
   }
 
   private applyLeaveToHistory(history: AttendanceRecord[], admissionNumber: number): AttendanceRecord[] {
+    const result = history.map(record => ({
+      ...record,
+      onLeave: this.isLeaveDate(admissionNumber, record.date, true),
+      present: this.isLeaveDate(admissionNumber, record.date, true) ? false : record.present
+    }));
 
-    const result = [] as AttendanceRecord[];
+
     if (admissionNumber !== null) {
-      this.applyHistoryDateRange(result, history, admissionNumber);
+      this.applyHistoryDateRange(result, admissionNumber);
     } else if (this.students().length > 0) {
       this.students().forEach(student => {
-        this.applyHistoryDateRange(result, history, student.admissionNumber);
+        this.applyHistoryDateRange(result, student.admissionNumber);
       });
 
     }
     return result;
   }
 
-  private applyHistoryDateRange(result: AttendanceRecord[], history: AttendanceRecord[], admissionNumber: number): void {
-
-    history.map(record => ({
-      ...record,
-      onLeave: this.isLeaveDate(admissionNumber, record.date, true),
-      present: this.isLeaveDate(admissionNumber, record.date, true) ? false : record.present
-    }));
+  private applyHistoryDateRange(result: AttendanceRecord[], admissionNumber: number): void {
 
     let startDate = this.selectedStartDate();//yyyy-mm-dd
     const endDate = this.selectedEndDate();// yyyy-mm-dd
@@ -289,4 +288,16 @@ export class TeacherAttendanceComponent {
     const day = String(date.getDate()).padStart(2, '0');
     return `${date.getFullYear()}-${month}-${day}`;
   }
+}
+
+
+function daysBetween(start: string, end: string): number {
+  const startDate = new Date(start);
+  const endDate = new Date(end);
+
+  const diffTime = endDate.getTime() - startDate.getTime();
+
+  const diffDays = diffTime / (1000 * 60 * 60 * 24);
+
+  return diffDays + 1;
 }

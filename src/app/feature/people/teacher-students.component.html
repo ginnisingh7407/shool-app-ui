@@ -11,16 +11,16 @@
 
   <section class="student-directory-controls" aria-label="Student directory filters">
     <label>Class
-      <select [ngModel]="selectedClass()" (ngModelChange)="onClassChange($event)">
+      <select name="teacherStudentsClass" [ngModel]="selectedClass()" (ngModelChange)="onClassChange($event)">
         @for (option of classOptions(); track option.classId) {
-          <option [value]="option.classId"> Class {{ option.classId }}</option>
+        <option [value]="option.classId"> Class {{ option.classId }}</option>
         }
       </select>
     </label>
     <label>Section
-      <select [ngModel]="selectedSection()" (ngModelChange)="onSectionChange($event)">
+      <select name="teacherStudentsSection" [ngModel]="selectedSection()" (ngModelChange)="onSectionChange($event)">
         @for (section of sectionOptions(); track section.sectionName) {
-          <option [value]="section.sectionName">Section {{ section.sectionName }}</option>
+        <option [value]="section.sectionName">Section {{ section.sectionName }}</option>
         }
       </select>
     </label>
@@ -29,7 +29,7 @@
 
   @if (students().length) {
   <section class="student-directory-grid" aria-label="Students in selected class and section">
-    @for (student of students(); track student.id) {
+    @for (student of students(); track student.admissionNumber) {
     <article class="student-detail-card">
       <div class="student-card-heading"><span class="directory-avatar">{{ student.name.charAt(0) }}</span>
         <div>
