@@ -99,7 +99,8 @@ export interface AttendanceSubmission {
   classId: number;
   sectionName: string;
   attendanceDate: string;
-  status: 'PRESENT' | 'ABSENT';
+  status: 'PRESENT' | 'ABSENT' | 'LEAVE';
+  onLeave: boolean;
   remarks: string;
 }
 

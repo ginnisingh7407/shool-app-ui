@@ -68,7 +68,7 @@ export class AttendanceService {
     const classId = this.classIdFromName(className);
     return this.profileService.getProfile().pipe(
       map(profile => students
-        .filter(student => !student.onLeave && student.admissionNumber !== undefined)
+        .filter(student => student.admissionNumber !== undefined)
         .map(student => ({
           id: student.attendanceId ?? null,
           admissionNumber: student.admissionNumber as number,
@@ -76,7 +76,8 @@ export class AttendanceService {
           classId: student.classId ?? classId,
           sectionName: student.sectionName ?? section,
           attendanceDate: date,
-          status: student.present ? 'PRESENT' : 'ABSENT',
+          status: student.onLeave ? 'LEAVE' : student.present ? 'PRESENT' : 'ABSENT',
+          onLeave: student.onLeave ? true : false,
           remarks: ''
         } satisfies AttendanceSubmission))),
       switchMap(payload => this.http.post<unknown>(attendanceApiUrl('/mark/all'), payload)),
