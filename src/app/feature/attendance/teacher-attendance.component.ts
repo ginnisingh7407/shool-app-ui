@@ -77,9 +77,16 @@ export class TeacherAttendanceComponent {
   }
 
   protected get leaveCount(): number {
-    return this.mode() === 'mark'
-      ? this.students().filter(student => student.onLeave).length
-      : this.history().filter(record => record.onLeave).length;
+    if (this.mode() === 'mark') {
+      return this.students().filter(student => student.onLeave).length;
+    }
+
+    if (this.selectedStudentId() !== null) {
+      return this.history().filter(record => record.onLeave).length;
+    }
+
+    const dates = this.getLeaveDatesForRange();
+    return dates.size;
   }
 
   protected get totalCount(): number {
@@ -261,6 +268,37 @@ export class TeacherAttendanceComponent {
       application.fromDate <= date &&
       application.toDate >= date
     );
+  }
+
+  private getLeaveDatesForRange(): Set<string> {
+    const studentAdmissionNumbers = this.selectedStudentId() !== null
+      ? [this.selectedStudentId() as number]
+      : this.students().map(student => student.admissionNumber);
+
+    const dates = new Set<string>();
+    const rangeStart = new Date(`${this.selectedStartDate()}T00:00:00`);
+    const rangeEnd = new Date(`${this.selectedEndDate()}T00:00:00`);
+    const cursor = new Date(rangeStart);
+
+    while (cursor <= rangeEnd) {
+      const date = this.formatLocalDate(cursor);
+      const hasLeaveOnDate = studentAdmissionNumbers.some(admissionNumber =>
+        this.leaveApplications().some(application =>
+          application.admissionNumber === admissionNumber &&
+          application.status !== 'REJECTED' &&
+          application.fromDate <= date &&
+          application.toDate >= date
+        )
+      );
+
+      if (hasLeaveOnDate) {
+        dates.add(date);
+      }
+
+      cursor.setDate(cursor.getDate() + 1);
+    }
+
+    return dates;
   }
 
   private buildCalendar(records: AttendanceRecord[]): CalendarMonth[] {

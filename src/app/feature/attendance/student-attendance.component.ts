@@ -49,7 +49,13 @@ export class StudentAttendanceComponent {
   }
 
   protected get leaveTotal(): number {
-    return this.records().filter(record => record.onLeave).length;
+    const leaveDates = new Set<string>();
+    this.records().forEach(record => {
+      if (record.onLeave) {
+        leaveDates.add(record.date);
+      }
+    });
+    return leaveDates.size;
   }
 
   protected changeStart(event: Event): void {
