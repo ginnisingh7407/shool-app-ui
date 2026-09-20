@@ -1,12 +1,11 @@
-<main class="dashboard student-page"><a class="back-link" routerLink="/" queryParamsHandling="preserve">&#8592; Back to workspace</a>
+<main class="dashboard student-page">
+    <a class="back-link" routerLink="/" queryParamsHandling="preserve">&#8592; Back to
+        workspace</a>
     <section class="student-page-heading">
         <p class="eyebrow">Student workspace</p>
         <h1>My classmates</h1>
         <p>Meet the students in your class.</p>
     </section>
-    <section class="classmate-grid">@for (classmate of classmates(); track classmate.id) { <article
-            class="classmate-card"><img [src]="classmate.photoUrl" [alt]="classmate.name" />
-            <h2>{{ classmate.name }}</h2><small>{{ classmate.rollNumber }}</small>
-        </article> }</section>
+    <app-students />
 </main>
 <footer><span>Oakridge School</span><span>Learning together since 1987</span></footer>

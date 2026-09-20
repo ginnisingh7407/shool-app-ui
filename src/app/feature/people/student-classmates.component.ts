@@ -1,10 +1,8 @@
 import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { PeopleService } from './people.service';
+import { StudentsComponent } from './students.component';
 
-@Component({ selector: 'app-student-classmates', imports: [RouterLink], templateUrl: './student-classmates.component.html' })
+@Component({ selector: 'app-student-classmates', imports: [RouterLink, StudentsComponent], templateUrl: './student-classmates.component.html' })
 export class StudentClassmatesComponent {
-  private readonly peopleService = inject(PeopleService);
-  protected readonly classmates = toSignal(this.peopleService.getClassmates(1), { initialValue: [] });
+  constructor() { }
 }

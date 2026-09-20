@@ -1,0 +1,22 @@
+@if (students().length) {
+<section class="student-directory-grid" aria-label="Students in selected class and section">
+  @for (student of students(); track student.admissionNumber) {
+  <article class="student-detail-card">
+    <div class="student-card-heading"><span class="directory-avatar">{{ student.name.charAt(0) }}</span>
+      <div>
+        <h2>{{ student.name }}</h2><small>{{ student.rollNumber }} · {{ student.gender }}</small>
+      </div>
+    </div>
+    <div class="student-card-details">
+      <div><span>Class</span><strong>Class {{ student.classId }} / Section {{ student.sectionName }}</strong></div>
+      <div><span>Parent / guardian</span><strong>{{ student.fatherName }}</strong><small>Father</small></div>
+      <div><span>Phone</span><a [href]="'tel:' + student.parentPhone">{{ student.parentPhone }}</a></div>
+    </div>
+  </article>
+  }
+</section>
+} @else {
+<section class="student-directory-empty">
+  <p>No students found.</p>
+</section>
+}
