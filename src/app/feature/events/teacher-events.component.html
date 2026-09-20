@@ -8,108 +8,110 @@
   </section>
 
   <div class="announcement-tabs" role="tablist" aria-label="Event views">
-    <button type="button" role="tab" [class.active]="activeTab() === 'new'" [attr.aria-selected]="activeTab() === 'new'" (click)="switchTab('new')">New event</button>
-    <button type="button" role="tab" [class.active]="activeTab() === 'published'" [attr.aria-selected]="activeTab() === 'published'" (click)="switchTab('published')">Published events</button>
+    <button type="button" role="tab" [class.active]="activeTab() === 'new'" [attr.aria-selected]="activeTab() === 'new'"
+      (click)="switchTab('new')">New event</button>
+    <button type="button" role="tab" [class.active]="activeTab() === 'published'"
+      [attr.aria-selected]="activeTab() === 'published'" (click)="switchTab('published')">Published events</button>
   </div>
 
   @if (activeTab() === 'new') {
-    <section class="announcement-layout single-column">
-      <article class="announcement-form-panel">
-        <div class="page-section-heading">
-          <div>
-            <p class="eyebrow">New event</p>
-            <h2>Create an event notice</h2>
+  <section class="announcement-layout single-column">
+    <article class="announcement-form-panel">
+      <div class="page-section-heading">
+        <div>
+          <p class="eyebrow">New event</p>
+          <h2>Create an event notice</h2>
+        </div>
+      </div>
+
+      <div class="announcement-form">
+        <label>Event title
+          <input type="text" [value]="title()" (input)="onTitleChange($event)" placeholder="e.g. Annual sports day" />
+        </label>
+
+        <label>Event date
+          <input type="date" [value]="eventDate()" (change)="onDateChange($event)" />
+        </label>
+
+        <label class="full-width">Upload files
+          <input type="file" multiple accept="image/*,video/*,.pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx"
+            (change)="onFilesChange($event)" />
+        </label>
+      </div>
+
+      @if (selectedFiles().length) {
+      <div class="announcement-list">
+        @for (file of selectedFiles(); track file.name) {
+        <div class="announcement-item">
+          <div class="announcement-item-heading">
+            <div>
+              <h3>{{ file.name }}</h3>
+              <small>{{ (file.size / 1024 / 1024) | number: '1.1-1' }} MB</small>
+            </div>
           </div>
         </div>
-
-        <div class="announcement-form">
-          <label>Event title
-            <input type="text" [value]="title()" (input)="onTitleChange($event)" placeholder="e.g. Annual sports day" />
-          </label>
-
-          <label>Event date
-            <input type="date" [value]="eventDate()" (change)="onDateChange($event)" />
-          </label>
-
-          <label class="full-width">Upload files
-            <input type="file" multiple accept="image/*,video/*,.pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx" (change)="onFilesChange($event)" />
-          </label>
-        </div>
-
-        @if (selectedFiles().length) {
-          <div class="announcement-list">
-            @for (file of selectedFiles(); track file.name) {
-              <div class="announcement-item">
-                <div class="announcement-item-heading">
-                  <div>
-                    <h3>{{ file.name }}</h3>
-                    <small>{{ (file.size / 1024 / 1024) | number: '1.1-1' }} MB</small>
-                  </div>
-                </div>
-              </div>
-            }
-          </div>
         }
+      </div>
+      }
 
-        <div class="form-actions">
-          <button class="primary-action" type="button" (click)="submitEvent()" [disabled]="isSubmitting()">
-            {{ isSubmitting() ? 'Uploading...' : 'Save event' }}
-          </button>
-        </div>
+      <div class="form-actions">
+        <button class="primary-action" type="button" (click)="submitEvent()" [disabled]="isSubmitting()">
+          {{ isSubmitting() ? 'Uploading...' : 'Save event' }}
+        </button>
+      </div>
 
-        @if (statusMessage()) {
-          <p class="form-message">{{ statusMessage() }}</p>
-        }
-      </article>
-    </section>
+      @if (statusMessage()) {
+      <p class="form-message">{{ statusMessage() }}</p>
+      }
+    </article>
+  </section>
   } @else {
-    <section class="announcement-layout single-column">
-      <article class="announcement-list-panel">
-        <div class="page-section-heading">
-          <div>
-            <p class="eyebrow">Published events</p>
-            <h2>Recent uploads</h2>
-          </div>
-          <span>{{ events().length }} item(s)</span>
+  <section class="announcement-layout single-column">
+    <article class="announcement-list-panel">
+      <div class="page-section-heading">
+        <div>
+          <p class="eyebrow">Published events</p>
+          <h2>Recent uploads</h2>
         </div>
+        <span>{{ events().length }} item(s)</span>
+      </div>
 
-        @if (events().length) {
-          <div class="event-grid">
-            @for (event of events(); track event.id ?? event.title) {
-              <article class="event-card">
-                <div class="event-card-header">
-                  <div>
-                    <h3>{{ event.title }}</h3>
-                    <small>{{ event.date }}</small>
-                  </div>
-                </div>
+      @if (events().length) {
+      <div class="event-grid">
+        @for (event of events(); track event.id ?? event.title) {
+        <article class="event-card">
+          <div class="event-card-header">
+            <div>
+              <h3>{{ event.title }}</h3>
+              <small>{{ event.date }}</small>
+            </div>
+          </div>
 
-                @if (event.attachments?.length) {
-                  <div class="event-media-grid">
-                    @for (attachment of event.attachments; track attachment) {
-                      <div class="event-media-item">
-                        @if (mediaType(attachment) === 'image') {
-                          <img [src]="previewUrl(attachment)" [alt]="attachment" />
-                        } @else if (mediaType(attachment) === 'video') {
-                          <video [src]="previewUrl(attachment)" muted playsinline preload="metadata"></video>
-                        } @else {
-                          <div class="event-file-preview" aria-label="Document attachment">
-                            <span>FILE</span>
-                          </div>
-                        }
-                        <span class="event-file-name">{{ attachment }}</span>
-                      </div>
-                    }
-                  </div>
-                }
-              </article>
+          @if (event.attachments?.length) {
+          <div class="event-media-grid">
+            @for (attachment of event.attachments; track attachment) {
+            <div class="event-media-item">
+              @if (mediaType(attachment) === 'image') {
+              <img [src]="previewUrl(attachment)" [alt]="attachment" />
+              } @else if (mediaType(attachment) === 'video') {
+              <video [src]="previewUrl(attachment)" muted playsinline preload="metadata"></video>
+              } @else {
+              <div class="event-file-preview" aria-label="Document attachment">
+                <span>FILE</span>
+              </div>
+              }
+              <span class="event-file-name">{{ attachment }}</span>
+            </div>
             }
           </div>
-        } @else {
-          <p class="empty-state">No events have been added yet.</p>
+          }
+        </article>
         }
-      </article>
-    </section>
+      </div>
+      } @else {
+      <p class="empty-state">No events have been added yet.</p>
+      }
+    </article>
+  </section>
   }
 </main>
-<footer><span>Oakridge School</span><span>Learning together since 1987</span></footer>

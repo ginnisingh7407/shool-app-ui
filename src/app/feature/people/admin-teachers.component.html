@@ -7,54 +7,60 @@
     <section class="admin-people-tools" aria-labelledby="admin-teachers-title">
       <h2 id="admin-teachers-title">Teacher records</h2>
       <div class="admin-data-tabs" role="tablist" aria-label="Teacher management actions">
-        <button type="button" role="tab" [attr.aria-selected]="activeTab === 'add'" [class.active]="activeTab === 'add'" (click)="activeTab = 'add'">{{ editingTeacherId === null ? 'Add new' : 'Update' }}</button>
-        <button type="button" role="tab" [attr.aria-selected]="activeTab === 'manage'" [class.active]="activeTab === 'manage'" (click)="showManage()">Manage</button>
+        <button type="button" role="tab" [attr.aria-selected]="activeTab === 'add'" [class.active]="activeTab === 'add'"
+          (click)="activeTab = 'add'">{{ editingTeacherId === null ? 'Add new' : 'Update' }}</button>
+        <button type="button" role="tab" [attr.aria-selected]="activeTab === 'manage'"
+          [class.active]="activeTab === 'manage'" (click)="showManage()">Manage</button>
       </div>
       @if (activeTab === 'add') {
-        @if (loadingTeacher()) {
-          <div class="admin-manage-placeholder" role="status">Loading teacher details...</div>
-        } @else {
-          <form class="admin-people-form" (submit)="$event.preventDefault(); save()">
-            @if (editingTeacherId !== null) {
-              <label>ID<input type="number" [value]="editingTeacherId" readonly></label>
-            }
-            @for (field of fields; track field) {
-              <label>{{ field === 'joiningDate' ? 'Joining date' : field === 'empId' ? 'Employee ID' : field === 'experience' ? 'Experience years' : field }}<input [type]="field === 'joiningDate' ? 'date' : field === 'email' ? 'email' : field === 'experience' ? 'number' : 'text'" [value]="form[field] ?? ''" (input)="updateField(field, $event)" required></label>
-            }
-            <button class="save-attendance" type="submit">{{ editingTeacherId === null ? 'Add teacher' : 'Update teacher' }}</button>
-          </form>
-        }
+      @if (loadingTeacher()) {
+      <div class="admin-manage-placeholder" role="status">Loading teacher details...</div>
       } @else {
-        @if (loadingTeachers()) {
-          <div class="admin-manage-placeholder" role="status">Loading teachers...</div>
-        } @else if (teachers().length) {
-          <div class="admin-student-list" aria-label="Teacher records">
-            @for (teacher of teachers(); track teacher.id) {
-              <article class="admin-student-card">
-                <div>
-                  <strong>{{ teacher.name }}</strong>
-                  <span>{{ teacher.gender || 'Gender not provided' }} · Employee ID {{ teacher.employeeId }}</span>
-                  <span>{{ teacher.qualification }} · {{ teacher.specialization }} · {{ teacher.experienceYears }} years' experience</span>
-                </div>
-                <div>
-                  <span>{{ teacher.email }}</span>
-                  <span>{{ teacher.phone }}</span>
-                  <span>Joined {{ teacher.joiningDate }}</span>
-                  <button type="button" class="edit-link" (click)="editTeacher(teacher)">Edit</button>
-                </div>
-              </article>
-            }
-          </div>
-        } @else {
-          <div class="admin-manage-placeholder" role="status">
-            <strong>No teachers found</strong>
-            <span>No teacher records are available.</span>
-          </div>
+      <form class="admin-people-form" (submit)="$event.preventDefault(); save()">
+        @if (editingTeacherId !== null) {
+        <label>ID<input type="number" [value]="editingTeacherId" readonly></label>
         }
+        @for (field of fields; track field) {
+        <label>{{ field === 'joiningDate' ? 'Joining date' : field === 'empId' ? 'Employee ID' : field === 'experience'
+          ? 'Experience years' : field }}<input
+            [type]="field === 'joiningDate' ? 'date' : field === 'email' ? 'email' : field === 'experience' ? 'number' : 'text'"
+            [value]="form[field] ?? ''" (input)="updateField(field, $event)" required></label>
+        }
+        <button class="save-attendance" type="submit">{{ editingTeacherId === null ? 'Add teacher' : 'Update teacher'
+          }}</button>
+      </form>
+      }
+      } @else {
+      @if (loadingTeachers()) {
+      <div class="admin-manage-placeholder" role="status">Loading teachers...</div>
+      } @else if (teachers().length) {
+      <div class="admin-student-list" aria-label="Teacher records">
+        @for (teacher of teachers(); track teacher.id) {
+        <article class="admin-student-card">
+          <div>
+            <strong>{{ teacher.name }}</strong>
+            <span>{{ teacher.gender || 'Gender not provided' }} · Employee ID {{ teacher.employeeId }}</span>
+            <span>{{ teacher.qualification }} · {{ teacher.specialization }} · {{ teacher.experienceYears }} years'
+              experience</span>
+          </div>
+          <div>
+            <span>{{ teacher.email }}</span>
+            <span>{{ teacher.phone }}</span>
+            <span>Joined {{ teacher.joiningDate }}</span>
+            <button type="button" class="edit-link" (click)="editTeacher(teacher)">Edit</button>
+          </div>
+        </article>
+        }
+      </div>
+      } @else {
+      <div class="admin-manage-placeholder" role="status">
+        <strong>No teachers found</strong>
+        <span>No teacher records are available.</span>
+      </div>
+      }
       }
       @if (message) { <p class="admin-data-message">{{ message }}</p> }
       @if (error) { <p class="admin-data-error" role="alert">{{ error }}</p> }
     </section>
   </section>
 </main>
-<footer><span>Oakridge School</span><span>Learning together since 1987</span></footer>

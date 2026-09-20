@@ -17,16 +17,15 @@
           <option>Family</option>
           <option>Other</option>
         </select>
-        </label>
-        <label>From date<input type="date" [value]="startDate()"
-          (input)="changeStart($event)" /></label>
-          
-          <label>To date<input type="date" [value]="endDate()"
-          (input)="changeEnd($event)" />
-        </label>
+      </label>
+      <label>From date<input type="date" [value]="startDate()" (input)="changeStart($event)" /></label>
 
-        <label class="full-width">Reason<textarea rows="5"
-          placeholder="Explain your reason" [value]="reason()" (input)="changeReason($event)"></textarea></label></div>
+      <label>To date<input type="date" [value]="endDate()" (input)="changeEnd($event)" />
+      </label>
+
+      <label class="full-width">Reason<textarea rows="5" placeholder="Explain your reason" [value]="reason()"
+          (input)="changeReason($event)"></textarea></label>
+    </div>
     <button class="apply-leave-button" type="button" [disabled]="submitting()" (click)="submit()">{{ submitting() ?
       'Applying...' : 'Apply leave' }}</button>@if (message()) { <p class="leave-message">{{ message() }}</p> }
   </section>
@@ -49,4 +48,3 @@
   </section>
   }
 </main>
-<footer><span>Oakridge School</span><span>Learning together since 1987</span></footer>

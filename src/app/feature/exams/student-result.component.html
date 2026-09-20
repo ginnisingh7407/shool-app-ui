@@ -32,28 +32,29 @@
     </div>
 
     @if (subjectSummary().length) {
-      <div class="student-result-table-wrap">
-        <table class="student-result-table">
-          <thead>
-            <tr>
-              <th>Subject</th>
-              <th>Obtained</th>
-              <th>Total</th>
-              <th>Answer sheet</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (row of subjectSummary(); track row.subject) {
-              <tr>
-                <td>{{ row.subject }}</td>
-                <td>{{ row.obtainedMark }}</td>
-                <td>{{ row.totalMarks }}</td>
-                <td><a class="work-attachment" [href]="row.paperUrl" target="_blank" rel="noopener">{{ row.paperFileName }}</a></td>
-              </tr>
-            }
-          </tbody>
-        </table>
-      </div>
+    <div class="student-result-table-wrap">
+      <table class="student-result-table">
+        <thead>
+          <tr>
+            <th>Subject</th>
+            <th>Obtained</th>
+            <th>Total</th>
+            <th>Answer sheet</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of subjectSummary(); track row.subject) {
+          <tr>
+            <td>{{ row.subject }}</td>
+            <td>{{ row.obtainedMark }}</td>
+            <td>{{ row.totalMarks }}</td>
+            <td><a class="work-attachment" [href]="row.paperUrl" target="_blank" rel="noopener">{{ row.paperFileName
+                }}</a></td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
     }
 
     <div class="final-result-box">
@@ -65,9 +66,8 @@
       </div>
 
       @if (finalResultFile(); as fileName) {
-        <a class="work-attachment final-result-link" [href]="'#'" target="_blank" rel="noopener">{{ fileName }}</a>
+      <a class="work-attachment final-result-link" [href]="'#'" target="_blank" rel="noopener">{{ fileName }}</a>
       }
     </div>
   </section>
 </main>
-<footer><span>Oakridge School</span><span>Learning together since 1987</span></footer>

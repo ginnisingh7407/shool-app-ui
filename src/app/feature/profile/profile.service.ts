@@ -55,17 +55,7 @@ export class ProfileService {
           throw new Error('Profile data is not available.');
         }
       }),
-      catchError(() => of({
-        id: 0,
-        name: 'Jordan Davis',
-        username: 'jordan.davis',
-        className: 'Class 8A',
-        email: 'jordan.davis@oakridge.edu',
-        mobile: 'Not available',
-        role: 'Student',
-        active: true,
-        photoUrl: null
-      }))
+      catchError(() => of())
     );
   }
 

@@ -13,10 +13,10 @@ export class ProfilePageComponent {
   protected readonly profile = toSignal(inject(ProfileService).getProfile(), {
     initialValue: {
       id: 0,
-      name: 'Jordan Davis',
-      username: 'jordan.davis',
-      className: 'Class 8A',
-      email: 'jordan.davis@oakridge.edu',
+      name: 'Pawan Singh',
+      username: 'pawan',
+      className: 'Class 12A',
+      email: '',
       mobile: 'Not available',
       role: 'Student',
       active: true,
