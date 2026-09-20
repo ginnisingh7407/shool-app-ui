@@ -23,6 +23,11 @@ export class PeopleService {
       .pipe(map(response => response.data.map(teacher => this.normalizeTeacher(teacher))));
   }
 
+  getTeachersByLevel(level: string): Observable<AdminTeacher[]> {
+    return this.http.get<TeacherResponse>(teachersApiUrl(`/level/${level}`))
+      .pipe(map(response => response.data.map(teacher => this.normalizeTeacher(teacher))));
+  }
+
   getAdminTeacher(id: number): Observable<AdminTeacher> {
     return this.http.get<TeacherDetailResponse>(teachersApiUrl(`/${id}`))
       .pipe(map(response => this.normalizeTeacher(response.data)));
@@ -57,12 +62,6 @@ export class PeopleService {
     return this.http.post<void>(teachersApiUrl(''), teacher);
   }
 
-  getClassmates(studentId: number): Observable<Classmate[]> {
-    return this.http.get<Classmate[]>(studentsApiUrl(`/classmates?studentId=${studentId}`)).pipe(
-      catchError(() => of([]))
-    );
-  }
-
   private normalizeTeacher(teacher: AdminTeacher): AdminTeacher {
     return {
       ...teacher,
@@ -71,9 +70,9 @@ export class PeopleService {
     };
   }
 
-  getTeachers(studentId: number): Observable<TeacherContact[]> {
-    return this.http.get<TeacherContact[]>(studentsApiUrl(`/teachers?studentId=${studentId}`)).pipe(
-      catchError(() => of([]))
+  getClassTeacher(classId: number, section: string): Observable<{ data: ClassTeacherAssignment }> {
+    return this.http.get<{ data: ClassTeacherAssignment }>(classTeacherApiUrl(`/class/${classId}/section/${encodeURIComponent(section)}`)).pipe(
+      catchError(() => of())
     );
   }
 

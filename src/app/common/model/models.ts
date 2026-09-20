@@ -1,4 +1,5 @@
 export type Role = 'Teacher' | 'Student' | 'Admin';
+export type ClassLevel = 'PRE_PRIMARY' | 'PRIMARY' | 'UPPER_PRIMARY' | 'SECONDARY' | 'HIGHER_SECONDARY' | 'COMMON';
 
 export interface MenuItem {
   id: string;

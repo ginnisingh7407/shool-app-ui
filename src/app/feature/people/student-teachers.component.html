@@ -5,12 +5,26 @@
         <h1>My teachers</h1>
         <p>Contact your class teacher and teaching team.</p>
     </section>
-    <section class="teacher-grid">@for (teacher of teachers(); track teacher.id) { <article class="teacher-card"><img
-                [src]="teacher.photoUrl" [alt]="teacher.name" />
+    <section class="teacher-grid">
+        <article class="teacher-card">
             <div>
-                <h2>{{ teacher.name }}</h2><span class="teacher-subject">{{ teacher.subject }}</span>@if
-                (teacher.isClassTeacher) { <span class="class-teacher-badge">Class teacher</span> }
-            </div><a [href]="'tel:' + teacher.phone">{{ teacher.phone }}</a><a [href]="'mailto:' + teacher.email">{{
-                teacher.email }}</a>
-        </article> }</section>
+                <h2>{{ classTeacher()?.name }}</h2><span class="teacher-subject">{{ classTeacher()?.specialization
+                    }}</span>
+                <span class="class-teacher-badge">Class teacher</span>
+            </div><a [href]="'tel:' + classTeacher()?.phone">{{ classTeacher()?.phone }}</a><a
+                [href]="'mailto:' + classTeacher()?.email">{{
+                classTeacher()?.email }}</a>
+        </article>
+        @for (teacher of teachers(); track teacher.id){
+        <article class="teacher-card">
+            <div>
+                <h2>{{ teacher?.name }}</h2><span class="teacher-subject">{{ teacher?.specialization
+                    }}</span>
+            </div><a [href]="'tel:' + teacher?.phone">{{ teacher?.phone }}</a><a [href]="'mailto:' + teacher?.email">{{
+                teacher?.email }}</a>
+        </article>
+
+        }
+
+    </section>
 </main>
