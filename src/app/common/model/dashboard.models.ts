@@ -16,12 +16,12 @@ export const FALLBACK_DASHBOARD_DATA: DashboardData = {
       { id: 'attendance', label: 'My attendance', detail: 'See your attendance record', icon: 'calendar', tone: 'coral', roles: ['Student'] },
       { id: 'homework', label: 'Homework & classwork', detail: 'Your assigned work', icon: 'book', tone: 'teal', roles: ['Student', 'Teacher'] },
       { id: 'leave', label: 'Leave', detail: 'Apply for a day off', icon: 'leave', tone: 'gold', roles: ['Student'] },
-      { id: 'fee', label: 'Fee', detail: 'View payment information', icon: 'fee', tone: 'orange', roles: ['Student'] },
       { id: 'classmates', label: 'My classmate', detail: 'Meet your class', icon: 'users', tone: 'coral', roles: ['Student'] },
       { id: 'teacher', label: 'My teacher', detail: 'Your teaching team', icon: 'teacher', tone: 'gold', roles: ['Student'] },
+      { id: 'announcements', label: 'Announcements', detail: 'Latest school updates', icon: 'announce', tone: 'blue', roles: ['Student', 'Teacher'] },
+      { id: 'fee', label: 'Fee', detail: 'View payment information', icon: 'fee', tone: 'orange', roles: ['Student'] },
       { id: 'result', label: 'My result', detail: 'Your academic progress', icon: 'result', tone: 'blue', roles: ['Student'] },
       { id: 'datesheet', label: 'Exam datesheet', detail: 'Plan your exam days', icon: 'datesheet', tone: 'violet', roles: ['Student'] },
-      { id: 'announcements', label: 'Announcements', detail: 'Latest school updates', icon: 'announce', tone: 'blue', roles: ['Student', 'Teacher'] },
       { id: 'events', label: 'Events', detail: 'What is happening next', icon: 'event', tone: 'violet', roles: ['Student'] }
     ],
     Admin: [
