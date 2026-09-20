@@ -2,7 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 import { PeopleService } from './people.service';
-import { AdminTeacher } from '../../common/model/models';
+import { AdminTeacher, ClassLevel } from '../../common/model/models';
 
 @Component({
   selector: 'app-admin-teachers',
@@ -12,7 +12,8 @@ import { AdminTeacher } from '../../common/model/models';
 })
 export class AdminTeachersComponent {
   private readonly peopleService = inject(PeopleService);
-  protected readonly fields = ['name', 'gender', 'username', 'empId', 'email', 'mobile', 'address', 'specialization', 'qualification', 'experience', 'joiningDate'];
+  protected readonly classLevelOptions: ClassLevel[] = ['PRE_PRIMARY', 'PRIMARY', 'UPPER_PRIMARY', 'SECONDARY', 'HIGHER_SECONDARY', 'COMMON'];
+  protected readonly fields = ['name', 'gender', 'username', 'empId', 'email', 'mobile', 'address', 'specialization', 'qualification', 'experience', 'joiningDate', 'classLevel'];
   protected readonly form: Record<string, string> = {};
   protected activeTab: 'add' | 'manage' = 'add';
   protected readonly teachers = signal<AdminTeacher[]>([]);
@@ -22,19 +23,21 @@ export class AdminTeachersComponent {
   protected message = '';
   protected error = '';
 
+  protected classLevelLabel(level: ClassLevel): string {
+    return level
+      .split('_')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(' ');
+  }
+
   protected updateField(field: string, event: Event): void {
-    this.form[field] = (event.target as HTMLInputElement).value;
+    this.form[field] = (event.target as HTMLInputElement | HTMLSelectElement).value;
   }
 
   protected save(): void {
     if (this.fields.some(field => !this.form[field]?.trim())) {
       this.error = 'Complete all teacher fields before saving.';
       this.message = '';
-      return;
-    }
-    if (this.editingTeacherId === null) {
-      this.message = 'Teacher details are ready to be saved.';
-      this.error = '';
       return;
     }
 
@@ -45,6 +48,7 @@ export class AdminTeachersComponent {
       email: this.form['email'],
       username: this.form['username'],
       employeeId: this.form['empId'],
+      level: this.form['classLevel'] as ClassLevel,
       qualification: this.form['qualification'],
       specialization: this.form['specialization'],
       joiningDate: this.form['joiningDate'],
@@ -62,10 +66,11 @@ export class AdminTeachersComponent {
           : 'Teacher details updated successfully.';
         this.error = '';
         this.editingTeacherId = null;
+        Object.keys(this.form).forEach(key => delete this.form[key]);
         if (this.activeTab === 'manage') this.loadTeachers();
       },
       error: () => {
-        this.error = 'Unable to update teacher details.';
+        this.error = 'Unable to save teacher details.';
         this.message = '';
       }
     });
@@ -104,6 +109,7 @@ export class AdminTeachersComponent {
     this.peopleService.getAdminTeacher(teacher.id).subscribe({
       next: details => {
         this.editingTeacherId = details.id;
+        Object.keys(this.form).forEach(key => delete this.form[key]);
         Object.assign(this.form, {
           name: details.name,
           gender: details.gender ?? '',
@@ -115,7 +121,8 @@ export class AdminTeachersComponent {
           specialization: details.specialization,
           qualification: details.qualification,
           experience: String(details.experienceYears ?? details.experience ?? 0),
-          joiningDate: (details.joiningDate || details.dateOfJoining || '').slice(0, 10)
+          joiningDate: (details.joiningDate || details.dateOfJoining || '').slice(0, 10),
+          classLevel: details.level ?? ''
         });
         this.loadingTeacher.set(false);
       },

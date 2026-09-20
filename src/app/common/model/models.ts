@@ -183,6 +183,7 @@ export interface AdminTeacher {
   email: string;
   username: string;
   employeeId: string;
+  level?: ClassLevel | string;
   qualification: string;
   specialization: string;
   joiningDate: string;

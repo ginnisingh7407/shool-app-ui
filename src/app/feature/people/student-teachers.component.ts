@@ -1,16 +1,14 @@
 import { Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { PeopleService } from './people.service';
 import { ProfileService } from '../profile/profile.service';
-import { AdminTeacher, ClassLevel, ClassTeacherAssignment } from '../../common/model/models';
+import { AdminTeacher, ClassLevel } from '../../common/model/models';
 
 @Component({ selector: 'app-student-teachers', imports: [RouterLink], templateUrl: './student-teachers.component.html' })
 export class StudentTeachersComponent {
   private readonly peopleService = inject(PeopleService);
   private readonly profileService = inject(ProfileService);
   protected readonly teachers = signal<AdminTeacher[]>([]);
-
   protected readonly classTeacher = signal<AdminTeacher | undefined>(undefined);
   protected readonly classId = signal('');
   protected readonly sectionName = signal('');
