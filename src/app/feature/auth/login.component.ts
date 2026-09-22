@@ -37,7 +37,9 @@ export class LoginComponent {
       next: schools => {
         this.schools.set(schools);
         this.isLoadingSchools.set(false);
-        if (schools.length === 1) this.selectedSchoolId.set(String(schools[0].id));
+        if (schools.length === 1) {
+          this.setSelectedSchool(String(schools[0].id));
+        }
       },
       error: () => {
         this.isLoadingSchools.set(false);
