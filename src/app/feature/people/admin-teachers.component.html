@@ -17,26 +17,59 @@
       <div class="admin-manage-placeholder" role="status">Loading teacher details...</div>
       } @else {
       <form class="admin-people-form" (submit)="$event.preventDefault(); save()">
-        <!-- @if (editingTeacherId !== null) {
-        <label>ID<input type="number" [value]="editingTeacherId" readonly></label>
-        } -->
-        @for (field of fields; track field) {
-        @if (field === 'classLevel') {
+        <label>Name
+          <input type="text" [(ngModel)]="teacherModel.name" name="name" required>
+        </label>
+
+        <label>Gender
+          <input type="text" [(ngModel)]="teacherModel.gender" name="gender" required>
+        </label>
+
+        <label>Username
+          <input type="text" [(ngModel)]="teacherModel.username" name="username" required>
+        </label>
+
+        <label>Employee ID
+          <input type="text" [(ngModel)]="teacherModel.empId" name="empId" required>
+        </label>
+
+        <label>Email
+          <input type="email" [(ngModel)]="teacherModel.email" name="email" required>
+        </label>
+
+        <label>Mobile
+          <input type="text" [(ngModel)]="teacherModel.mobile" name="mobile" required>
+        </label>
+
+        <label>Address
+          <input type="text" [(ngModel)]="teacherModel.address" name="address" required>
+        </label>
+
+        <label>Specialization
+          <input type="text" [(ngModel)]="teacherModel.specialization" name="specialization" required>
+        </label>
+
+        <label>Qualification
+          <input type="text" [(ngModel)]="teacherModel.qualification" name="qualification" required>
+        </label>
+
+        <label>Experience years
+          <input type="number" [(ngModel)]="teacherModel.experience" name="experience" required>
+        </label>
+
+        <label>Joining date
+          <input type="date" [(ngModel)]="teacherModel.joiningDate" name="joiningDate" required>
+        </label>
+
         <label>Class level
-          <select [value]="form[field] ?? ''" (change)="updateField(field, $event)" required>
+          <select [(ngModel)]="teacherModel.classLevel" name="classLevel" required>
             <option value="" disabled>Select class level</option>
             @for (option of classLevelOptions; track option) {
             <option [value]="option">{{ classLevelLabel(option) }}</option>
             }
           </select>
         </label>
-        } @else {
-        <label>{{ field === 'joiningDate' ? 'Joining date' : field === 'empId' ? 'Employee ID' : field === 'experience'
-          ? 'Experience years' : field }}<input
-            [type]="field === 'joiningDate' ? 'date' : field === 'email' ? 'email' : field === 'experience' ? 'number' : 'text'"
-            [value]="form[field] ?? ''" (input)="updateField(field, $event)" required></label>
-        }
-        }
+
         <button class="save-attendance" type="submit">{{ editingTeacherId === null ? 'Add teacher' : 'Update teacher'
           }}</button>
       </form>

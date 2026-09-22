@@ -1,23 +1,52 @@
 import { Component, computed, inject, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 
 import { PeopleService } from './people.service';
 import { Student, ClassSectionOption } from '../../common/model/models';
 import { ClassSectionService } from '../class-section/class-section.service';
 
+interface StudentFormModel {
+  name: string;
+  gender: string;
+  rollNumber: string;
+  admissionNumber: string;
+  dob: string;
+  address: string;
+  fatherName: string;
+  motherName: string;
+  parentMobile: string;
+  className: string;
+  section: string;
+  email: string;
+}
+
 @Component({
   selector: 'app-admin-students',
-  imports: [RouterLink],
+  imports: [RouterLink, FormsModule],
   templateUrl: './admin-students.component.html',
   styleUrl: './admin-people-management.css'
 })
 export class AdminStudentsComponent {
   private readonly peopleService = inject(PeopleService);
   private readonly classSectionService = inject(ClassSectionService);
-  protected readonly fields = ['name', 'gender', 'rollNumber', 'admissionNumber', 'dob', 'address', 'fatherName', 'motherName', 'parentMobile', 'className', 'section', 'email'];
+  protected readonly fields: Array<keyof StudentFormModel> = ['name', 'gender', 'rollNumber', 'admissionNumber', 'dob', 'address', 'fatherName', 'motherName', 'parentMobile', 'className', 'section', 'email'];
   protected readonly classOptions = signal<ClassSectionOption[]>([]);
   protected readonly sectionOptions = computed(() => this.classOptions().find(option => Number(option.classId) === this.selectedClassId())?.sections ?? []);
-  protected readonly form: Record<string, string> = {};
+  protected readonly studentModel: StudentFormModel = {
+    name: '',
+    gender: '',
+    rollNumber: '',
+    admissionNumber: '',
+    dob: '',
+    address: '',
+    fatherName: '',
+    motherName: '',
+    parentMobile: '',
+    className: '',
+    section: '',
+    email: ''
+  };
   protected activeTab: 'add' | 'manage' = 'add';
   protected readonly selectedClassId = signal(2);
   protected readonly selectedSection = signal('B');
@@ -40,30 +69,26 @@ export class AdminStudentsComponent {
     return { rollNumber: 'Roll no', admissionNumber: 'Admission no', dob: 'Date of birth', className: 'Class', parentMobile: 'Parent mobile' }[field] ?? field;
   }
 
-  protected updateField(field: string, event: Event): void {
-    this.form[field] = (event.target as HTMLInputElement).value;
-  }
-
   protected save(): void {
-    if (this.fields.some(field => !this.form[field]?.trim())) {
+    if (Object.values(this.studentModel).some(value => !String(value).trim())) {
       this.error = 'Complete all student fields before saving.';
       this.message = '';
       return;
     }
     const student: Student = {
       id: this.editingStudentId ?? null,
-      name: this.form['name'],
-      gender: this.form['gender'],
-      email: this.form['email'],
-      admissionNumber: Number(this.form['admissionNumber']),
-      rollNumber: Number(this.form['rollNumber']),
-      classId: Number(this.form['className']),
-      sectionName: this.form['section'],
-      fatherName: this.form['fatherName'],
-      motherName: this.form['motherName'],
-      dateOfBirth: this.form['dob'],
-      address: this.form['address'],
-      parentPhone: this.form['parentMobile']
+      name: this.studentModel['name'],
+      gender: this.studentModel['gender'],
+      email: this.studentModel['email'],
+      admissionNumber: Number(this.studentModel['admissionNumber']),
+      rollNumber: Number(this.studentModel['rollNumber']),
+      classId: Number(this.studentModel['className']),
+      sectionName: this.studentModel['section'],
+      fatherName: this.studentModel['fatherName'],
+      motherName: this.studentModel['motherName'],
+      dateOfBirth: this.studentModel['dob'],
+      address: this.studentModel['address'],
+      parentPhone: this.studentModel['parentMobile']
     };
     const request = this.editingStudentId === null
       ? this.peopleService.createStudent(student)
@@ -75,6 +100,9 @@ export class AdminStudentsComponent {
           : 'Student details updated successfully.';
         this.error = '';
         this.editingStudentId = null;
+        this.fields.forEach(field => {
+          this.studentModel[field] = '';
+        });
         if (this.activeTab === 'manage') this.loadStudents();
       },
       error: () => {
@@ -103,7 +131,10 @@ export class AdminStudentsComponent {
 
   protected editStudent(student: Student): void {
     this.editingStudentId = student.id;
-    Object.assign(this.form, {
+    this.fields.forEach(field => {
+      this.studentModel[field] = '';
+    });
+    Object.assign(this.studentModel, {
       name: student.name,
       gender: student.gender,
       rollNumber: String(student.rollNumber),

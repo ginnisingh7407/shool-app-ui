@@ -14,26 +14,64 @@
       </div>
       @if (activeTab === 'add') {
       <form class="admin-people-form" (submit)="$event.preventDefault(); save()">
-        @for (field of fields; track field) {
-        <label>{{ labelFor(field) }}
-          @if (field === 'className') {
-          <select [value]="form[field] ?? ''" (change)="updateField(field, $event)" required>
-            <option value="" disabled>Select a class</option>
-            @for (option of classOptions(); track option.classId) { <option [value]="option.classId">Class {{
-              option.classId }}</option> }
-          </select>
-          } @else if (field === 'section') {
-          <select [value]="form[field] ?? ''" (change)="updateField(field, $event)" required>
-            <option value="" disabled>Select a section</option>
-            @for (option of sectionOptions(); track option.sectionName) { <option [value]="option.sectionName">Section
-              {{ option.sectionName }}</option> }
-          </select>
-          } @else {
-          <input [type]="field === 'email' ? 'email' : field === 'dob' ? 'date' : 'text'" [value]="form[field] ?? ''"
-            (input)="updateField(field, $event)" required>
-          }
+        <label>Name
+          <input type="text" [(ngModel)]="studentModel.name" name="studentName" required>
         </label>
-        }
+
+        <label>Gender
+          <input type="text" [(ngModel)]="studentModel.gender" name="studentGender" required>
+        </label>
+
+        <label>Roll no
+          <input type="number" [(ngModel)]="studentModel.rollNumber" name="studentRollNumber" required>
+        </label>
+
+        <label>Admission no
+          <input type="number" [(ngModel)]="studentModel.admissionNumber" name="studentAdmissionNumber" required>
+        </label>
+
+        <label>Date of birth
+          <input type="date" [(ngModel)]="studentModel.dob" name="studentDob" required>
+        </label>
+
+        <label>Address
+          <input type="text" [(ngModel)]="studentModel.address" name="studentAddress" required>
+        </label>
+
+        <label>Father name
+          <input type="text" [(ngModel)]="studentModel.fatherName" name="studentFatherName" required>
+        </label>
+
+        <label>Mother name
+          <input type="text" [(ngModel)]="studentModel.motherName" name="studentMotherName" required>
+        </label>
+
+        <label>Parent mobile
+          <input type="text" [(ngModel)]="studentModel.parentMobile" name="studentParentMobile" required>
+        </label>
+
+        <label>Class
+          <select [(ngModel)]="studentModel.className" name="studentClassName" required>
+            <option value="" disabled>Select a class</option>
+            @for (option of classOptions(); track option.classId) {
+            <option [value]="option.classId">Class {{ option.classId }}</option>
+            }
+          </select>
+        </label>
+
+        <label>Section
+          <select [(ngModel)]="studentModel.section" name="studentSection" required>
+            <option value="" disabled>Select a section</option>
+            @for (option of sectionOptions(); track option.sectionName) {
+            <option [value]="option.sectionName">Section {{ option.sectionName }}</option>
+            }
+          </select>
+        </label>
+
+        <label>Email
+          <input type="email" [(ngModel)]="studentModel.email" name="studentEmail" required>
+        </label>
+
         <button class="save-attendance" type="submit">{{ editingStudentId === null ? 'Add student' : 'Update student'
           }}</button>
       </form>
